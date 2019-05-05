@@ -53,7 +53,7 @@ class OrderForm(models.Model):
 
 
 class Want(models.Model):
-    user = models.ForeignKey('User', to_field='id', on_delete=models.CASCADE, primary_key=True)
+    user = models.ForeignKey('User', to_field='id', on_delete=models.CASCADE)
     title = models.CharField(max_length=20)
     author = models.CharField(max_length=15, null=True, blank=True)
     disc = models.TextField()
