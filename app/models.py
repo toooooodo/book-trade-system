@@ -11,19 +11,19 @@ class User(models.Model):
 
 class Book(models.Model):
     BOOK_TYPE_CHOICES = (
-        ('LT', 'literature'),
-        ('CH', 'child'),
-        ('ED', 'education'),
-        ('HM', 'humanities'),
-        ('LF', 'life'),
-        ('AT', 'art'),
-        ('TC', 'tech'),
-        ('CS', 'computer'),
+        ('LT', 'literature'),  # 文学
+        ('CH', 'child'),  # 少儿
+        ('ED', 'education'),  # 教育
+        ('HM', 'humanities'),  # 人文
+        ('LF', 'life'),  # 生活
+        ('AT', 'art'),  # 艺术
+        ('TC', 'tech'),  # 科技
+        ('CS', 'computer'),  # 计算机
     )
     BOOK_LAN_CHOICES = (
-        ('EN', 'english'),
-        ('ZH', 'chinese'),
-        ('OT', 'other'),
+        ('EN', 'english'),  # 英语
+        ('ZH', 'chinese'),  # 汉语
+        ('OT', 'other'),  # 其他
     )
     seller = models.ForeignKey('User', to_field='id', on_delete=models.CASCADE)
     title = models.CharField(max_length=20)
@@ -41,8 +41,8 @@ class Book(models.Model):
 
 class OrderForm(models.Model):
     TRADE_TYPE = (
-        ('OL', 'online'),
-        ('FL', 'offline'),
+        ('OL', 'online'),  # 线上
+        ('FL', 'offline'),  # 线下
     )
     seller = models.ForeignKey('User', to_field='id', on_delete=models.CASCADE)
     buyer = models.IntegerField()
