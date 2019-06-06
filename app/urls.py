@@ -5,5 +5,6 @@ from app import views
 
 urlpatterns = [
     path(r'', views.login),
-    path(r'register', views.register)
+    url(r'^register/$', views.register),
+    url(r'^doregister/$', views.doregister),
 ]
