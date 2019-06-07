@@ -58,20 +58,20 @@
 <script>
     function validate() {
         toastr.options.positionClass = 'toast-top-full-width';
-        var pwd = $("#pwd").val();
-        var pwd1 = $("#pwd_v").val();
-        var email = $("#em").val();
-        var username = $("#uname").val();
+        const pwd = $("#pwd").val();
+        const pwd1 = $("#pwd_v").val();
+        const email = $("#em").val();
+        const username = $("#uname").val();
         if (pwd === "" || pwd1 === "") {
-            toastr.error("请填写密码");
+            toastr.warning("请填写密码");
         } else if (email === "") {
-            toastr.error("请填写邮箱");
+            toastr.warning("请填写邮箱");
         } else if (username === "") {
-            toastr.error("请填写用户名");
+            toastr.warning("请填写用户名");
         } else if (pwd !== pwd1) {
-            toastr.error("密码不一致");
+            toastr.warning("密码不一致");
         } else if ($("#registering").is(':checked') === false) {
-            toastr.error("请同意服务条款和隐私政策",);
+            toastr.warning("请同意服务条款和隐私政策",);
         } else {
             // toastr.success("提交成功");
             // return true;
@@ -94,11 +94,11 @@
                     } else if (xhr.status == 1) {
                         console.log("11");
                         // alert(xhr.status);
-                        toastr.warning("注册失败", "邮箱已被注册");
+                        toastr.error("注册失败", "邮箱已被注册");
                     } else if (xhr.status == 2) {
                         console.log("22");
                         // alert(xhr.status);
-                        toastr.warning("注册失败", "用户名已被注册");
+                        toastr.error("注册失败", "用户名已被注册");
                     }
                 },
                 error: function (xhr) {
