@@ -37,7 +37,7 @@ class Book(models.Model):
     sellingPrice = models.DecimalField(max_digits=6, decimal_places=2)  # 售价
     type = models.CharField(max_length=2, choices=BOOK_TYPE_CHOICES)  # 种类
     info = models.CharField(max_length=255)  # 描述
-    img = models.ImageField()  # 图片
+    img = models.ImageField(upload_to='images')  # 图片
     isbn = models.CharField(max_length=20, blank=True)
     url = models.URLField()
     method = models.CharField(max_length=2, choices=TRADE_TYPE)  # 交易方式

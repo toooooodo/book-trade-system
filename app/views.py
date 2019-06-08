@@ -84,5 +84,3 @@ def do_adlisting(request):
     pass
 
 
-def get_category(request):
-    return JsonResponse({})

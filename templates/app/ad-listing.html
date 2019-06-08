@@ -22,7 +22,7 @@
 
 <section class="ad-posting bg-gray py-5">
     <div class="container">
-        <form action="#">
+        <form method="post" enctype="multipart/form-data" onsubmit="return validate()">  {% csrf_token %}
             <!-- Post Your ad start -->
             <fieldset class="border border-gary p-4 mb-5">
                 <div class="row">
@@ -31,21 +31,23 @@
                     </div>
                     <div class="col-lg-6">
                         <h6 class="font-weight-bold pt-4 pb-1">书名：</h6>
-                        <input type="text" class="border w-100 p-2 bg-white text-capitalize" placeholder="请填写书名*">
+                        <input type="text" class="border w-100 p-2 bg-white text-capitalize" id="title"
+                               placeholder="请填写书名*">
                         <h6 class="font-weight-bold pt-4 pb-1">作者：</h6>
-                        <input type="text" class="border w-100 p-2 bg-white text-capitalize" placeholder="请填写作者*">
+                        <input type="text" class="border w-100 p-2 bg-white text-capitalize" id="author"
+                               placeholder="请填写作者*">
                         <h6 class="font-weight-bold pt-4 pb-1">语言：</h6>
                         <div class="row px-3">
                             <div class="col-lg-3 mr-lg-4 my-2 rounded bg-white">
-                                <input type="radio" name="itemName" value="personal" id="personal">
+                                <input type="radio" name="language" value="chinese" id="chinese" checked>
                                 <label for="personal" class="py-2">中文</label>
                             </div>
                             <div class="col-lg-3 mr-lg-4 my-2 rounded bg-white ">
-                                <input type="radio" name="itemName" value="business" id="business">
+                                <input type="radio" name="language" value="english" id="english">
                                 <label for="business" class="py-2">英文</label>
                             </div>
                             <div class="col-lg-3 mr-lg-4 my-2 rounded bg-white ">
-                                <input type="radio" name="itemName" value="business" id="business">
+                                <input type="radio" name="language" value="other" id="other">
                                 <label for="business" class="py-2">其他</label>
                             </div>
                         </div>
@@ -68,7 +70,7 @@
                             <option value="4">外语</option>
                         </select>
                         <h6 class="font-weight-bold pt-4 pb-1">描述信息:</h6>
-                        <textarea name="" id="" class="border p-3 w-100" rows="7"
+                        <textarea name="information" id="information" class="border p-3 w-100" rows="7"
                                   placeholder="请为您的图书输入描述信息*"></textarea>
                     </div>
                     <div class="col-lg-6">
@@ -87,18 +89,20 @@
                         <h6 class="font-weight-bold pt-4 pb-1">交易方式：</h6>
                         <div class="row px-3">
                             <div class="col-lg-4 mr-lg-4 my-2 rounded bg-white">
-                                <input type="radio" name="itemName" value="personal" id="personal">
+                                <input type="radio" name="trade" value="online" id="online" checked>
                                 <label for="personal" class="py-2">线上</label>
                             </div>
                             <div class="col-lg-4 mr-lg-4 my-2 rounded bg-white ">
-                                <input type="radio" name="itemName" value="business" id="business">
+                                <input type="radio" name="trade" value="offline" id="offline">
                                 <label for="business" class="py-2">线下</label>
                             </div>
                         </div>
                         <h6 class="font-weight-bold pt-4 pb-1">ISBN：</h6>
-                        <input type="text" class="border w-100 p-2 bg-white" placeholder="请填写ISBN*">
+                        <input type="text" class="border w-100 p-2 bg-white" placeholder="请填写ISBN*" name="isbn"
+                               id="isbn">
                         <h6 class="font-weight-bold pt-4 pb-1">外部链接：</h6>
-                        <input type="text" class="border w-100 p-2 bg-white" placeholder="请填写外部链接URL*">
+                        <input type="text" class="border w-100 p-2 bg-white" placeholder="请填写外部链接URL*" name="url"
+                               id="url">
                         <h6 class="font-weight-bold pt-4 pb-1">图片：</h6>
                         <div class="choose-file text-center my-4 py-4 rounded">
                             <label for="file-upload">
@@ -226,8 +230,46 @@
                 + "<option value=\"3\">人生哲学</option>" + "<option value=\"4\">人际交往</option>";
             $("select#cat-select").append(option);
         }
-    })
+    });
 
+    function validate() {
+        const title = $('input#title').val();
+        const author = $('input#author').val();
+        const language = $(':radio[name=language]:checked').val();
+        const type = $('div.nice-select:first>ul.list>li.selected').attr("data-value");
+        const category = $('div.nice-select:last>ul.list>li.selected').attr("data-value");
+        const info = $('textarea#information').val();
+        const origin = $('input#origin-price').val();
+        const sell = $('input#sell-price').val();
+        const trade = $(':radio[name=trade]:checked').val();
+        const isbn = $('input#isbn').val();
+        const url = $('input#url').val();
+        console.log(trade);
+        toastr.options.positionClass = 'toast-top-full-width';
+        var regPos = /^\d+(\.\d+)?$/; //非负浮点数
+        if (title.length === 0) {
+            toastr.warning("请填写书名");
+        } else if (author.length === 0) {
+            toastr.warning("请填写作者");
+        } else if (info.length === 0) {
+            toastr.warning("请填写描述信息");
+        } else if (isbn.length === 0) {
+            toastr.warning("请填写ISBN");
+        } else if (url.length === 0) {
+            toastr.warning("请填写外部链接URL");
+        } else if (origin.length === 0) {
+            toastr.warning("请填写原价");
+        } else if (sell.length === 0) {
+            toastr.warning("请填写售价");
+        } else if (regPos.test(origin) === false) {
+            toastr.warning("原价格式不正确");
+        } else if (regPos.test(sell) === false) {
+            toastr.warning("售价格式不正确");
+        }
+        // console.log(title, author, language, type, category);
+        // alert(category+category);
+        return false;
+    }
 </script>
 </body>
 
