@@ -11,32 +11,72 @@ class User(models.Model):
 
 class Book(models.Model):
     BOOK_TYPE_CHOICES = (
-        ('LT', 'literature'),  # 文学
-        ('CH', 'child'),  # 少儿
         ('ED', 'education'),  # 教育
-        ('HM', 'humanities'),  # 人文
+        ('LT', 'literary'),  # 文艺
+        ('HM', 'humanities'),  # 人文社科
         ('LF', 'life'),  # 生活
-        ('AT', 'art'),  # 艺术
+        ('EC', 'economic'),  # 经管
         ('TC', 'tech'),  # 科技
-        ('CS', 'computer'),  # 计算机
+        ('CH', 'child'),  # 少儿
+        ('IN', 'Inspirational'),  # 励志
     )
     BOOK_LAN_CHOICES = (
         ('EN', 'english'),  # 英语
         ('ZH', 'chinese'),  # 汉语
         ('OT', 'other'),  # 其他
     )
-    seller = models.ForeignKey('User', to_field='id', on_delete=models.CASCADE)
-    title = models.CharField(max_length=20)
-    author = models.CharField(max_length=15)
-    language = models.CharField(max_length=2, choices=BOOK_LAN_CHOICES)
-    originPrice = models.DecimalField(max_digits=6, decimal_places=2)
-    sellingPrice = models.DecimalField(max_digits=6, decimal_places=2)
-    type = models.CharField(max_length=2, choices=BOOK_TYPE_CHOICES)
-    info = models.CharField(max_length=255)
-    img = models.ImageField()
+    seller = models.ForeignKey('User', to_field='id', on_delete=models.CASCADE)  # 卖方
+    title = models.CharField(max_length=20)  # 书名
+    author = models.CharField(max_length=15)  # 作者
+    language = models.CharField(max_length=2, choices=BOOK_LAN_CHOICES)  # 语言
+    originPrice = models.DecimalField(max_digits=6, decimal_places=2)  # 原价
+    sellingPrice = models.DecimalField(max_digits=6, decimal_places=2)  # 售价
+    type = models.CharField(max_length=2, choices=BOOK_TYPE_CHOICES)  # 种类
+    info = models.CharField(max_length=255)  # 描述
+    img = models.ImageField()  # 图片
     isbn = models.CharField(max_length=20, blank=True)
     url = models.URLField()
     time = models.DateTimeField(auto_now_add=True)
+
+
+class EDBook(models.Model):
+    id = models.IntegerField(primary_key=True)
+    category = models.CharField(max_length=1)
+
+
+class LTBook(models.Model):
+    id = models.IntegerField(primary_key=True)
+    category = models.CharField(max_length=1)
+
+
+class HMBook(models.Model):
+    id = models.IntegerField(primary_key=True)
+    category = models.CharField(max_length=1)
+
+
+class LFBook(models.Model):
+    id = models.IntegerField(primary_key=True)
+    category = models.CharField(max_length=1)
+
+
+class ECBook(models.Model):
+    id = models.IntegerField(primary_key=True)
+    category = models.CharField(max_length=1)
+
+
+class TCBook(models.Model):
+    id = models.IntegerField(primary_key=True)
+    category = models.CharField(max_length=1)
+
+
+class CHBook(models.Model):
+    id = models.IntegerField(primary_key=True)
+    category = models.CharField(max_length=1)
+
+
+class INBook(models.Model):
+    id = models.IntegerField(primary_key=True)
+    category = models.CharField(max_length=1)
 
 
 class OrderForm(models.Model):

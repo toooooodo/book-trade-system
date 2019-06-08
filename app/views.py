@@ -9,13 +9,15 @@ from app.models import *
 # Create your views here.
 
 def login(request):
+    if request.session.get('is_login', None):
+        return redirect('/index')
     return render(request, 'app/login.html')
 
 
 @csrf_exempt
 def dologin(request):
     if request.session.get('is_login', None):
-        return redirect('app/index.html')
+        return JsonResponse({'status': '2'})
     if request.method == "POST":
         username = request.POST.get('username')
         password = request.POST.get('password')
@@ -29,7 +31,8 @@ def dologin(request):
             request.session['is_login'] = True
             request.session['user_id'] = res[0].id
             request.session['user_name'] = res[0].username
-            return redirect('/index/')
+            # return redirect('/index/')
+            return JsonResponse({'status': '1'})
 
 
 def register(request):
