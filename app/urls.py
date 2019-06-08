@@ -10,4 +10,7 @@ urlpatterns = [
     url(r'^dologin/$', views.dologin),
     url(r'^register/$', views.register),
     url(r'^doregister/$', views.doregister),
+    url(r'^adlisting/$', views.adlisting),
+    url(r'^doadlisting/$', views.do_adlisting),
+    url(r'^getcat/$', views.get_category),
 ]

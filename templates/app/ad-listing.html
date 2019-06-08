@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <!-- SITE TITTLE -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Classimax</title>
+    {% include 'app/link.html' %}
+    <style type="text/css">
+        label {
+            margin-bottom: 0;
+        }
+    </style>
+</head>
+
+<body class="body-wrapper">
+
+{% include 'app/header.html' %}
+
+
+<section class="ad-posting bg-gray py-5">
+    <div class="container">
+        <form action="#">
+            <!-- Post Your ad start -->
+            <fieldset class="border border-gary p-4 mb-5">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <h3>发布新的图书</h3>
+                    </div>
+                    <div class="col-lg-6">
+                        <h6 class="font-weight-bold pt-4 pb-1">书名：</h6>
+                        <input type="text" class="border w-100 p-2 bg-white text-capitalize" placeholder="请填写书名*">
+                        <h6 class="font-weight-bold pt-4 pb-1">作者：</h6>
+                        <input type="text" class="border w-100 p-2 bg-white text-capitalize" placeholder="请填写作者*">
+                        <h6 class="font-weight-bold pt-4 pb-1">语言：</h6>
+                        <div class="row px-3">
+                            <div class="col-lg-3 mr-lg-4 my-2 rounded bg-white">
+                                <input type="radio" name="itemName" value="personal" id="personal">
+                                <label for="personal" class="py-2">中文</label>
+                            </div>
+                            <div class="col-lg-3 mr-lg-4 my-2 rounded bg-white ">
+                                <input type="radio" name="itemName" value="business" id="business">
+                                <label for="business" class="py-2">英文</label>
+                            </div>
+                            <div class="col-lg-3 mr-lg-4 my-2 rounded bg-white ">
+                                <input type="radio" name="itemName" value="business" id="business">
+                                <label for="business" class="py-2">其他</label>
+                            </div>
+                        </div>
+                        <h6 class="font-weight-bold pt-4 pb-1">选择书的种类：</h6>
+                        <select name="book-type" id="type-select" class="w-100">
+                            <option value="1">教育</option>
+                            <option value="2">文艺</option>
+                            <option value="3">人文社科</option>
+                            <option value="4">生活</option>
+                            <option value="5">经管</option>
+                            <option value="6">科技</option>
+                            <option value="7">童书</option>
+                            <option value="8">励志</option>
+                        </select>
+                        <h6 class="font-weight-bold pt-4 pb-1">选择书的细分种类：</h6>
+                        <select name="book-category" id="cat-select" class="w-100">
+                            <option value="1">中小学教辅</option>
+                            <option value="2">考试</option>
+                            <option value="3">大中专教材</option>
+                            <option value="4">外语</option>
+                        </select>
+                        <h6 class="font-weight-bold pt-4 pb-1">描述信息:</h6>
+                        <textarea name="" id="" class="border p-3 w-100" rows="7"
+                                  placeholder="请为您的图书输入描述信息*"></textarea>
+                    </div>
+                    <div class="col-lg-6">
+
+                        <h6 class="font-weight-bold pt-4 pb-1">图书原价:</h6>
+
+                        <input type="text" name="originprice" class="border w-100 p-2 bg-white" placeholder="原价*"
+                               id="origin-price">
+
+
+                        <h6 class="font-weight-bold pt-4 pb-1">图书售价:</h6>
+
+                        <input type="text" name="price" class="border w-100 p-2 bg-white" placeholder="售价*"
+                               id="sell-price">
+
+                        <h6 class="font-weight-bold pt-4 pb-1">交易方式：</h6>
+                        <div class="row px-3">
+                            <div class="col-lg-4 mr-lg-4 my-2 rounded bg-white">
+                                <input type="radio" name="itemName" value="personal" id="personal">
+                                <label for="personal" class="py-2">线上</label>
+                            </div>
+                            <div class="col-lg-4 mr-lg-4 my-2 rounded bg-white ">
+                                <input type="radio" name="itemName" value="business" id="business">
+                                <label for="business" class="py-2">线下</label>
+                            </div>
+                        </div>
+                        <h6 class="font-weight-bold pt-4 pb-1">ISBN：</h6>
+                        <input type="text" class="border w-100 p-2 bg-white" placeholder="请填写ISBN*">
+                        <h6 class="font-weight-bold pt-4 pb-1">外部链接：</h6>
+                        <input type="text" class="border w-100 p-2 bg-white" placeholder="请填写外部链接URL*">
+                        <h6 class="font-weight-bold pt-4 pb-1">图片：</h6>
+                        <div class="choose-file text-center my-4 py-4 rounded">
+                            <label for="file-upload">
+                                <span class="d-block font-weight-bold text-dark">将图片拖放入任何位置</span>
+                                <span class="d-block">或</span>
+                                <span class="d-block btn bg-primary text-white my-3 select-files">选择图片</span>
+                                <span class="d-block">最大上传图片大小: 500 KB</span>
+                                <input type="file" class="form-control-file d-none" id="file-upload" name="file">
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </fieldset>
+            <!-- Post Your ad end -->
+
+            <!-- submit button -->
+            <div class="checkbox d-inline-flex">
+                <input type="checkbox" id="terms-&-condition" class="mt-1">
+                <label for="terms-&-condition" class="ml-2">我已阅读并同意
+                    <span> <a class="text-success" href="terms-condition.html">相关服务条款和隐私政策</a></span>
+                </label>
+            </div>
+            <button type="submit" class="btn btn-primary d-block mt-2">发布图书</button>
+        </form>
+    </div>
+</section>
+
+<!--============================
+=            Footer            =
+=============================-->
+
+{% include 'app/footer.html' %}
+<!-- JAVASCRIPTS -->
+{% include 'app/script.html' %}
+
+<script>
+    $("#type-select").on("change", function () {
+        var value = this.value;
+        var option;
+        const current = $("div.nice-select:last > span");
+        const l1 = $("div.nice-select:last>ul.list > li:nth-child(1)");
+        const l2 = $("div.nice-select:last>ul.list > li:nth-child(2)");
+        const l3 = $("div.nice-select:last>ul.list > li:nth-child(3)");
+        const l4 = $("div.nice-select:last>ul.list > li:nth-child(4)");
+        console.log(value);
+        if (value === "1") {
+            current.text("中小学教辅");
+            l1.text("中小学教辅");
+            l2.text("考试");
+            l3.text("大中专教材");
+            l4.text("外语");
+            $("select#cat-select").empty();
+            // var text=$("<option value="1"></option>").text("love ");
+            option = "<option value=\"1\">中小学教辅</option>" + "<option value=\"2\">考试</option>"
+                + "<option value=\"3\">大中专教材</option>" + "<option value=\"4\">外语</option>";
+            $("select#cat-select").append(option);
+        } else if (value === "2") {
+            current.text("小说");
+            l1.text("小说");
+            l2.text("文学");
+            l3.text("传记");
+            l4.text("动漫/幽默");
+            $("select#cat-select").empty();
+            option = "<option value=\"1\">小说</option>" + "<option value=\"2\">文学</option>"
+                + "<option value=\"3\">传记</option>" + "<option value=\"4\">动漫/幽默</option>";
+            $("select#cat-select").append(option);
+        } else if (value === "3") {
+            current.text("哲学宗教");
+            l1.text("哲学宗教");
+            l2.text("历史");
+            l3.text("政治军事");
+            l4.text("文化");
+            $("select#cat-select").empty();
+            option = "<option value=\"1\">哲学宗教</option>" + "<option value=\"2\">历史</option>"
+                + "<option value=\"3\">政治军事</option>" + "<option value=\"4\">文化</option>";
+            $("select#cat-select").append(option);
+        } else if (value === "4") {
+            current.text("育儿");
+            l1.text("育儿");
+            l2.text("亲子家教");
+            l3.text("美食");
+            l4.text("动漫/幽默");
+            $("select#cat-select").empty();
+            option = "<option value=\"1\">育儿</option>" + "<option value=\"2\">亲子家教</option>"
+                + "<option value=\"3\">美食</option>" + "<option value=\"4\">休闲</option>";
+            $("select#cat-select").append(option);
+        } else if (value === "5") {
+            current.text("经济");
+            l1.text("经济");
+            l2.text("管理");
+            l3.text("股票");
+            l4.text("动漫/幽默");
+            $("select#cat-select").empty();
+            option = "<option value=\"1\">经济</option>" + "<option value=\"2\">管理</option>"
+                + "<option value=\"3\">股票</option>" + "<option value=\"4\">会计</option>";
+            $("select#cat-select").append(option);
+        } else if (value === "6") {
+            current.text("计算机/网络");
+            l1.text("计算机/网络");
+            l2.text("医学");
+            l3.text("工业技术");
+            l4.text("自然科学");
+            $("select#cat-select").empty();
+            option = "<option value=\"1\">计算机/网络</option>" + "<option value=\"2\">医学</option>"
+                + "<option value=\"3\">工业技术</option>" + "<option value=\"4\">自然科学</option>";
+            $("select#cat-select").append(option);
+        } else if (value === "7") {
+            current.text("0-2岁");
+            l1.text("0-2岁");
+            l2.text("3-6岁");
+            l3.text("7-10岁");
+            l4.text("11-14岁");
+            $("select#cat-select").empty();
+            option = "<option value=\"1\">0-2岁</option>" + "<option value=\"2\">3-6岁</option>"
+                + "<option value=\"3\">7-10岁</option>" + "<option value=\"4\">11-14岁</option>";
+            $("select#cat-select").append(option);
+        } else if (value === "8") {
+            current.text("心灵修养");
+            l1.text("心灵修养");
+            l2.text("职场");
+            l3.text("人生哲学");
+            l4.text("动漫/幽默");
+            $("select#cat-select").empty();
+            option = "<option value=\"1\">心灵修养</option>" + "<option value=\"2\">职场</option>"
+                + "<option value=\"3\">人生哲学</option>" + "<option value=\"4\">人际交往</option>";
+            $("select#cat-select").append(option);
+        }
+    })
+
+</script>
+</body>
+
+</html>

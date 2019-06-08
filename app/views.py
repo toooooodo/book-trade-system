@@ -69,4 +69,20 @@ def doregister(request):
 
 
 def index(request):
+    if request.session.get('is_login', None) is None:
+        return render(request, 'app/login.html')
     return render(request, 'app/index.html')
+
+
+def adlisting(request):
+    if request.session.get('is_login', None) is None:
+        return render(request, 'app/login.html')
+    return render(request, 'app/ad-listing.html')
+
+
+def do_adlisting(request):
+    pass
+
+
+def get_category(request):
+    return JsonResponse({})

@@ -25,6 +25,10 @@ class Book(models.Model):
         ('ZH', 'chinese'),  # 汉语
         ('OT', 'other'),  # 其他
     )
+    TRADE_TYPE = (
+        ('OL', 'online'),  # 线上
+        ('FL', 'offline'),  # 线下
+    )
     seller = models.ForeignKey('User', to_field='id', on_delete=models.CASCADE)  # 卖方
     title = models.CharField(max_length=20)  # 书名
     author = models.CharField(max_length=15)  # 作者
@@ -36,6 +40,7 @@ class Book(models.Model):
     img = models.ImageField()  # 图片
     isbn = models.CharField(max_length=20, blank=True)
     url = models.URLField()
+    method = models.CharField(max_length=2, choices=TRADE_TYPE)  # 交易方式
     time = models.DateTimeField(auto_now_add=True)
 
 
