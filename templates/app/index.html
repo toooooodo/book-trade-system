@@ -113,6 +113,7 @@
             <!-- offer 01 -->
             <div class="col-lg-12">
                 <div class="trending-ads-slide">
+                    <!--book 1-->
                     <div class="col-sm-12 col-lg-4">
                         <!-- product card -->
                         <div class="product-item bg-light">
@@ -120,23 +121,22 @@
                                 <div class="thumb-content">
                                     <!-- <div class="price">$200</div> -->
                                     <a href="single.html">
-                                        <img class="card-img-top img-fluid" src="images/products/cover-elata.JPG"
+                                        <img class="card-img-top img-fluid" src= "{{ book.book1.url }}"
                                              alt="Card image cap">
                                     </a>
                                 </div>
                                 <div class="card-body">
-                                    <h4 class="card-title"><a href="single.html"> Evoluionary Learning: Advances in
-                                        Theories and Algorithms</a>
+                                    <h4 class="card-title"><a href="single.html">{{ book.book1.title }}</a>
                                     </h4>
                                     <ul class="list-inline product-meta">
                                         <li class="list-inline-item">
-                                            <a href="single.html"><i class="fa fa-folder-open-o"></i>计算机</a>
+                                            <a href="single.html"><i class="fa fa-folder-open-o"></i>{{ book.book1.type }}</a>
                                         </li>
                                         <li class="list-inline-item">
-                                            <a href="#"><i class="fa fa-calendar"></i>26th December</a>
+                                            <a href="#"><i class="fa fa-calendar"></i>{{ book.book1.lan }}</a>
                                         </li>
                                     </ul>
-                                    <p class="card-text">Presents theoretical results for evolutionary learning.
+                                    <p class="card-text">{{ book.book1.info }}
                                     </p>
                                     <div class="product-ratings">
                                         <ul class="list-inline">
@@ -153,6 +153,7 @@
 
 
                     </div>
+                    <!--book 2-->
                     <div class="col-sm-12 col-lg-4">
                         <!-- product card -->
                         <div class="product-item bg-light">
@@ -160,24 +161,21 @@
                                 <div class="thumb-content">
                                     <!-- <div class="price">$200</div> -->
                                     <a href="single.html">
-                                        <img class="card-img-top img-fluid" src="images/products/cover-emfa.jpg"
+                                        <img class="card-img-top img-fluid"  src= "{{ book.book2.url }}"
                                              alt="Card image cap">
                                     </a>
                                 </div>
                                 <div class="card-body">
-                                    <h4 class="card-title"><a href="single.html">Ensemble Methods: Foundations and
-                                        Algorithms</a></h4>
+                                    <h4 class="card-title"><a href="single.html">{{ book.book2.title }}</a></h4>
                                     <ul class="list-inline product-meta">
                                         <li class="list-inline-item">
-                                            <a href="single.html"><i class="fa fa-folder-open-o"></i>计算机</a>
+                                            <a href="single.html"><i class="fa fa-folder-open-o"></i>{{ book.book2.type }}</a>
                                         </li>
                                         <li class="list-inline-item">
-                                            <a href="#"><i class="fa fa-calendar"></i>26th December</a>
+                                            <a href="#"><i class="fa fa-calendar"></i>{{ book.book2.lan }}</a>
                                         </li>
                                     </ul>
-                                    <p class="card-text">An up-to-date, self-contained introduction to a
-                                        state-of-the-art machine learning
-                                        approach!
+                                    <p class="card-text">{{ book.book2.info }}
                                     </p>
                                     <div class="product-ratings">
                                         <ul class="list-inline">
@@ -194,6 +192,7 @@
 
 
                     </div>
+                    <!--book 3-->
                     <div class="col-sm-12 col-lg-4">
                         <!-- product card -->
                         <div class="product-item bg-light">
@@ -201,22 +200,21 @@
                                 <div class="thumb-content">
                                     <!-- <div class="price">$200</div> -->
                                     <a href="single.html">
-                                        <img class="card-img-top img-fluid" src="images/products/cover-ml2016.jpg"
+                                        <img class="card-img-top img-fluid"  src= "{{ book.book3.url }}"
                                              alt="Card image cap">
                                     </a>
                                 </div>
                                 <div class="card-body">
-                                    <h4 class="card-title"><a href="single.html">MACHINE LEARNING 机器学习 西瓜书</a></h4>
+                                    <h4 class="card-title"><a href="single.html">{{ book.book3.title }}</a></h4>
                                     <ul class="list-inline product-meta">
                                         <li class="list-inline-item">
-                                            <a href="single.html"><i class="fa fa-folder-open-o"></i>计算机</a>
+                                            <a href="single.html"><i class="fa fa-folder-open-o"></i>{{ book.book3.type }}</a>
                                         </li>
                                         <li class="list-inline-item">
-                                            <a href="#"><i class="fa fa-calendar"></i>26th December</a>
+                                            <a href="#"><i class="fa fa-calendar"></i>{{ book.book3.lan }}</a>
                                         </li>
                                     </ul>
-                                    <p class="card-text"> The book strives to cover the basic knowledge of
-                                        machine learning from all the aspects.
+                                    <p class="card-text">{{ book.book3.info }}
                                     </p>
                                     <div class="product-ratings">
                                         <ul class="list-inline">
@@ -233,6 +231,7 @@
 
 
                     </div>
+                    <!--book 4-->
                     <div class="col-sm-12 col-lg-4">
                         <!-- product card -->
                         <div class="product-item bg-light">
@@ -240,23 +239,21 @@
                                 <div class="thumb-content">
                                     <!-- <div class="price">$200</div> -->
                                     <a href="single.html">
-                                        <img class="card-img-top img-fluid" src="images/products/deep-learning.jpg"
+                                        <img class="card-img-top img-fluid"  src= "{{ book.book4.url }}"
                                              alt="Card image cap">
                                     </a>
                                 </div>
                                 <div class="card-body">
-                                    <h4 class="card-title"><a href="single.html">Deep Learning 深度学习</a></h4>
+                                    <h4 class="card-title"><a href="single.html">{{ book.book4.title }}</a></h4>
                                     <ul class="list-inline product-meta">
                                         <li class="list-inline-item">
-                                            <a href="single.html"><i class="fa fa-folder-open-o"></i>计算机</a>
+                                            <a href="single.html"><i class="fa fa-folder-open-o"></i>{{ book.book4.type }}</a>
                                         </li>
                                         <li class="list-inline-item">
-                                            <a href="#"><i class="fa fa-calendar"></i>26th December</a>
+                                            <a href="#"><i class="fa fa-calendar"></i>{{ book.book4.lan }}</a>
                                         </li>
                                     </ul>
-                                    <p class="card-text">An introduction to a broad range of topics in deep learning,
-                                        covering mathematical and
-                                        conceptual background.
+                                    <p class="card-text">{{ book.book4.info }}
                                     </p>
                                     <div class="product-ratings">
                                         <ul class="list-inline">
@@ -305,10 +302,10 @@
                                 <h4>教育</h4>
                             </div>
                             <ul class="category-list">
-                                <li><a href="category.html">中小学教辅 <span>93</span></a></li>
-                                <li><a href="category.html">考试 <span>233</span></a></li>
-                                <li><a href="category.html">大中专教材 <span>183</span></a></li>
-                                <li><a href="category.html">外语 <span>343</span></a></li>
+                                <li><a href="category.html">中小学教辅 <span>{{ variable.aa }}</span></a></li>
+                                <li><a href="category.html">考试 <span>{{ variable.ab }}</span></a></li>
+                                <li><a href="category.html">大中专教材 <span>{{ variable.ac }}</span></a></li>
+                                <li><a href="category.html">外语 <span>{{ variable.ad }}</span></a></li>
                             </ul>
                         </div>
                     </div> <!-- /Category List -->
@@ -320,10 +317,10 @@
                                 <h4>文艺</h4>
                             </div>
                             <ul class="category-list">
-                                <li><a href="category.html">小说 <span>393</span></a></li>
-                                <li><a href="category.html">文学 <span>23</span></a></li>
-                                <li><a href="category.html">传记 <span>13</span></a></li>
-                                <li><a href="category.html">动漫/幽默 <span>43</span></a></li>
+                                <li><a href="category.html">小说 <span>{{ variable.ba }}</span></a></li>
+                                <li><a href="category.html">文学 <span>{{ variable.bb }}</span></a></li>
+                                <li><a href="category.html">传记 <span>{{ variable.bc }}</span></a></li>
+                                <li><a href="category.html">动漫/幽默 <span>{{ variable.bd }}</span></a></li>
                             </ul>
                         </div>
                     </div> <!-- /Category List -->
@@ -335,10 +332,10 @@
                                 <h4>人文社科</h4>
                             </div>
                             <ul class="category-list">
-                                <li><a href="category.html">哲学宗教 <span>93</span></a></li>
-                                <li><a href="category.html">历史 <span>23</span></a></li>
-                                <li><a href="category.html">政治军事 <span>83</span></a></li>
-                                <li><a href="category.html">文化 <span>33</span></a></li>
+                                <li><a href="category.html">哲学宗教 <span>{{ variable.ca }}</span></a></li>
+                                <li><a href="category.html">历史 <span>{{ variable.cb }}</span></a></li>
+                                <li><a href="category.html">政治军事 <span>{{ variable.cc }}</span></a></li>
+                                <li><a href="category.html">文化 <span>{{ variable.cd }}</span></a></li>
                             </ul>
                         </div>
                     </div> <!-- /Category List -->
@@ -350,10 +347,10 @@
                                 <h4>生活</h4>
                             </div>
                             <ul class="category-list">
-                                <li><a href="category.html">育儿 <span>53</span></a></li>
-                                <li><a href="category.html">亲子家教 <span>212</span></a></li>
-                                <li><a href="category.html">美食 <span>133</span></a></li>
-                                <li><a href="category.html">休闲 <span>143</span></a></li>
+                                <li><a href="category.html">育儿 <span>{{ variable.da }}</span></a></li>
+                                <li><a href="category.html">亲子家教 <span>{{ variable.db }}</span></a></li>
+                                <li><a href="category.html">美食 <span>{{ variable.dc }}</span></a></li>
+                                <li><a href="category.html">休闲 <span>{{ variable.dd }}</span></a></li>
                             </ul>
                         </div>
                     </div> <!-- /Category List -->
@@ -365,10 +362,10 @@
                                 <h4>经管</h4>
                             </div>
                             <ul class="category-list">
-                                <li><a href="category.html">经济 <span>93</span></a></li>
-                                <li><a href="category.html">管理 <span>233</span></a></li>
-                                <li><a href="category.html">股票 <span>183</span></a></li>
-                                <li><a href="category.html">会计 <span>343</span></a></li>
+                                <li><a href="category.html">经济 <span>{{ variable.ea }}</span></a></li>
+                                <li><a href="category.html">管理 <span>{{ variable.eb }}</span></a></li>
+                                <li><a href="category.html">股票 <span>{{ variable.ec }}</span></a></li>
+                                <li><a href="category.html">会计 <span>{{ variable.ed }}</span></a></li>
                             </ul>
                         </div>
                     </div> <!-- /Category List -->
@@ -380,10 +377,10 @@
                                 <h4>科技</h4>
                             </div>
                             <ul class="category-list">
-                                <li><a href="category.html">计算机/网络 <span>193</span></a></li>
-                                <li><a href="category.html">医学 <span>23</span></a></li>
-                                <li><a href="category.html">工业技术 <span>33</span></a></li>
-                                <li><a href="category.html">自然科学 <span>73</span></a></li>
+                                <li><a href="category.html">计算机/网络 <span>{{ variable.fa }}</span></a></li>
+                                <li><a href="category.html">医学 <span>{{ variable.fb }}</span></a></li>
+                                <li><a href="category.html">工业技术 <span>{{ variable.fc }}</span></a></li>
+                                <li><a href="category.html">自然科学 <span>{{ variable.fd }}</span></a></li>
                             </ul>
                         </div>
                     </div> <!-- /Category List -->
@@ -395,10 +392,10 @@
                                 <h4>童书</h4>
                             </div>
                             <ul class="category-list">
-                                <li><a href="category.html">0-2岁 <span>65</span></a></li>
-                                <li><a href="category.html">3-6岁 <span>23</span></a></li>
-                                <li><a href="category.html">7-10岁 <span>113</span></a></li>
-                                <li><a href="category.html">11-14岁 <span>43</span></a></li>
+                                <li><a href="category.html">0-2岁 <span>{{ variable.ga }}</span></a></li>
+                                <li><a href="category.html">3-6岁 <span>{{ variable.gb }}</span></a></li>
+                                <li><a href="category.html">7-10岁 <span>{{ variable.gc }}</span></a></li>
+                                <li><a href="category.html">11-14岁 <span>{{ variable.gd }}</span></a></li>
                             </ul>
                         </div>
                     </div> <!-- /Category List -->
@@ -411,10 +408,10 @@
                                 <h4>励志</h4>
                             </div>
                             <ul class="category-list">
-                                <li><a href="category.html">心灵修养 <span>93</span></a></li>
-                                <li><a href="category.html">职场 <span>233</span></a></li>
-                                <li><a href="category.html">人生哲学 <span>183</span></a></li>
-                                <li><a href="category.html">人际交往 <span>343</span></a></li>
+                                <li><a href="category.html">心灵修养 <span>{{ variable.ha }}</span></a></li>
+                                <li><a href="category.html">职场 <span>{{ variable.hb }}</span></a></li>
+                                <li><a href="category.html">人生哲学 <span>{{ variable.hc }}</span></a></li>
+                                <li><a href="category.html">人际交往 <span>{{ variable.hd }}</span></a></li>
                             </ul>
                         </div>
                     </div> <!-- /Category List -->

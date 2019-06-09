@@ -30,7 +30,7 @@ class Book(models.Model):
         ('FL', 'offline'),  # 线下
     )
     seller = models.ForeignKey('User', to_field='id', on_delete=models.CASCADE)  # 卖方
-    title = models.CharField(max_length=50)  # 书名
+    title = models.CharField(max_length=80)  # 书名
     author = models.CharField(max_length=40)  # 作者
     language = models.CharField(max_length=2, choices=BOOK_LAN_CHOICES)  # 语言
     originPrice = models.DecimalField(max_digits=6, decimal_places=2)  # 原价
@@ -83,6 +83,11 @@ class CHBook(models.Model):
 class INBook(models.Model):
     id = models.IntegerField(primary_key=True)
     category = models.CharField(max_length=1)
+
+
+class BookCount(models.Model):
+    cat = models.CharField(max_length=2, primary_key=True)
+    num = models.IntegerField()
 
 
 class OrderForm(models.Model):

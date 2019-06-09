@@ -71,7 +71,29 @@ def doregister(request):
 def index(request):
     if request.session.get('is_login', None) is None:
         return render(request, 'app/login.html')
-    return render(request, 'app/index.html')
+    dic, variable, book, book1, book2, book3, book4 = dict(), dict(), dict(), dict(), dict(), dict(), dict()
+    book['book1'] = book1
+    book['book2'] = book2
+    book['book3'] = book3
+    book['book4'] = book4
+    # type category
+    catList = ['aa', 'ab', 'ac', 'ad', 'ba', 'bb', 'bc', 'bd', 'ca', 'cb', 'cc', 'cd', 'da', 'db', 'dc', 'dd',
+               'ea', 'eb', 'ec', 'ed', 'fa', 'fb', 'fc', 'fd', 'ga', 'gb', 'gc', 'gd', 'ha', 'hb', 'hc', 'hd']
+    languageDic = {'EN': '英文', 'ZH': '中文', 'OT': '其他语言'}
+    typeDic = {'1': '教育', '2': '文艺', '3': '人文社科', '4': '生活', '5': '经管', '6': '科技', '7': '少儿', '8': '励志'}
+    for i in catList:
+        variable[i] = BookCount.objects.get(cat=i).num
+    dic['variable'] = variable
+    # title type lan info
+    books = Book.objects.all()[:4]
+    for i, key in enumerate(book):
+        book[key]['title'] = books[i].title
+        book[key]['type'] = typeDic[books[i].type]
+        book[key]['lan'] = languageDic[books[i].language]
+        book[key]['info'] = books[i].info
+        book[key]['url'] = books[i].img.url
+    dic['book'] = book
+    return render(request, 'app/index.html', dic)
 
 
 def adlisting(request):
@@ -98,6 +120,11 @@ def do_adlisting(request):
         isbn = request.POST.get('isbn')
         url = request.POST.get('url')
         img = request.FILES.get('img')
+
+        cat_s = chr(ord(_type) - ord('1') + ord('a')) + chr(ord(category) - ord('1') + ord('a'))
+        print(cat_s)
+        num = BookCount.objects.get(cat=cat_s).num
+        BookCount.objects.filter(cat=cat_s).update(num=num + 1)
         # print(title, author, language, _type, category, info, origin,
         #       sell, trade, isbn, url, img)
         book = Book()
@@ -124,9 +151,9 @@ def do_adlisting(request):
         book.seller_id = request.session.get('user_id')
         book.save()
         print(str(book.img))
-        _img = Image.open('media/'+str(book.img))
+        _img = Image.open('media/' + str(book.img))
         print(_img.size)
         _img = _img.resize((275, 280), Image.ANTIALIAS)
-        _img.save('media/'+str(book.img))
+        _img.save('media/' + str(book.img))
         return JsonResponse({'flag': '1'})
     return JsonResponse({'flag': '2'})
