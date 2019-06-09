@@ -11,14 +11,14 @@ class User(models.Model):
 
 class Book(models.Model):
     BOOK_TYPE_CHOICES = (
-        ('ED', 'education'),  # 教育
-        ('LT', 'literary'),  # 文艺
-        ('HM', 'humanities'),  # 人文社科
-        ('LF', 'life'),  # 生活
-        ('EC', 'economic'),  # 经管
-        ('TC', 'tech'),  # 科技
-        ('CH', 'child'),  # 少儿
-        ('IN', 'Inspirational'),  # 励志
+        ('1', 'education'),  # 教育
+        ('2', 'literary'),  # 文艺
+        ('3', 'humanities'),  # 人文社科
+        ('4', 'life'),  # 生活
+        ('5', 'economic'),  # 经管
+        ('6', 'tech'),  # 科技
+        ('7', 'child'),  # 少儿
+        ('8', 'Inspirational'),  # 励志
     )
     BOOK_LAN_CHOICES = (
         ('EN', 'english'),  # 英语
@@ -30,17 +30,18 @@ class Book(models.Model):
         ('FL', 'offline'),  # 线下
     )
     seller = models.ForeignKey('User', to_field='id', on_delete=models.CASCADE)  # 卖方
-    title = models.CharField(max_length=20)  # 书名
-    author = models.CharField(max_length=15)  # 作者
+    title = models.CharField(max_length=50)  # 书名
+    author = models.CharField(max_length=40)  # 作者
     language = models.CharField(max_length=2, choices=BOOK_LAN_CHOICES)  # 语言
     originPrice = models.DecimalField(max_digits=6, decimal_places=2)  # 原价
     sellingPrice = models.DecimalField(max_digits=6, decimal_places=2)  # 售价
-    type = models.CharField(max_length=2, choices=BOOK_TYPE_CHOICES)  # 种类
+    type = models.CharField(max_length=1, choices=BOOK_TYPE_CHOICES)  # 种类
+    category = models.CharField(max_length=1)
     info = models.CharField(max_length=255)  # 描述
     img = models.ImageField(upload_to='images')  # 图片
     isbn = models.CharField(max_length=20, blank=True)
     url = models.URLField()
-    method = models.CharField(max_length=2, choices=TRADE_TYPE)  # 交易方式
+    trade = models.CharField(max_length=2, choices=TRADE_TYPE)  # 交易方式
     time = models.DateTimeField(auto_now_add=True)
 
 

@@ -2,7 +2,7 @@ from django.db.models import Q
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-
+from PIL import Image
 from app.models import *
 
 
@@ -80,7 +80,53 @@ def adlisting(request):
     return render(request, 'app/ad-listing.html')
 
 
+@csrf_exempt
 def do_adlisting(request):
-    pass
-
-
+    if request.session.get('is_login', None) is None:
+        # 未登录
+        return JsonResponse({'flag': '0'})
+    if request.method == "POST":
+        title = request.POST.get('title')
+        author = request.POST.get('author')
+        language = request.POST.get('language')
+        _type = request.POST.get('type')
+        category = request.POST.get('category')
+        info = request.POST.get('info')
+        origin = request.POST.get('origin')
+        sell = request.POST.get('sell')
+        trade = request.POST.get('trade')
+        isbn = request.POST.get('isbn')
+        url = request.POST.get('url')
+        img = request.FILES.get('img')
+        # print(title, author, language, _type, category, info, origin,
+        #       sell, trade, isbn, url, img)
+        book = Book()
+        book.title = title
+        book.author = author
+        if language == 'chinese':
+            book.language = 'ZH'
+        elif language == 'english':
+            book.language = 'EN'
+        else:
+            book.language = 'OT'
+        book.type = _type
+        book.category = category
+        book.info = info
+        book.originPrice = origin
+        book.sellingPrice = sell
+        book.isbn = isbn
+        book.url = url
+        book.img = img
+        if trade == 'online':
+            book.trade = 'OL'
+        else:
+            book.trade = 'FL'
+        book.seller_id = request.session.get('user_id')
+        book.save()
+        print(str(book.img))
+        _img = Image.open('media/'+str(book.img))
+        print(_img.size)
+        _img = _img.resize((275, 280), Image.ANTIALIAS)
+        _img.save('media/'+str(book.img))
+        return JsonResponse({'flag': '1'})
+    return JsonResponse({'flag': '2'})

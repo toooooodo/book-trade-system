@@ -109,7 +109,7 @@
                                 <span class="d-block font-weight-bold text-dark">将图片拖放入任何位置</span>
                                 <span class="d-block">或</span>
                                 <span class="d-block btn bg-primary text-white my-3 select-files">选择图片</span>
-                                <span class="d-block">最大上传图片大小: 500 KB</span>
+                                <span class="d-block">图片格式：jpg/jpeg/png/gif</span>
                                 <input type="file" class="form-control-file d-none" id="file-upload" name="file">
                             </label>
                         </div>
@@ -244,9 +244,10 @@
         const trade = $(':radio[name=trade]:checked').val();
         const isbn = $('input#isbn').val();
         const url = $('input#url').val();
-        console.log(trade);
+        const img = $('input#file-upload')[0].files[0];
         toastr.options.positionClass = 'toast-top-full-width';
         var regPos = /^\d+(\.\d+)?$/; //非负浮点数
+        var patn = /\.jpg$|\.jpeg$|\.png$|\.gif$/i; // img
         if (title.length === 0) {
             toastr.warning("请填写书名");
         } else if (author.length === 0) {
@@ -265,9 +266,45 @@
             toastr.warning("原价格式不正确");
         } else if (regPos.test(sell) === false) {
             toastr.warning("售价格式不正确");
+        } else if (typeof (img) === "undefined") {
+            toastr.warning("请选择上传的图片");
+        } else if (!patn.test(img.name)) {
+            toastr.warning("请选择正确格式的图片");
+        } else {
+            var formData = new FormData();
+            formData.append('title', title);
+            formData.append('author', author);
+            formData.append('language', language);
+            formData.append('type', type);
+            formData.append('category', category);
+            formData.append('info', info);
+            formData.append('origin', origin);
+            formData.append('sell', sell);
+            formData.append('trade', trade);
+            formData.append('isbn', isbn);
+            formData.append('url', url);
+            formData.append('img', img);
+            // formData.forEach((value, key) => console.log(value, key));
+            $.ajax({
+                url: '/doadlisting/', /*接口域名地址*/
+                type: 'post',
+                data: formData,
+                contentType: false,
+                processData: false,
+                success: function (xhr) {
+                    if (xhr.flag == 0) {
+                        window.location.href = "/login";
+                    } else if (xhr.flag == 1) {
+                        window.location.href = "/index";
+                    } else {
+                        toastr.error("发布失败，请稍后重试");
+                    }
+                },
+                error: function (xhr) {
+                    toastr.error("发布失败，请稍后重试");
+                },
+            });
         }
-        // console.log(title, author, language, type, category);
-        // alert(category+category);
         return false;
     }
 </script>
