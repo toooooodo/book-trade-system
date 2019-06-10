@@ -11,10 +11,20 @@ from app.models import *
 
 
 def notFound(request):
+    """
+    404
+    :param request:
+    :return:
+    """
     return render(request, 'app/404.html')
 
 
 def login(request):
+    """
+    登陆页面
+    :param request:
+    :return:
+    """
     if request.session.get('is_login', None):
         return redirect('/index')
     return render(request, 'app/login.html')
@@ -22,6 +32,11 @@ def login(request):
 
 @csrf_exempt
 def dologin(request):
+    """
+    登录处理
+    :param request:
+    :return:
+    """
     if request.session.get('is_login', None):
         return JsonResponse({'status': '2'})
     if request.method == "POST":
@@ -42,11 +57,21 @@ def dologin(request):
 
 
 def register(request):
+    """
+    注册页面
+    :param request:
+    :return:
+    """
     return render(request, 'app/register.html')
 
 
 @csrf_exempt
 def doregister(request):
+    """
+    注册处理
+    :param request:
+    :return:
+    """
     if request.method == "POST":
         username = (request.POST.get('username')).strip()
         email = (request.POST.get('email')).strip()
@@ -75,6 +100,11 @@ def doregister(request):
 
 
 def index(request):
+    """
+    首页
+    :param request:
+    :return:
+    """
     if request.session.get('is_login', None) is None:
         return render(request, 'app/login.html')
     dic, variable, book, book1, book2, book3, book4 = dict(), dict(), dict(), dict(), dict(), dict(), dict()
@@ -103,6 +133,12 @@ def index(request):
 
 
 def adlisting(request):
+    """
+    发布商品
+    :param request:
+    :return:
+    """
+
     if request.session.get('is_login', None) is None:
         return render(request, 'app/login.html')
     return render(request, 'app/ad-listing.html')
@@ -110,6 +146,11 @@ def adlisting(request):
 
 @csrf_exempt
 def do_adlisting(request):
+    """
+    处理发布商品请求
+    :param request:
+    :return:
+    """
     if request.session.get('is_login', None) is None:
         # 未登录
         return JsonResponse({'flag': '0'})
@@ -168,6 +209,12 @@ def do_adlisting(request):
 
 
 def single_book(request, book_id):
+    """
+    商品详情页
+    :param request:
+    :param book_id:
+    :return:
+    """
     book_re = Book.objects.filter(id=book_id, sold=False)
     if len(book_re) == 0:
         return render(request, 'app/404.html')
@@ -188,20 +235,10 @@ def single_book(request, book_id):
     book['type'] = typeDic[book_re.type]
     book['origin'] = float(book_re.originPrice)
     book['selling'] = float(book_re.sellingPrice)
-    book['score']=float(book_re.score)
+    book['score'] = float(book_re.score)
     book['img'] = book_re.img.url
     book['time'] = book_re.time
     dic['book'] = book
     dic['seller'] = seller
     print(dic)
-    # dic['seller'] = seller
-
-    # book['title']=book_re.title
-    # book['author']=book_re.author
-    # book['lan']=book_re.language
-    # book['origin']=book_re.originPrice
-    # book['selling']=book_re.sellingPrice
-    # book['type']=typeDic[book_re.type]
-    # book['info']=book_re.info
-    # book['img']
     return render(request, 'app/single.html', dic)
