@@ -1,4 +1,5 @@
 from django.db.models import Q
+from django.forms import model_to_dict
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
@@ -7,6 +8,11 @@ from app.models import *
 
 
 # Create your views here.
+
+
+def notFound(request):
+    return render(request, 'app/404.html')
+
 
 def login(request):
     if request.session.get('is_login', None):
@@ -42,9 +48,9 @@ def register(request):
 @csrf_exempt
 def doregister(request):
     if request.method == "POST":
-        username = request.POST.get('username')
-        email = request.POST.get('email')
-        password = request.POST.get('password')
+        username = (request.POST.get('username')).strip()
+        email = (request.POST.get('email')).strip()
+        password = (request.POST.get('password')).strip()
         print(username, email, password)
         # res = User.objects.filter(username=username, email=email)
         # res = User.objects.filter(Q(username__exact=username) | Q(email__exact=email))
@@ -79,17 +85,17 @@ def index(request):
     # type category
     catList = ['aa', 'ab', 'ac', 'ad', 'ba', 'bb', 'bc', 'bd', 'ca', 'cb', 'cc', 'cd', 'da', 'db', 'dc', 'dd',
                'ea', 'eb', 'ec', 'ed', 'fa', 'fb', 'fc', 'fd', 'ga', 'gb', 'gc', 'gd', 'ha', 'hb', 'hc', 'hd']
-    languageDic = {'EN': '英文', 'ZH': '中文', 'OT': '其他语言'}
     typeDic = {'1': '教育', '2': '文艺', '3': '人文社科', '4': '生活', '5': '经管', '6': '科技', '7': '少儿', '8': '励志'}
     for i in catList:
         variable[i] = BookCount.objects.get(cat=i).num
     dic['variable'] = variable
     # title type lan info
-    books = Book.objects.all()[:4]
+    books = Book.objects.filter(sold__exact=False)[:4]
     for i, key in enumerate(book):
         book[key]['title'] = books[i].title
         book[key]['type'] = typeDic[books[i].type]
-        book[key]['lan'] = languageDic[books[i].language]
+        # book[key]['lan'] = languageDic[books[i].language]
+        book[key]['time'] = books[i].time
         book[key]['info'] = books[i].info
         book[key]['url'] = books[i].img.url
     dic['book'] = book
@@ -144,6 +150,8 @@ def do_adlisting(request):
         book.isbn = isbn
         book.url = url
         book.img = img
+        book.sold = False
+        book.score = 5.0
         if trade == 'online':
             book.trade = 'OL'
         else:
@@ -157,3 +165,43 @@ def do_adlisting(request):
         _img.save('media/' + str(book.img))
         return JsonResponse({'flag': '1'})
     return JsonResponse({'flag': '2'})
+
+
+def single_book(request, book_id):
+    book_re = Book.objects.filter(id=book_id, sold=False)
+    if len(book_re) == 0:
+        return render(request, 'app/404.html')
+    for i in book_re:
+        print(i)
+    seller_re = User.objects.filter(id=book_re[0].seller_id)[0]
+    book_re = book_re[0]
+    tradeDic = {'OL': '线上', 'FL': '线下'}
+    lanDic = {'EN': '英文', 'ZH': '中文', 'OT': '其他'}
+    typeDic = {'1': '教育', '2': '文艺', '3': '人文社科', '4': '生活', '5': '经管', '6': '科技', '7': '少儿', '8': '励志'}
+    dic = dict()
+    book = model_to_dict(book_re,
+                         fields=['title', 'author', 'info', 'isbn', 'url'])
+    seller = model_to_dict(seller_re, fields=['username'])
+    seller['time'] = seller_re.time
+    book['trade'] = tradeDic[book_re.trade]
+    book['lan'] = lanDic[book_re.language]
+    book['type'] = typeDic[book_re.type]
+    book['origin'] = float(book_re.originPrice)
+    book['selling'] = float(book_re.sellingPrice)
+    book['score']=float(book_re.score)
+    book['img'] = book_re.img.url
+    book['time'] = book_re.time
+    dic['book'] = book
+    dic['seller'] = seller
+    print(dic)
+    # dic['seller'] = seller
+
+    # book['title']=book_re.title
+    # book['author']=book_re.author
+    # book['lan']=book_re.language
+    # book['origin']=book_re.originPrice
+    # book['selling']=book_re.sellingPrice
+    # book['type']=typeDic[book_re.type]
+    # book['info']=book_re.info
+    # book['img']
+    return render(request, 'app/single.html', dic)

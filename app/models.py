@@ -7,6 +7,7 @@ class User(models.Model):
     username = models.CharField(max_length=20, unique=True)
     password = models.CharField(max_length=25)
     email = models.EmailField(max_length=25, unique=True)
+    time = models.DateTimeField(auto_now_add=True)
 
 
 class Book(models.Model):
@@ -43,6 +44,8 @@ class Book(models.Model):
     url = models.URLField()
     trade = models.CharField(max_length=2, choices=TRADE_TYPE)  # 交易方式
     time = models.DateTimeField(auto_now_add=True)
+    sold = models.BooleanField()
+    score = models.DecimalField(max_digits=2, decimal_places=1)
 
 
 class EDBook(models.Model):
