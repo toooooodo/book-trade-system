@@ -1,3 +1,4 @@
+from django.core.paginator import Paginator
 from django.db.models import Q
 from django.forms import model_to_dict
 from django.shortcuts import render, redirect
@@ -242,3 +243,74 @@ def single_book(request, book_id):
     dic['seller'] = seller
     print(dic)
     return render(request, 'app/single.html', dic)
+
+
+def show_list(request, type_id, page):
+    if request.method == "GET":
+        if '0' <= type_id <= '8':
+            sort = request.GET.get('sort')
+            title = request.GET.get('title')
+            if type_id == '0':
+                if sort == 'ascending':
+                    books = Book.objects.filter(title__contains=title).order_by('sellingPrice')
+                elif sort == 'descending':
+                    books = Book.objects.filter(title__contains=title).order_by('-sellingPrice')
+                elif sort == 'latest':
+                    books = Book.objects.filter(title__contains=title).order_by('-id')
+                else:
+                    return render(request, 'app/404.html')
+            else:
+                if sort == 'ascending':
+                    books = Book.objects.filter(title__contains=title, type__exact=type_id).order_by('sellingPrice')
+                elif sort == 'descending':
+                    books = Book.objects.filter(title__contains=title, type__exact=type_id).order_by('-sellingPrice')
+                elif sort == 'latest':
+                    books = Book.objects.filter(title__contains=title, type__exact=type_id).order_by('-id')
+                else:
+                    return render(request, 'app/404.html')
+        else:
+            return render(request, 'app/404.html')
+
+        paginator = Paginator(books, 5)
+
+        # 获取第page页的内容
+        try:
+            page = int(page)
+        except Exception as e:
+            return render(request, 'app/404.html')
+
+        if page > paginator.num_pages or page <= 0:
+            return render(request, 'app/404.html')
+
+        # 获取第page页的Page实例对象
+        book_page = paginator.page(page)
+        num_pages = paginator.num_pages
+        if num_pages < 5:
+            pages = range(1, num_pages + 1)
+        elif page <= 3:
+            pages = range(1, 6)
+        elif num_pages - page <= 2:
+            pages = range(num_pages - 4, num_pages + 1)
+        else:
+            pages = range(page - 2, page + 3)
+
+        print(book_page)
+        contest = {
+            'pages': pages,
+            'sort': sort,
+            'book_page': book_page,
+            'type': type_id,
+            'title': title
+        }
+        return render(request, 'app/ad-list-view.html', contest)
+        # try:
+#     if type_id == '0':
+#         type = Book.objects.get()
+#     else:
+#         type = Book.objects.get(type=type_id)
+# except Book.DoesNotExist:
+#     return render(request, 'app/404.html')
+
+# print(type)
+# if len(type) == 0:
+#     return render(request, 'app/ad-list-view.html')
