@@ -1,5 +1,6 @@
 from django.core.paginator import Paginator
 from django.db.models import Q
+from django.db.models.functions import datetime
 from django.forms import model_to_dict
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, JsonResponse
@@ -129,6 +130,7 @@ def index(request):
         book[key]['time'] = books[i].time
         book[key]['info'] = books[i].info
         book[key]['url'] = books[i].img.url
+        book[key]['id'] = books[i].id
     dic['book'] = book
     return render(request, 'app/index.html', dic)
 
@@ -252,26 +254,29 @@ def show_list(request, type_id, page):
             title = request.GET.get('title')
             if type_id == '0':
                 if sort == 'ascending':
-                    books = Book.objects.filter(title__contains=title).order_by('sellingPrice')
+                    books = Book.objects.filter(title__contains=title, sold__exact=False).order_by('sellingPrice')
                 elif sort == 'descending':
-                    books = Book.objects.filter(title__contains=title).order_by('-sellingPrice')
+                    books = Book.objects.filter(title__contains=title, sold__exact=False).order_by('-sellingPrice')
                 elif sort == 'latest':
-                    books = Book.objects.filter(title__contains=title).order_by('-id')
+                    books = Book.objects.filter(title__contains=title, sold__exact=False).order_by('-id')
                 else:
                     return render(request, 'app/404.html')
             else:
                 if sort == 'ascending':
-                    books = Book.objects.filter(title__contains=title, type__exact=type_id).order_by('sellingPrice')
+                    books = Book.objects.filter(title__contains=title, type__exact=type_id, sold__exact=False).order_by(
+                        'sellingPrice')
                 elif sort == 'descending':
-                    books = Book.objects.filter(title__contains=title, type__exact=type_id).order_by('-sellingPrice')
+                    books = Book.objects.filter(title__contains=title, type__exact=type_id, sold__exact=False).order_by(
+                        '-sellingPrice')
                 elif sort == 'latest':
-                    books = Book.objects.filter(title__contains=title, type__exact=type_id).order_by('-id')
+                    books = Book.objects.filter(title__contains=title, type__exact=type_id, sold__exact=False).order_by(
+                        '-id')
                 else:
                     return render(request, 'app/404.html')
         else:
             return render(request, 'app/404.html')
 
-        paginator = Paginator(books, 5)
+        paginator = Paginator(books, 4)
 
         # 获取第page页的内容
         try:
@@ -295,22 +300,21 @@ def show_list(request, type_id, page):
             pages = range(page - 2, page + 3)
 
         print(book_page)
+
+        count = {'1': '教育', '2': '文艺', '3': '人文社科', '4': '生活', '5': '经管', '6': '科技', '7': '少儿', '8': '励志'}
+        # typeDic = {'1': '教育', '2': '文艺', '3': '人文社科', '4': '生活', '5': '经管', '6': '科技', '7': '少儿', '8': '励志'}
+        for key in count:
+            count[key] = len(Book.objects.filter(title__contains=title, type__exact=key, sold__exact=False))
+
         contest = {
             'pages': pages,
             'sort': sort,
             'book_page': book_page,
             'type': type_id,
-            'title': title
+            'title': title,
+            'total': len(books),
+            'time': datetime.datetime.now(),
+            'count': count,
         }
         return render(request, 'app/ad-list-view.html', contest)
-        # try:
-#     if type_id == '0':
-#         type = Book.objects.get()
-#     else:
-#         type = Book.objects.get(type=type_id)
-# except Book.DoesNotExist:
-#     return render(request, 'app/404.html')
-
-# print(type)
-# if len(type) == 0:
-#     return render(request, 'app/ad-list-view.html')
+    return render(request, 'app/404.html')

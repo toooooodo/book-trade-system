@@ -59,23 +59,32 @@
                                 <form>
                                     <div class="form-row">
                                         <div class="form-group col-md-4">
-                                            <input type="text" class="form-control my-2 my-lg-1" id="inputtext4"
+                                            <input type="text" class="form-control my-2 my-lg-1" id="title"
                                                    placeholder="What are you looking for">
                                         </div>
-                                        <div class="form-group col-md-3">
+                                        <div class="form-group col-md-3" id="type">
                                             <select class="w-100 form-control mt-lg-1 mt-md-2">
-                                                <option>Category</option>
-                                                <option value="1">Top rated</option>
-                                                <option value="2">Lowest Price</option>
-                                                <option value="4">Highest Price</option>
+                                                <option value="0">不限分类</option>
+                                                <option value="1">教育</option>
+                                                <option value="2">文艺</option>
+                                                <option value="3">人文社科</option>
+                                                <option value="4">生活</option>
+                                                <option value="5">经管</option>
+                                                <option value="6">科技</option>
+                                                <option value="7">童书</option>
+                                                <option value="8">励志</option>
                                             </select>
                                         </div>
-                                        <div class="form-group col-md-3">
-                                            <input type="text" class="form-control my-2 my-lg-1" id="inputLocation4"
-                                                   placeholder="Location">
+                                        <div class="form-group col-md-3" id="sort">
+                                            <select class="w-100 form-control mt-lg-1 mt-md-2">
+                                                <option value="ascending">价格升序</option>
+                                                <option value="descending">价格降序</option>
+                                                <option value="latest">最新发布</option>
+                                            </select>
                                         </div>
                                         <div class="form-group col-md-2 align-self-center">
-                                            <button type="submit" class="btn btn-primary">Search Now</button>
+                                            <button type="submit" class="btn btn-primary" id="search">Search Now
+                                            </button>
                                         </div>
                                     </div>
                                 </form>
@@ -120,20 +129,23 @@
                             <div class="card">
                                 <div class="thumb-content">
                                     <!-- <div class="price">$200</div> -->
-                                    <a href="single.html">
-                                        <img class="card-img-top img-fluid" src= "{{ book.book1.url }}"
+                                    <a href="{% url 'book' book.book1.id %}">
+                                        <img class="card-img-top img-fluid" src="{{ book.book1.url }}"
                                              alt="Card image cap">
                                     </a>
                                 </div>
                                 <div class="card-body">
-                                    <h4 class="card-title"><a href="single.html">{{ book.book1.title }}</a>
+                                    <h4 class="card-title"><a
+                                            href="{% url 'book' book.book1.id %}">{{ book.book1.title }}</a>
                                     </h4>
                                     <ul class="list-inline product-meta">
                                         <li class="list-inline-item">
-                                            <a href="single.html"><i class="fa fa-folder-open-o"></i>{{ book.book1.type }}</a>
+                                            <a href="#"><i
+                                                    class="fa fa-folder-open-o"></i>{{ book.book1.type }}</a>
                                         </li>
                                         <li class="list-inline-item">
-                                            <a href="#"><i class="fa fa-calendar"></i>{{ book.book1.time|date:"Y-m-d" }}</a>
+                                            <a href="#"><i class="fa fa-calendar"></i>{{ book.book1.time|date:"Y-m-d" }}
+                                            </a>
                                         </li>
                                     </ul>
                                     <p class="card-text">{{ book.book1.info }}
@@ -160,19 +172,22 @@
                             <div class="card">
                                 <div class="thumb-content">
                                     <!-- <div class="price">$200</div> -->
-                                    <a href="single.html">
-                                        <img class="card-img-top img-fluid"  src= "{{ book.book2.url }}"
+                                    <a href="{% url 'book' book.book2.id %}">
+                                        <img class="card-img-top img-fluid" src="{{ book.book2.url }}"
                                              alt="Card image cap">
                                     </a>
                                 </div>
                                 <div class="card-body">
-                                    <h4 class="card-title"><a href="single.html">{{ book.book2.title }}</a></h4>
+                                    <h4 class="card-title"><a
+                                            href="{% url 'book' book.book2.id %}">{{ book.book2.title }}</a></h4>
                                     <ul class="list-inline product-meta">
                                         <li class="list-inline-item">
-                                            <a href="single.html"><i class="fa fa-folder-open-o"></i>{{ book.book2.type }}</a>
+                                            <a href="#"><i
+                                                    class="fa fa-folder-open-o"></i>{{ book.book2.type }}</a>
                                         </li>
                                         <li class="list-inline-item">
-                                            <a href="#"><i class="fa fa-calendar"></i>{{ book.book2.time|date:"Y-m-d" }}</a>
+                                            <a href="#"><i class="fa fa-calendar"></i>{{ book.book2.time|date:"Y-m-d" }}
+                                            </a>
                                         </li>
                                     </ul>
                                     <p class="card-text">{{ book.book2.info }}
@@ -199,19 +214,22 @@
                             <div class="card">
                                 <div class="thumb-content">
                                     <!-- <div class="price">$200</div> -->
-                                    <a href="single.html">
-                                        <img class="card-img-top img-fluid"  src= "{{ book.book3.url }}"
+                                    <a href="{% url 'book' book.book3.id %}">
+                                        <img class="card-img-top img-fluid" src="{{ book.book3.url }}"
                                              alt="Card image cap">
                                     </a>
                                 </div>
                                 <div class="card-body">
-                                    <h4 class="card-title"><a href="single.html">{{ book.book3.title }}</a></h4>
+                                    <h4 class="card-title"><a
+                                            href="{% url 'book' book.book3.id %}">{{ book.book3.title }}</a></h4>
                                     <ul class="list-inline product-meta">
                                         <li class="list-inline-item">
-                                            <a href="single.html"><i class="fa fa-folder-open-o"></i>{{ book.book3.type }}</a>
+                                            <a href="#"><i
+                                                    class="fa fa-folder-open-o"></i>{{ book.book3.type }}</a>
                                         </li>
                                         <li class="list-inline-item">
-                                            <a href="#"><i class="fa fa-calendar"></i>{{ book.book3.time|date:"Y-m-d" }}</a>
+                                            <a href="#"><i class="fa fa-calendar"></i>{{ book.book3.time|date:"Y-m-d" }}
+                                            </a>
                                         </li>
                                     </ul>
                                     <p class="card-text">{{ book.book3.info }}
@@ -238,19 +256,22 @@
                             <div class="card">
                                 <div class="thumb-content">
                                     <!-- <div class="price">$200</div> -->
-                                    <a href="single.html">
-                                        <img class="card-img-top img-fluid"  src= "{{ book.book4.url }}"
+                                    <a href="{% url 'book' book.book4.id %}">
+                                        <img class="card-img-top img-fluid" src="{{ book.book4.url }}"
                                              alt="Card image cap">
                                     </a>
                                 </div>
                                 <div class="card-body">
-                                    <h4 class="card-title"><a href="single.html">{{ book.book4.title }}</a></h4>
+                                    <h4 class="card-title"><a
+                                            href="{% url 'book' book.book4.id %}">{{ book.book4.title }}</a></h4>
                                     <ul class="list-inline product-meta">
                                         <li class="list-inline-item">
-                                            <a href="single.html"><i class="fa fa-folder-open-o"></i>{{ book.book4.type }}</a>
+                                            <a href="#"><i
+                                                    class="fa fa-folder-open-o"></i>{{ book.book4.type }}</a>
                                         </li>
                                         <li class="list-inline-item">
-                                            <a href="#"><i class="fa fa-calendar"></i>{{ book.book4.time|date:"Y-m-d" }}</a>
+                                            <a href="#"><i class="fa fa-calendar"></i>{{ book.book4.time|date:"Y-m-d" }}
+                                            </a>
                                         </li>
                                     </ul>
                                     <p class="card-text">{{ book.book4.info }}
@@ -297,121 +318,143 @@
                     <!-- Category list -->
                     <div class="col-lg-3 offset-lg-0 col-md-5 offset-md-1 col-sm-6 col-6">
                         <div class="category-block">
-                            <div class="header">
-                                <i class="fa fa-laptop icon-bg-1"></i>
-                                <h4>教育</h4>
-                            </div>
+                            <a href="{% url 'list' 1 1 %}?sort=ascending&title=">
+                                <div class="header">
+                                    <i class="fa fa-laptop icon-bg-1"></i>
+                                    <h4>教育</h4>
+                                </div>
+                            </a>
                             <ul class="category-list">
-                                <li><a href="category.html">中小学教辅 <span>{{ variable.aa }}</span></a></li>
-                                <li><a href="category.html">考试 <span>{{ variable.ab }}</span></a></li>
-                                <li><a href="category.html">大中专教材 <span>{{ variable.ac }}</span></a></li>
-                                <li><a href="category.html">外语 <span>{{ variable.ad }}</span></a></li>
+                                <li>中小学教辅 <span>{{ variable.aa }}</span></li>
+                                <li>考试 <span>{{ variable.ab }}</span></li>
+                                <li>大中专教材 <span>{{ variable.ac }}</span></li>
+                                <li>外语 <span>{{ variable.ad }}</span></li>
                             </ul>
                         </div>
                     </div> <!-- /Category List -->
                     <!-- Category list -->
                     <div class="col-lg-3 offset-lg-0 col-md-5 offset-md-1 col-sm-6 col-6">
                         <div class="category-block">
-                            <div class="header">
-                                <i class="fa fa-apple icon-bg-2"></i>
-                                <h4>文艺</h4>
-                            </div>
-                            <ul class="category-list">
-                                <li><a href="category.html">小说 <span>{{ variable.ba }}</span></a></li>
-                                <li><a href="category.html">文学 <span>{{ variable.bb }}</span></a></li>
-                                <li><a href="category.html">传记 <span>{{ variable.bc }}</span></a></li>
-                                <li><a href="category.html">动漫/幽默 <span>{{ variable.bd }}</span></a></li>
-                            </ul>
-                        </div>
-                    </div> <!-- /Category List -->
-                    <!-- Category list -->
-                    <div class="col-lg-3 offset-lg-0 col-md-5 offset-md-1 col-sm-6 col-6">
-                        <div class="category-block">
-                            <div class="header">
-                                <i class="fa fa-home icon-bg-3"></i>
-                                <h4>人文社科</h4>
-                            </div>
-                            <ul class="category-list">
-                                <li><a href="category.html">哲学宗教 <span>{{ variable.ca }}</span></a></li>
-                                <li><a href="category.html">历史 <span>{{ variable.cb }}</span></a></li>
-                                <li><a href="category.html">政治军事 <span>{{ variable.cc }}</span></a></li>
-                                <li><a href="category.html">文化 <span>{{ variable.cd }}</span></a></li>
-                            </ul>
-                        </div>
-                    </div> <!-- /Category List -->
-                    <!-- Category list -->
-                    <div class="col-lg-3 offset-lg-0 col-md-5 offset-md-1 col-sm-6 col-6">
-                        <div class="category-block">
-                            <div class="header">
-                                <i class="fa fa-shopping-basket icon-bg-4"></i>
-                                <h4>生活</h4>
-                            </div>
-                            <ul class="category-list">
-                                <li><a href="category.html">育儿 <span>{{ variable.da }}</span></a></li>
-                                <li><a href="category.html">亲子家教 <span>{{ variable.db }}</span></a></li>
-                                <li><a href="category.html">美食 <span>{{ variable.dc }}</span></a></li>
-                                <li><a href="category.html">休闲 <span>{{ variable.dd }}</span></a></li>
-                            </ul>
-                        </div>
-                    </div> <!-- /Category List -->
-                    <!-- Category list -->
-                    <div class="col-lg-3 offset-lg-0 col-md-5 offset-md-1 col-sm-6 col-6">
-                        <div class="category-block">
-                            <div class="header">
-                                <i class="fa fa-briefcase icon-bg-5"></i>
-                                <h4>经管</h4>
-                            </div>
-                            <ul class="category-list">
-                                <li><a href="category.html">经济 <span>{{ variable.ea }}</span></a></li>
-                                <li><a href="category.html">管理 <span>{{ variable.eb }}</span></a></li>
-                                <li><a href="category.html">股票 <span>{{ variable.ec }}</span></a></li>
-                                <li><a href="category.html">会计 <span>{{ variable.ed }}</span></a></li>
-                            </ul>
-                        </div>
-                    </div> <!-- /Category List -->
-                    <!-- Category list -->
-                    <div class="col-lg-3 offset-lg-0 col-md-5 offset-md-1 col-sm-6 col-6">
-                        <div class="category-block">
-                            <div class="header">
-                                <i class="fa fa-car icon-bg-6"></i>
-                                <h4>科技</h4>
-                            </div>
-                            <ul class="category-list">
-                                <li><a href="category.html">计算机/网络 <span>{{ variable.fa }}</span></a></li>
-                                <li><a href="category.html">医学 <span>{{ variable.fb }}</span></a></li>
-                                <li><a href="category.html">工业技术 <span>{{ variable.fc }}</span></a></li>
-                                <li><a href="category.html">自然科学 <span>{{ variable.fd }}</span></a></li>
-                            </ul>
-                        </div>
-                    </div> <!-- /Category List -->
-                    <!-- Category list -->
-                    <div class="col-lg-3 offset-lg-0 col-md-5 offset-md-1 col-sm-6 col-6">
-                        <div class="category-block">
-                            <div class="header">
-                                <i class="fa fa-paw icon-bg-7"></i>
-                                <h4>童书</h4>
-                            </div>
-                            <ul class="category-list">
-                                <li><a href="category.html">0-2岁 <span>{{ variable.ga }}</span></a></li>
-                                <li><a href="category.html">3-6岁 <span>{{ variable.gb }}</span></a></li>
-                                <li><a href="category.html">7-10岁 <span>{{ variable.gc }}</span></a></li>
-                                <li><a href="category.html">11-14岁 <span>{{ variable.gd }}</span></a></li>
-                            </ul>
-                        </div>
-                    </div> <!-- /Category List -->
-                    <!-- Category list -->
-                    <div class="col-lg-3 offset-lg-0 col-md-5 offset-md-1 col-sm-6 col-6">
-                        <div class="category-block">
+                            <a href="{% url 'list' 2 1 %}?sort=ascending&title=">
+                                <div class="header">
 
-                            <div class="header">
-                                <i class="fa fa-laptop icon-bg-8"></i>
-                                <h4>励志</h4>
-                            </div>
+                                    <i class="fa fa-apple icon-bg-2"></i>
+                                    <h4>文艺</h4>
+                                </div>
+                            </a>
                             <ul class="category-list">
-                                <li><a href="category.html">心灵修养 <span>{{ variable.ha }}</span></a></li>
-                                <li><a href="category.html">职场 <span>{{ variable.hb }}</span></a></li>
-                                <li><a href="category.html">人生哲学 <span>{{ variable.hc }}</span></a></li>
-                                <li><a href="category.html">人际交往 <span>{{ variable.hd }}</span></a></li>
+                                <li>小说 <span>{{ variable.ba }}</span></li>
+                                <li>文学 <span>{{ variable.bb }}</span></li>
+                                <li>传记 <span>{{ variable.bc }}</span></li>
+                                <li>动漫/幽默 <span>{{ variable.bd }}</span></li>
+                            </ul>
+                        </div>
+                    </div> <!-- /Category List -->
+                    <!-- Category list -->
+                    <div class="col-lg-3 offset-lg-0 col-md-5 offset-md-1 col-sm-6 col-6">
+                        <div class="category-block">
+                            <a href="{% url 'list' 3 1 %}?sort=ascending&title=">
+                                <div class="header">
+
+                                    <i class="fa fa-home icon-bg-3"></i>
+                                    <h4>人文社科</h4>
+                                </div>
+                            </a>
+                            <ul class="category-list">
+                                <li>哲学宗教 <span>{{ variable.ca }}</span></li>
+                                <li>历史 <span>{{ variable.cb }}</span></li>
+                                <li>政治军事 <span>{{ variable.cc }}</span></li>
+                                <li>文化 <span>{{ variable.cd }}</span></li>
+                            </ul>
+                        </div>
+                    </div> <!-- /Category List -->
+                    <!-- Category list -->
+                    <div class="col-lg-3 offset-lg-0 col-md-5 offset-md-1 col-sm-6 col-6">
+                        <div class="category-block">
+                            <a href="{% url 'list' 4 1 %}?sort=ascending&title=">
+                                <div class="header">
+
+                                    <i class="fa fa-shopping-basket icon-bg-4"></i>
+                                    <h4>生活</h4>
+                                </div>
+                            </a>
+                            <ul class="category-list">
+                                <li>育儿 <span>{{ variable.da }}</span></li>
+                                <li>亲子家教 <span>{{ variable.db }}</span></li>
+                                <li>美食 <span>{{ variable.dc }}</span></li>
+                                <li>休闲 <span>{{ variable.dd }}</span></li>
+                            </ul>
+                        </div>
+                    </div> <!-- /Category List -->
+                    <!-- Category list -->
+                    <div class="col-lg-3 offset-lg-0 col-md-5 offset-md-1 col-sm-6 col-6">
+                        <div class="category-block">
+                            <a href="{% url 'list' 5 1 %}?sort=ascending&title=">
+                                <div class="header">
+
+                                    <i class="fa fa-briefcase icon-bg-5"></i>
+                                    <h4>经管</h4>
+                                </div>
+                            </a>
+                            <ul class="category-list">
+                                <li>经济 <span>{{ variable.ea }}</span></li>
+                                <li>管理 <span>{{ variable.eb }}</span></li>
+                                <li>股票 <span>{{ variable.ec }}</span></li>
+                                <li>会计 <span>{{ variable.ed }}</span></li>
+                            </ul>
+                        </div>
+                    </div> <!-- /Category List -->
+                    <!-- Category list -->
+                    <div class="col-lg-3 offset-lg-0 col-md-5 offset-md-1 col-sm-6 col-6">
+                        <div class="category-block">
+                            <a href="{% url 'list' 6 1 %}?sort=ascending&title=">
+                                <div class="header">
+
+                                    <i class="fa fa-car icon-bg-6"></i>
+                                    <h4>科技</h4>
+                                </div>
+                            </a>
+                            <ul class="category-list">
+                                <li>计算机/网络 <span>{{ variable.fa }}</span></li>
+                                <li>医学 <span>{{ variable.fb }}</span></li>
+                                <li>工业技术 <span>{{ variable.fc }}</span></li>
+                                <li>自然科学 <span>{{ variable.fd }}</span></li>
+                            </ul>
+                        </div>
+                    </div> <!-- /Category List -->
+                    <!-- Category list -->
+                    <div class="col-lg-3 offset-lg-0 col-md-5 offset-md-1 col-sm-6 col-6">
+                        <div class="category-block">
+                            <a href="{% url 'list' 7 1 %}?sort=ascending&title=">
+                                <div class="header">
+
+                                    <i class="fa fa-paw icon-bg-7"></i>
+                                    <h4>童书</h4>
+                                </div>
+                            </a>
+                            <ul class="category-list">
+                                <li>0-2岁 <span>{{ variable.ga }}</span></li>
+                                <li>3-6岁 <span>{{ variable.gb }}</span></li>
+                                <li>7-10岁 <span>{{ variable.gc }}</span></li>
+                                <li>11-14岁 <span>{{ variable.gd }}</span></li>
+                            </ul>
+                        </div>
+                    </div> <!-- /Category List -->
+                    <!-- Category list -->
+                    <div class="col-lg-3 offset-lg-0 col-md-5 offset-md-1 col-sm-6 col-6">
+                        <div class="category-block">
+                            <a href="{% url 'list' 8 1 %}?sort=ascending&title=">
+                                <div class="header">
+
+                                    <i class="fa fa-laptop icon-bg-8"></i>
+                                    <h4>励志</h4>
+                                </div>
+                            </a>
+                            <ul class="category-list">
+                                <li>心灵修养 <span>{{ variable.ha }}</span></li>
+                                <li>职场 <span>{{ variable.hb }}</span></li>
+                                <li>人生哲学 <span>{{ variable.hc }}</span></li>
+                                <li>人际交往 <span>{{ variable.hd }}</span></li>
                             </ul>
                         </div>
                     </div> <!-- /Category List -->
@@ -456,7 +499,16 @@
 {% include 'app/footer.html' %}
 <!-- JAVASCRIPTS -->
 {% include 'app/script.html' %}
-
+<script>
+    $('button#search').click(function () {
+        var title = $('input#title').val();
+        var type = $('div#type>div>ul.list>li.selected').attr("data-value");
+        var sort = $('div#sort>div>ul.list>li.selected').attr("data-value");
+        console.log(title, type, sort);
+        window.location.href = "/list/" + type + "/1?sort=" + sort + "&title=" + title;
+        return false;
+    })
+</script>
 </body>
 
 </html>

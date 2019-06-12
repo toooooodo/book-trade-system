@@ -13,6 +13,6 @@ urlpatterns = [
     url(r'^doregister/$', views.doregister),
     url(r'^adlisting/$', views.adlisting),
     url(r'^doadlisting/$', views.do_adlisting),
-    re_path(r'^book/(?P<book_id>\d+)$', views.single_book),
+    re_path(r'^book/(?P<book_id>\d+)$', views.single_book, name='book'),
     re_path(r'^list/(?P<type_id>\d+)/(?P<page>\d+)$', views.show_list, name='list')
 ]
