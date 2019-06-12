@@ -65,12 +65,15 @@
                         </ul>
                         <ul class="navbar-nav ml-auto mt-10">
                             <li class="nav-item">
-                                <a class="nav-link login-button" href="/login">Login</a>
+                                <a class="nav-link login-button" href="{% url 'login' %}">登录</a>
+                            </li>
+                            <li class="nav-item" style="margin-right: 8px">
+                                <a class="nav-link text-white add-button" href="{% url 'adlisting' %}"><i
+                                        class="fa fa-plus-circle"></i>发布新书</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link text-white add-button" href="/adlisting"><i
-                                        class="fa fa-plus-circle"></i> Add
-                                    Listing</a>
+                                <a class="nav-link text-white add-button" href="{% url 'want' %}"><i
+                                        class="fa fa-plus-circle"></i>发布求购信息</a>
                             </li>
                         </ul>
                     </div>

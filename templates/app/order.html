@@ -9,7 +9,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Classimax</title>
 
-{% include 'app/link.html' %}
+    {% include 'app/link.html' %}
 
 </head>
 
@@ -41,11 +41,20 @@
         <div class="row">
             <div class="col-md-6">
                 <div class="product-details">
-                    <h1 class="product-title">{{ book.title }}</h1>
+                    <div class="row">
+                        <div class="col-md-8">
+                            <h1 class="product-title">{{ book.title }}</h1>
+                        </div>
+                        <div class="col-md-4 font-weight-bold price text-left text-black-50">
+                            <!-- <div class="font-weight-bold price text-left text-black-50" style="margin-bottom: 20px"> -->
+                            <h2>¥{{ book.sellingPrice }}</h2>
+                            <!-- </div> -->
+                        </div>
+                    </div>
                     <div class="product-meta">
                         <ul class="list-inline">
                             <li class="list-inline-item"><i class="fa fa-user-o"></i> 发布者：<a
-                                    href="">{{ seller.username }}</a></li>
+                                    href="">{{ seller }}</a></li>
                             <li class="list-inline-item"><i class="fa fa-folder-open-o"></i> 分类：<a
                                     href="">{{ book.type }}</a></li>
                             <li class="list-inline-item"><i class="fa fa-calendar"></i> 发布时间：<a
@@ -55,41 +64,48 @@
 
                     <!-- product slider -->
                     <div class="my-4" data-image="{{ book.img }}">
-                        <img class="d-block img-fluid w-100" src="images/products/cover-ml2016.jpg" alt="
+                        <img class="d-block img-fluid w-100" src="{{ book.img }}" alt="
                         product-img">
                     </div>
                 </div>
-                <!-- <div class="contact-us-content p-4">
-                <h5>Contact Us</h5>
-                <h1 class="pt-3">Hello, what's on your mind?</h1>
-                <p class="pt-3 pb-5">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla elit dolor, blandit vel euismod ac, lentesque et dolor. Ut id tempus ipsum.</p>
-            </div> -->
             </div>
             <div class="col-md-6">
-                <form action="#">
+                <form action="#" method="post" onsubmit="return send()"> {% csrf_token %}
                     <fieldset class="p-4 mb-5">
                         <div class="form-group">
                             <div class="col-md-12">
                                 <h6 class="font-weight-bold pt-4 pb-1">联系方式：</h6>
+                                <input type="text" placeholder="联系方式* " class="border p-2 w-100" id="phone" name="phone"
+                                       required>
 
-                                <input type="text" placeholder="Name *" class="border p-2 w-100" required>
+                                {% if book.trade == 'OL' %}
+                                    <h6 class="font-weight-bold pt-4 pb-1">寄送地址：</h6>
+                                    <input type="text" placeholder="寄送地址* " class="border p-2 w-100" id="address"
+                                           name="address" required>
+                                    <h6 class="font-weight-bold pt-4 pb-1">收件人：</h6>
+                                    <input type="text" placeholder="收件人* " class="border p-2 w-100" id="timeorname"
+                                           name="timeorname" required maxlength="30">
+                                {% else %}
+                                    <h6 class="font-weight-bold pt-4 pb-1">交易地址：</h6>
+                                    <input type="text" placeholder="交易地址* " class="border p-2 w-100" id="address"
+                                           name="address" required>
+                                    <h6 class="font-weight-bold pt-4 pb-1">交易时间：</h6>
+                                    <input type="text" placeholder="交易时间* " class="border p-2 w-100" id="timeorname"
+                                           name="timeorname" required maxlength="30">
+                                {% endif %}
 
-                                <h6 class="font-weight-bold pt-4 pb-1">寄送地址：</h6>
+                                {#                                <h6 class="font-weight-bold pt-4 pb-1">收件人：</h6>#}
+                                {##}
+                                {#                                <input type="email" placeholder="收件人* " class="border p-2 w-100" required>#}
 
-                                <input type="email" placeholder="Email *" class="border p-2 w-100" required>
-
-                                <h6 class="font-weight-bold pt-4 pb-1">收件人姓名：</h6>
-
-                                <input type="email" placeholder="Email *" class="border p-2 w-100" required>
-
-                                <h6 class="font-weight-bold pt-4 pb-1">Description:</h6>
-                                <textarea name="" id="" class="border p-2 w-100"
-                                          rows="7" placeholder="Write details about your product"></textarea>
+                                <h6 class="font-weight-bold pt-4 pb-1">备注：</h6>
+                                <textarea name="message" id="message" class="border p-2 w-100"
+                                          rows="7" placeholder="订单的备注信息*" required></textarea>
 
                             </div>
                         </div>
                         <div class="col-lg-12 py-2">
-                            <button type="submit" class="btn btn-primary mt-2 float-right">SUBMIT</button>
+                            <button type="submit" class="btn btn-primary mt-2 float-right" id="submit">提交订单</button>
                         </div>
                     </fieldset>
                 </form>
@@ -108,6 +124,50 @@
 
 {% include 'app/script.html' %}
 
+<script>
+    function send() {
+        toastr.options.positionClass = 'toast-top-full-width';
+        var phone = $('input#phone').val();
+        var address = $('input#address').val();
+        var timeorname = $('input#timeorname').val();
+        var message = $('textarea#message').val();
+        console.log(phone, address, timeorname, message, window.location.pathname.split('/')[2]);
+        if (phone.length > 15) {
+            toastr.warning('联系方式不超过15个字符');
+        } else {
+            $.ajax({
+                type: "POST",
+                url: "/doorder/",
+                headers: {"X-CSRFToken": $.cookie("csrftoken")},
+                data: {
+                    'phone': phone,
+                    'address': address,
+                    'timeorname': timeorname,
+                    'message': message,
+                    'book_id': window.location.pathname.split('/')[2],
+                },
+                timeout: 3000,
+                success: function (xhr) {
+                    if (xhr.flag == 0) {
+                        toastr.error('此书以出售');
+                    } else if (xhr.flag == 1) {
+                        window.location.href = "/index";
+                    } else if (xhr.flag == 2) {
+                        toastr.error('系统出错');
+                    } else if (xhr.flag == 3) {
+                        toastr.warning('您不能购买自己发布的图书');
+                    } else {
+                        toastr.error('系统出错');
+                    }
+                },
+                error: function (xhr) {
+                    toastr.error('系统出错');
+                },
+            });
+        }
+        return false;
+    }
+</script>
 </body>
 
 </html>

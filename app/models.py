@@ -40,7 +40,7 @@ class Book(models.Model):
     category = models.CharField(max_length=1)
     info = models.TextField()  # 描述
     img = models.ImageField(upload_to='images')  # 图片
-    isbn = models.CharField(max_length=20, blank=True)
+    isbn = models.CharField(max_length=20)
     url = models.URLField()
     trade = models.CharField(max_length=2, choices=TRADE_TYPE)  # 交易方式
     time = models.DateTimeField(auto_now_add=True)
@@ -48,46 +48,46 @@ class Book(models.Model):
     score = models.DecimalField(max_digits=2, decimal_places=1)
 
 
-class EDBook(models.Model):
-    id = models.IntegerField(primary_key=True)
-    category = models.CharField(max_length=1)
-
-
-class LTBook(models.Model):
-    id = models.IntegerField(primary_key=True)
-    category = models.CharField(max_length=1)
-
-
-class HMBook(models.Model):
-    id = models.IntegerField(primary_key=True)
-    category = models.CharField(max_length=1)
-
-
-class LFBook(models.Model):
-    id = models.IntegerField(primary_key=True)
-    category = models.CharField(max_length=1)
-
-
-class ECBook(models.Model):
-    id = models.IntegerField(primary_key=True)
-    category = models.CharField(max_length=1)
-
-
-class TCBook(models.Model):
-    id = models.IntegerField(primary_key=True)
-    category = models.CharField(max_length=1)
-
-
-class CHBook(models.Model):
-    id = models.IntegerField(primary_key=True)
-    category = models.CharField(max_length=1)
-
-
-class INBook(models.Model):
-    id = models.IntegerField(primary_key=True)
-    category = models.CharField(max_length=1)
-
-
+# class EDBook(models.Model):
+#     id = models.IntegerField(primary_key=True)
+#     category = models.CharField(max_length=1)
+#
+#
+# class LTBook(models.Model):
+#     id = models.IntegerField(primary_key=True)
+#     category = models.CharField(max_length=1)
+#
+#
+# class HMBook(models.Model):
+#     id = models.IntegerField(primary_key=True)
+#     category = models.CharField(max_length=1)
+#
+#
+# class LFBook(models.Model):
+#     id = models.IntegerField(primary_key=True)
+#     category = models.CharField(max_length=1)
+#
+#
+# class ECBook(models.Model):
+#     id = models.IntegerField(primary_key=True)
+#     category = models.CharField(max_length=1)
+#
+#
+# class TCBook(models.Model):
+#     id = models.IntegerField(primary_key=True)
+#     category = models.CharField(max_length=1)
+#
+#
+# class CHBook(models.Model):
+#     id = models.IntegerField(primary_key=True)
+#     category = models.CharField(max_length=1)
+#
+#
+# class INBook(models.Model):
+#     id = models.IntegerField(primary_key=True)
+#     category = models.CharField(max_length=1)
+#
+#
 class BookCount(models.Model):
     cat = models.CharField(max_length=2, primary_key=True)
     num = models.IntegerField()
@@ -103,14 +103,16 @@ class OrderForm(models.Model):
     method = models.CharField(max_length=2, choices=TRADE_TYPE)
     address = models.TextField()
     phone = models.CharField(max_length=15)
+    timeorname = models.CharField(max_length=30)
     message = models.TextField()
     book = models.ForeignKey('Book', to_field='id', on_delete=models.CASCADE)
 
 
 class Want(models.Model):
     user = models.ForeignKey('User', to_field='id', on_delete=models.CASCADE)
-    title = models.CharField(max_length=20)
-    author = models.CharField(max_length=15, null=True, blank=True)
+    title = models.CharField(max_length=80)
+    author = models.CharField(max_length=40)
     disc = models.TextField()
-    isbn = models.CharField(max_length=20, null=True, blank=True)
-    url = models.URLField()
+    # isbn = models.CharField(max_length=20, null=True, blank=True)
+    img = models.ImageField(upload_to='images')  # 图片
+    time = models.DateTimeField(auto_now_add=True)

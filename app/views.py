@@ -249,6 +249,13 @@ def single_book(request, book_id):
 
 
 def show_list(request, type_id, page):
+    """
+    商品列表
+    :param request:
+    :param type_id:
+    :param page:
+    :return:
+    """
     if request.method == "GET":
         if '0' <= type_id <= '8':
             sort = request.GET.get('sort')
@@ -322,8 +329,99 @@ def show_list(request, type_id, page):
 
 
 def order(request, book_id):
+    """
+    订单页
+    :param request:
+    :param book_id:
+    :return:
+    """
     if request.session.get('is_login', None) is None:
-        return render(request, 'app/404.html')
-    buyer = request.session.get('user_id')
+        return render(request, 'app/login.html')
+    # buyer = request.session.get('user_id')
+    book = Book.objects.filter(id=book_id, sold__exact=False)
+    if len(book) == 0:
+        return render(request, 'app/order.html')
+    # print(book[0].title)
+    typeDic = {'1': '教育', '2': '文艺', '3': '人文社科', '4': '生活', '5': '经管', '6': '科技', '7': '少儿', '8': '励志'}
+    bookDic = model_to_dict(book[0], fields=['id', 'title', 'trade', 'sellingPrice'])
+    bookDic['type'] = typeDic[book[0].type]
+    bookDic['img'] = book[0].img.url
+    bookDic['time'] = book[0].time
+    context = {
+        'book': bookDic,
+        'seller': User.objects.filter(id=book[0].seller_id)[0].username
+    }
+    print(bookDic)
+    return render(request, 'app/order.html', context)
 
-    return render(request, 'app/order.html')
+
+def doOrder(request):
+    """
+    处理订单请求
+    :param request:
+    :return:
+    """
+    if request.session.get('is_login', None) is None:
+        return JsonResponse({'flag': '2'})
+    if request.method == "GET":
+        return JsonResponse({'flag': '2'})
+    orderform = OrderForm()
+    print(request.session.get('user_id'))
+    orderform.buyer = request.session.get('user_id')
+    orderform.phone = request.POST.get('phone')
+    orderform.address = request.POST.get('address')
+    orderform.timeorname = request.POST.get('timeorname')
+    orderform.message = request.POST.get('message')
+    orderform.book_id = request.POST.get('book_id')
+    # print(orderform.buyer, orderform.phone, orderform.address, orderform.timeorname, orderform.message,
+    #       orderform.book_id)
+    book = Book.objects.filter(id=orderform.book_id, sold__exact=False)
+
+    # print(book[0].seller)   seller是个对象
+    if len(book) == 0:
+        # 没有此书
+        return JsonResponse({'flag': '0'})
+    elif book[0].seller_id == orderform.buyer:
+        # 卖方和买方是同一人
+        return JsonResponse({'flag': '3'})
+    else:
+        orderform.seller_id = book[0].seller_id
+        orderform.method = book[0].trade
+        book[0].sold = True
+        # update book
+        book[0].save()
+        # save order
+        orderform.save()
+        # update book count
+        cat_s = chr(ord(book[0].type) - ord('1') + ord('a')) + chr(ord(book[0].category) - ord('1') + ord('a'))
+        print(cat_s)
+        num = BookCount.objects.get(cat=cat_s).num
+        BookCount.objects.filter(cat=cat_s).update(num=num - 1)
+        return JsonResponse({'flag': '1'})
+
+
+def want(request):
+    if request.session.get('is_login', None) is None:
+        return render(request, 'app/login.html')
+    return render(request, 'app/want.html')
+
+
+@csrf_exempt
+def dowant(request):
+    if request.session.get('is_login', None) is None:
+        # 未登录
+        return JsonResponse({'flag': '0'})
+    if request.method == "POST":
+        _want = Want()
+        _want.title = request.POST.get('title')
+        _want.author = request.POST.get('author')
+        _want.disc = request.POST.get('info')
+        _want.user_id = request.session.get('user_id')
+        _want.img = request.FILES.get('img')
+        _want.save()
+        _img = Image.open('media/' + str(_want.img))
+        print(_img.size)
+        _img = _img.resize((275, 280), Image.ANTIALIAS)
+        _img.save('media/' + str(_want.img))
+        return JsonResponse({'flag': '1'})
+    return JsonResponse({'flag': '2'})

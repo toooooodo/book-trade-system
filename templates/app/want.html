@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <!-- SITE TITTLE -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Classimax</title>
+
+    {% include 'app/link.html' %}
+    <style type="text/css">
+        label {
+            margin-bottom: 0;
+        }
+    </style>
+</head>
+
+<body class="body-wrapper">
+
+{% include 'app/header.html' %}
+
+<section class="ad-posting bg-gray py-5">
+    <div class="container">
+        <form method="post" enctype="multipart/form-data" onsubmit="return send()">  {% csrf_token %}
+            <!-- Post Your ad start -->
+            <fieldset class="border border-gary p-4 mb-5">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <h3>发布想要购买的图书</h3>
+                    </div>
+                    <div class="col-lg-6">
+                        <h6 class="font-weight-bold pt-4 pb-1">书名：</h6>
+                        <input type="text" class="border w-100 p-2 bg-white text-capitalize" placeholder="请填写书名*"
+                               id="title" name="title" required>
+
+                        <h6 class="font-weight-bold pt-4 pb-1">描述：</h6>
+                        <textarea name="info" id="info" class="border p-3 w-100" rows="7"
+                                  placeholder="Write details about your product" required></textarea>
+                    </div>
+                    <div class="col-lg-6">
+                        <h6 class="font-weight-bold pt-4 pb-1">作者：</h6>
+                        <input type="text" class="border w-100 p-2 bg-white text-capitalize" placeholder="请填写作者*"
+                               id="author" name="author" required>
+                        <h6 class="font-weight-bold pt-4 pb-1">图片：</h6>
+                        <div class="choose-file text-center my-4 py-4 rounded">
+                            <label for="file-upload">
+                                <span class="d-block font-weight-bold text-dark">将图片拖放入任何位置</span>
+                                <span class="d-block">或</span>
+                                <span class="d-block btn bg-primary text-white my-3 select-files">选择图片</span>
+                                <span class="d-block">图片格式：jpg/jpeg/png/gif</span>
+                                <input type="file" class="form-control-file d-none" id="file-upload" name="file">
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </fieldset>
+            <!-- Post Your ad end -->
+
+
+            <!-- submit button -->
+            <div class="checkbox d-inline-flex">
+                <input type="checkbox" id="terms-&-condition" class="mt-1">
+                <label for="terms-&-condition" class="ml-2">我已阅读并同意
+                    <span> <a class="text-success" href="terms-condition.html">相关服务条款和隐私政策</a></span>
+                </label>
+            </div>
+            <button type="submit" class="btn btn-primary d-block mt-2">提交求购信息</button>
+        </form>
+    </div>
+</section>
+
+
+<!--============================
+=            Footer            =
+=============================-->
+{% include 'app/footer.html' %}
+
+{% include 'app/script.html' %}
+
+<script>
+    function send() {
+        var title = $('input#title').val();
+        var author = $('input#author').val();
+        var info = $('textarea#info').val();
+        var img = $('input#file-upload')[0].files[0];
+        var patn = /\.jpg$|\.jpeg$|\.png$|\.gif$/i; // img
+        toastr.options.positionClass = 'toast-top-full-width';
+        if (title.length > 80) {
+            toastr.warning('书名不能超过80个字符');
+        } else if (author.length > 40) {
+            toastr.warning('作者信息不能超过40个字符');
+        } else if (typeof (img) === "undefined") {
+            toastr.error('请上传图片');
+        } else if (!patn.test(img.name)) {
+            toastr.error('请上传正确格式的图片');
+        } else {
+            var formData = new FormData();
+            formData.append('title', title);
+            formData.append('author', author);
+            formData.append('info', info);
+            formData.append('img', img);
+            $.ajax({
+                url: '/dowant/',
+                type: 'post',
+                data: formData,
+                contentType: false,
+                processData: false,
+                success: function (xhr) {
+                    if (xhr.flag == 0) {
+                        window.location.href = "/login";
+                    } else if (xhr.flag == 1) {
+                        window.location.href = "/index";
+                    } else {
+                        toastr.error("发布失败，请稍后重试");
+                    }
+                },
+                error: function (xhr) {
+                    toastr.error("发布失败，请稍后重试");
+                },
+            });
+        }
+        return false;
+    }
+</script>
+</body>
+
+</html>
