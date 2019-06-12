@@ -230,7 +230,7 @@ def single_book(request, book_id):
     typeDic = {'1': '教育', '2': '文艺', '3': '人文社科', '4': '生活', '5': '经管', '6': '科技', '7': '少儿', '8': '励志'}
     dic = dict()
     book = model_to_dict(book_re,
-                         fields=['title', 'author', 'info', 'isbn', 'url'])
+                         fields=['id', 'title', 'author', 'info', 'isbn', 'url'])
     seller = model_to_dict(seller_re, fields=['username'])
     seller['time'] = seller_re.time
     book['trade'] = tradeDic[book_re.trade]
@@ -243,6 +243,7 @@ def single_book(request, book_id):
     book['time'] = book_re.time
     dic['book'] = book
     dic['seller'] = seller
+    # dic['buyer'] = request.session.get('user_id')
     print(dic)
     return render(request, 'app/single.html', dic)
 
@@ -318,3 +319,11 @@ def show_list(request, type_id, page):
         }
         return render(request, 'app/ad-list-view.html', contest)
     return render(request, 'app/404.html')
+
+
+def order(request, book_id):
+    if request.session.get('is_login', None) is None:
+        return render(request, 'app/404.html')
+    buyer = request.session.get('user_id')
+
+    return render(request, 'app/order.html')

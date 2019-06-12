@@ -38,7 +38,7 @@ class Book(models.Model):
     sellingPrice = models.DecimalField(max_digits=6, decimal_places=2)  # 售价
     type = models.CharField(max_length=1, choices=BOOK_TYPE_CHOICES)  # 种类
     category = models.CharField(max_length=1)
-    info = models.CharField(max_length=255)  # 描述
+    info = models.TextField()  # 描述
     img = models.ImageField(upload_to='images')  # 图片
     isbn = models.CharField(max_length=20, blank=True)
     url = models.URLField()
@@ -103,6 +103,7 @@ class OrderForm(models.Model):
     method = models.CharField(max_length=2, choices=TRADE_TYPE)
     address = models.TextField()
     phone = models.CharField(max_length=15)
+    message = models.TextField()
     book = models.ForeignKey('Book', to_field='id', on_delete=models.CASCADE)
 
 

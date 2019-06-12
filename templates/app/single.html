@@ -36,8 +36,8 @@
                                     href="">{{ seller.username }}</a></li>
                             <li class="list-inline-item"><i class="fa fa-folder-open-o"></i> 分类：<a
                                     href="">{{ book.type }}</a></li>
-                            <li class="list-inline-item"><i class="fa fa-location-arrow"></i> 位置：<a
-                                    href="">Dhaka Bangladesh</a></li>
+                            <li class="list-inline-item"><i class="fa fa-calendar"></i> 发布时间：<a
+                                    href="">{{ book.time|date:"Y-m-d" }}</a></li>
                         </ul>
                     </div>
 
@@ -228,7 +228,7 @@
                         <li class="list-inline-item"><a href=""
                                                         class="btn btn-contact d-inline-block  btn-primary px-lg-4 my-1 px-md-3">私信</a>
                         </li>
-                        <li class="list-inline-item"><a href=""
+                        <li class="list-inline-item"><a href="{% url 'order' book.id %}"
                                                         class="btn btn-offer d-inline-block btn-primary ml-n1 my-1 px-lg-4 px-md-3">购买</a>
                         </li>
                     </ul>

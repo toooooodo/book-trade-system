@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <!-- SITE TITTLE -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Classimax</title>
+
+{% include 'app/link.html' %}
+
+</head>
+
+<body class="body-wrapper">
+
+{% include 'app/header.html' %}
+
+<!-- page title -->
+<!--================================
+=            Page Title            =
+=================================-->
+<section class="page-title">
+    <!-- Container Start -->
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8 offset-md-2 text-center">
+                <!-- Title text -->
+                <h3>生 成 订 单</h3>
+            </div>
+        </div>
+    </div>
+    <!-- Container End -->
+</section>
+<!-- page title -->
+
+<!-- contact us start-->
+<section class="section">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="product-details">
+                    <h1 class="product-title">{{ book.title }}</h1>
+                    <div class="product-meta">
+                        <ul class="list-inline">
+                            <li class="list-inline-item"><i class="fa fa-user-o"></i> 发布者：<a
+                                    href="">{{ seller.username }}</a></li>
+                            <li class="list-inline-item"><i class="fa fa-folder-open-o"></i> 分类：<a
+                                    href="">{{ book.type }}</a></li>
+                            <li class="list-inline-item"><i class="fa fa-calendar"></i> 发布时间：<a
+                                    href="">{{ book.time|date:"Y-m-d" }}</a></li>
+                        </ul>
+                    </div>
+
+                    <!-- product slider -->
+                    <div class="my-4" data-image="{{ book.img }}">
+                        <img class="d-block img-fluid w-100" src="images/products/cover-ml2016.jpg" alt="
+                        product-img">
+                    </div>
+                </div>
+                <!-- <div class="contact-us-content p-4">
+                <h5>Contact Us</h5>
+                <h1 class="pt-3">Hello, what's on your mind?</h1>
+                <p class="pt-3 pb-5">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla elit dolor, blandit vel euismod ac, lentesque et dolor. Ut id tempus ipsum.</p>
+            </div> -->
+            </div>
+            <div class="col-md-6">
+                <form action="#">
+                    <fieldset class="p-4 mb-5">
+                        <div class="form-group">
+                            <div class="col-md-12">
+                                <h6 class="font-weight-bold pt-4 pb-1">联系方式：</h6>
+
+                                <input type="text" placeholder="Name *" class="border p-2 w-100" required>
+
+                                <h6 class="font-weight-bold pt-4 pb-1">寄送地址：</h6>
+
+                                <input type="email" placeholder="Email *" class="border p-2 w-100" required>
+
+                                <h6 class="font-weight-bold pt-4 pb-1">收件人姓名：</h6>
+
+                                <input type="email" placeholder="Email *" class="border p-2 w-100" required>
+
+                                <h6 class="font-weight-bold pt-4 pb-1">Description:</h6>
+                                <textarea name="" id="" class="border p-2 w-100"
+                                          rows="7" placeholder="Write details about your product"></textarea>
+
+                            </div>
+                        </div>
+                        <div class="col-lg-12 py-2">
+                            <button type="submit" class="btn btn-primary mt-2 float-right">SUBMIT</button>
+                        </div>
+                    </fieldset>
+                </form>
+            </div>
+
+
+        </div>
+    </div>
+</section>
+<!-- contact us end -->
+
+<!--============================
+=            Footer            =
+=============================-->
+{% include 'app/footer.html' %}
+
+{% include 'app/script.html' %}
+
+</body>
+
+</html>
