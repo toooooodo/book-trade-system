@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <!-- SITE TITTLE -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Classimax</title>
+
+    {% include 'app/link.html' %}
+
+</head>
+
+<body class="body-wrapper">
+
+{% include 'app/header.html' %}
+{% include 'app/search.html' %}
+<section class="section-sm">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="search-result bg-gray">
+                    <h2>求购信息</h2>
+                    <p>{{ total }}条结果， {{ time|date:"Y-m-d H:i:s" }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="category-search-filter">
+                    <div class="row">
+                        <div class="row col-md-12">
+                            <!-- <div class="col-md-3">
+                                <strong>排序规则</strong>
+                            </div> -->
+                            <div class="col-md-6">
+                                <ul class="nav nav-pills nav-justified">
+                                    <li class="nav-item">
+                                        <a class="nav-link disabled"><strong>排序规则</strong></a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="{% url 'want-list' 1 %}?sort=latest"
+                                                {% if sort == 'latest' %}
+                                           class="nav-link active" {% else %} class="nav-link" {% endif %}>最新发布</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="{% url 'want-list' 1 %}?sort=earliest"
+                                                {% if sort == 'earliest' %}
+                                           class="nav-link active" {% else %} class="nav-link" {% endif %}>最久发布</a>
+                                    </li>
+                                </ul>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="product-grid-list">
+                    <div class="row mt-30">
+                        {% for want in want_page %}
+                            <div class="col-sm-12 col-lg-4 col-md-6">
+                            <!-- product card -->
+                            <div class="product-item bg-light">
+                                <div class="card">
+                                    <div class="thumb-content">
+                                        <!-- <div class="price">$200</div> -->
+                                        <a href="#">
+                                            <img class="card-img-top img-fluid" src="{{ want.img.url }}"
+                                                 alt="Card image cap">
+                                        </a>
+                                    </div>
+                                    <div class="card-body">
+                                        <h4 class="card-title"><a href="#">{{ want.title }}</a></h4>
+                                        <ul class="list-inline product-meta">
+                                            <li class="list-inline-item">
+                                                <a href="#"><i class="fa fa-calendar"></i>{{ want.time }}</a>
+                                            </li>
+                                        </ul>
+                                        <p class="card-text">{{ want.disc|truncatechars:40 }}</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                        {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                <div class="pagination justify-content-center">
+                    <nav aria-label="Page navigation example">
+                        <ul class="pagination">
+                            {% if want_page.has_previous %}
+                                <li class="page-item">
+                                    <a class="page-link"
+                                       href="{% url 'want-list' want_page.previous_page_number %}?sort={{ sort }}"
+                                       aria-label="Previous">
+                                        <span aria-hidden="true">&laquo;</span>
+                                        <span class="sr-only">Previous</span>
+                                    </a>
+                                </li>
+                            {% endif %}
+                            {% for pindex in pages %}
+                                {% if pindex == want_page.number %}
+                                    <li class="page-item active"><a class="page-link"
+                                                             href="{% url 'want-list' pindex %}?sort={{ sort }}">{{ pindex }}</a>
+                                    </li>
+                                {% else %}
+                                    <li class="page-item"><a class="page-link"
+                                                                    href="{% url 'want-list' pindex %}?sort={{ sort }}">{{ pindex }}</a>
+                                    </li>
+                                {% endif %}
+                            {% endfor %}
+                            <li class="page-item">
+                                <a class="page-link" href="#" aria-label="Next">
+                                    <span aria-hidden="true">&raquo;</span>
+                                    <span class="sr-only">Next</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!--============================
+=            Footer            =
+=============================-->
+{% include 'app/footer.html' %}
+
+{% include 'app/script.html' %}
+<script>
+    $('button#search').click(function () {
+        var title = $('input#title').val();
+        var type = $('div.form-control>ul.list>li.selected').attr("data-value");
+        console.log(title, type);
+        // window.location.replace("http://www.jb51.net");
+        window.location.href = "/list/" + type + "/1?sort=ascending&title=" + title;
+        return false;
+    })
+</script>
+</body>
+
+</html>

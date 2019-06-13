@@ -13,11 +13,13 @@
                     </button>
                     <div class="collapse navbar-collapse" id="navbarSupportedContent">
                         <ul class="navbar-nav ml-auto main-nav ">
+                            <!-- 主页 -->
                             <li class="nav-item active">
-                                <a class="nav-link" href="{% url 'index' %}">Home</a>
+                                <a class="nav-link" href="{% url 'index' %}">主页</a>
                             </li>
+                            <!-- 个人中心 -->
                             <li class="nav-item dropdown dropdown-slide">
-                                <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="">Dashboard<span><i
+                                <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="">个人中心<span><i
                                         class="fa fa-angle-down"></i></span>
                                 </a>
 
@@ -32,48 +34,53 @@
                                     <a class="dropdown-item" href="dashboard-pending-ads.html">Dashboard Pending Ads</a>
                                 </div>
                             </li>
+                            <!-- 商品列表 -->
                             <li class="nav-item dropdown dropdown-slide">
-                                <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" aria-haspopup="true"
+                                <a class="nav-link dropdown-toggle" href="{% url 'list' 0 1 %}?sort=ascending&title="
+                                   data-toggle="dropdown" aria-haspopup="true"
                                    aria-expanded="false">
-                                    Pages <span><i class="fa fa-angle-down"></i></span>
+                                    商品列表<span><i class="fa fa-angle-down"></i></span>
                                 </a>
                                 <!-- Dropdown list -->
                                 <div class="dropdown-menu">
-                                    <a class="dropdown-item" href="about-us.html">About Us</a>
-                                    <a class="dropdown-item" href="contact-us.html">Contact Us</a>
-                                    <a class="dropdown-item" href="user-profile.html">User Profile</a>
-                                    <a class="dropdown-item" href="404.html">404 Page</a>
-                                    <a class="dropdown-item" href="package.html">Package</a>
-                                    <a class="dropdown-item" href="single.html">Single Page</a>
-                                    <a class="dropdown-item" href="store.html">Store Single</a>
-                                    <a class="dropdown-item" href="single-blog.html">Single Post</a>
-                                    <a class="dropdown-item" href="blog.html">Blog</a>
+                                    <a class="dropdown-item" href="{% url 'list' 1 1 %}?sort=ascending&title=">教育</a>
+                                    <a class="dropdown-item" href="{% url 'list' 2 1 %}?sort=ascending&title=">文艺</a>
+                                    <a class="dropdown-item" href="{% url 'list' 3 1 %}?sort=ascending&title=">人文社科</a>
+                                    <a class="dropdown-item" href="{% url 'list' 4 1 %}?sort=ascending&title=">生活</a>
+                                    <a class="dropdown-item" href="{% url 'list' 5 1 %}?sort=ascending&title=">经管</a>
+                                    <a class="dropdown-item" href="{% url 'list' 6 1 %}?sort=ascending&title=">科技</a>
+                                    <a class="dropdown-item" href="{% url 'list' 7 1 %}?sort=ascending&title=">童书</a>
+                                    <a class="dropdown-item" href="{% url 'list' 8 1 %}?sort=ascending&title=">励志</a>
+                                    {# <a class="dropdown-item" href="{% url 'list' 0 1 %}?sort=ascending&title=">Blog</a>#}
 
                                 </div>
                             </li>
-                            <li class="nav-item dropdown dropdown-slide">
-                                <a class="nav-link dropdown-toggle" href="" data-toggle="dropdown" aria-haspopup="true"
-                                   aria-expanded="false">
-                                    Listing <span><i class="fa fa-angle-down"></i></span>
-                                </a>
-                                <!-- Dropdown list -->
-                                <div class="dropdown-menu">
-                                    <a class="dropdown-item" href="category.html">Ad-Gird View</a>
-                                    <a class="dropdown-item" href="ad-listing-list.html">Ad-List View</a>
-                                </div>
+                            <li class="nav-item active">
+                                <a class="nav-link" href="{% url 'want-list' 1 %}?sort=latest">求购信息</a>
                             </li>
+                            {#                            <li class="nav-item dropdown dropdown-slide">#}
+                            {#                                <a class="nav-link dropdown-toggle" href="" data-toggle="dropdown" aria-haspopup="true"#}
+                            {#                                   aria-expanded="false">#}
+                            {#                                    Listing <span><i class="fa fa-angle-down"></i></span>#}
+                            {#                                </a>#}
+                            {#                                <!-- Dropdown list -->#}
+                            {#                                <div class="dropdown-menu">#}
+                            {#                                    <a class="dropdown-item" href="category.html">Ad-Gird View</a>#}
+                            {#                                    <a class="dropdown-item" href="ad-listing-list.html">Ad-List View</a>#}
+                            {#                                </div>#}
+                            {#                            </li>#}
                         </ul>
                         <ul class="navbar-nav ml-auto mt-10">
                             <li class="nav-item">
                                 <a class="nav-link login-button" href="{% url 'login' %}">登录</a>
                             </li>
-                            <li class="nav-item" style="margin-right: 8px">
+                            <li class="nav-item" style="margin-right: 4px; margin-left: 4px">
                                 <a class="nav-link text-white add-button" href="{% url 'adlisting' %}"><i
                                         class="fa fa-plus-circle"></i>发布新书</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link text-white add-button" href="{% url 'want' %}"><i
-                                        class="fa fa-plus-circle"></i>发布求购信息</a>
+                                        class="fa fa-plus-circle" style="margin-right: 4px; margin-left: 4px"></i>发布求购信息</a>
                             </li>
                         </ul>
                     </div>

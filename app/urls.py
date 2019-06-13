@@ -19,4 +19,5 @@ urlpatterns = [
     re_path(r'^doorder/$', views.doOrder, name='doorder'),
     re_path(r'^want/$', views.want, name='want'),
     re_path(r'^dowant/$', views.dowant, name='dowant'),
+    re_path(r'^want-list/(?P<page>\d+)$', views.showWantList, name='want-list'),
 ]

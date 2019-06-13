@@ -314,7 +314,7 @@ def show_list(request, type_id, page):
         for key in count:
             count[key] = len(Book.objects.filter(title__contains=title, type__exact=key, sold__exact=False))
 
-        contest = {
+        context = {
             'pages': pages,
             'sort': sort,
             'book_page': book_page,
@@ -324,7 +324,7 @@ def show_list(request, type_id, page):
             'time': datetime.datetime.now(),
             'count': count,
         }
-        return render(request, 'app/ad-list-view.html', contest)
+        return render(request, 'app/ad-list-view.html', context)
     return render(request, 'app/404.html')
 
 
@@ -418,6 +418,7 @@ def dowant(request):
         _want.disc = request.POST.get('info')
         _want.user_id = request.session.get('user_id')
         _want.img = request.FILES.get('img')
+        _want.flag = True
         _want.save()
         _img = Image.open('media/' + str(_want.img))
         print(_img.size)
@@ -425,3 +426,45 @@ def dowant(request):
         _img.save('media/' + str(_want.img))
         return JsonResponse({'flag': '1'})
     return JsonResponse({'flag': '2'})
+
+
+def showWantList(request, page):
+    if request.method == "GET":
+        sort = request.GET.get('sort')
+        if sort == 'latest':
+            wantList = Want.objects.filter(flag__exact=True).order_by('-id')
+        elif sort == 'earliest':
+            wantList = Want.objects.filter(flag__exact=True).order_by('id')
+        else:
+            return render(request, 'app/404.html')
+        paginator = Paginator(wantList, 9)
+        # 获取第page页的内容
+        try:
+            page = int(page)
+        except Exception as e:
+            return render(request, 'app/404.html')
+
+        if page > paginator.num_pages or page <= 0:
+            return render(request, 'app/404.html')
+
+        # 获取第page页的Page实例对象
+        want_page = paginator.page(page)
+        num_pages = paginator.num_pages
+        if num_pages < 5:
+            pages = range(1, num_pages + 1)
+        elif page <= 3:
+            pages = range(1, 6)
+        elif num_pages - page <= 2:
+            pages = range(num_pages - 4, num_pages + 1)
+        else:
+            pages = range(page - 2, page + 3)
+        context = {
+            'pages': pages,
+            'sort': sort,
+            'want_page': want_page,
+            'total': len(wantList),
+            'time': datetime.datetime.now(),
+        }
+        return render(request, 'app/want-list.html', context)
+    else:
+        return render(request, 'app/404.html')

@@ -34,18 +34,18 @@
                         <h2>Popular Category</h2>
                         <ul class="list-inline">
                             <li class="list-inline-item">
-                                <a href="category.html"><i class="fa fa-bed"></i> Hotel</a></li>
+                                <a href="{% url 'list' 1 1 %}?sort=ascending&title="><i class="fa fa-laptop"></i> 教育</a></li>
                             <li class="list-inline-item">
-                                <a href="category.html"><i class="fa fa-grav"></i> Fitness</a>
+                                <a href="{% url 'list' 4 1 %}?sort=ascending&title="><i class="fa fa-shopping-basket"></i> 生活</a>
                             </li>
                             <li class="list-inline-item">
-                                <a href="category.html"><i class="fa fa-car"></i> Cars</a>
+                                <a href="{% url 'list' 6 1 %}?sort=ascending&title="><i class="fa fa-car"></i> 科技</a>
                             </li>
                             <li class="list-inline-item">
-                                <a href="category.html"><i class="fa fa-cutlery"></i> Restaurants</a>
+                                <a href="{% url 'list' 3 1 %}?sort=ascending&title="><i class="fa fa-home"></i> 人文社科</a>
                             </li>
                             <li class="list-inline-item">
-                                <a href="category.html"><i class="fa fa-coffee"></i> Cafe</a>
+                                <a href="{% url 'list' 2 1 %}?sort=ascending&title="><i class="fa fa-apple"></i> 文艺</a>
                             </li>
                         </ul>
                     </div>
@@ -481,9 +481,8 @@
                     <h2>Start today to get more exposure and
                         grow your business</h2>
                     <ul class="list-inline mt-30">
-                        <li class="list-inline-item"><a class="btn btn-main" href="ad-listing.html">Add Listing</a></li>
-                        <li class="list-inline-item"><a class="btn btn-secondary" href="category.html">Browser
-                            Listing</a></li>
+                        <li class="list-inline-item"><a class="btn btn-main" href="{% url 'adlisting' %}">发布新书</a></li>
+                        <li class="list-inline-item"><a class="btn btn-secondary" href="{% url 'list' 0 1 %}?sort=ascending&title=">所有商品</a></li>
                     </ul>
                 </div>
             </div>
