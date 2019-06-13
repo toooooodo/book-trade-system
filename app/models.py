@@ -1,13 +1,13 @@
 from django.db import models
-
+from django.contrib.auth.models import User
 
 # Create your models here.
 
-class User(models.Model):
-    username = models.CharField(max_length=20, unique=True)
-    password = models.CharField(max_length=25)
-    email = models.EmailField(max_length=25, unique=True)
-    time = models.DateTimeField(auto_now_add=True)
+# class User(models.Model):
+#     username = models.CharField(max_length=20, unique=True)
+#     password = models.CharField(max_length=25)
+#     email = models.EmailField(max_length=25, unique=True)
+#     time = models.DateTimeField(auto_now_add=True)
 
 
 class Book(models.Model):
@@ -30,7 +30,7 @@ class Book(models.Model):
         ('OL', 'online'),  # 线上
         ('FL', 'offline'),  # 线下
     )
-    seller = models.ForeignKey('User', to_field='id', on_delete=models.CASCADE)  # 卖方
+    seller = models.ForeignKey(User, to_field='id', on_delete=models.CASCADE)  # 卖方
     title = models.CharField(max_length=80)  # 书名
     author = models.CharField(max_length=40)  # 作者
     language = models.CharField(max_length=2, choices=BOOK_LAN_CHOICES)  # 语言
@@ -98,7 +98,7 @@ class OrderForm(models.Model):
         ('OL', 'online'),  # 线上
         ('FL', 'offline'),  # 线下
     )
-    seller = models.ForeignKey('User', to_field='id', on_delete=models.CASCADE)
+    seller = models.ForeignKey(User, to_field='id', on_delete=models.CASCADE)
     buyer = models.IntegerField()
     method = models.CharField(max_length=2, choices=TRADE_TYPE)
     address = models.TextField()
@@ -109,7 +109,7 @@ class OrderForm(models.Model):
 
 
 class Want(models.Model):
-    user = models.ForeignKey('User', to_field='id', on_delete=models.CASCADE)
+    user = models.ForeignKey(User, to_field='id', on_delete=models.CASCADE)
     title = models.CharField(max_length=80)
     author = models.CharField(max_length=40)
     disc = models.TextField()

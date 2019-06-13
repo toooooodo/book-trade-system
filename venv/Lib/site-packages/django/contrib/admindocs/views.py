@@ -1,6 +1,6 @@
 import inspect
+import os
 from importlib import import_module
-from pathlib import Path
 
 from django.apps import apps
 from django.conf import settings
@@ -23,8 +23,6 @@ from django.utils.inspect import (
 from django.utils.translation import gettext as _
 from django.views.generic import TemplateView
 
-from .utils import get_view_name
-
 # Exclude methods starting with these strings from documentation
 MODEL_METHODS_EXCLUDE = ('_', 'add_', 'delete', 'save', 'set_')
 
@@ -42,11 +40,9 @@ class BaseAdminDocsView(TemplateView):
         return super().dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
-        return super().get_context_data(**{
-            **kwargs,
-            'root_path': reverse('admin:index'),
-            **admin.site.each_context(self.request),
-        })
+        kwargs.update({'root_path': reverse('admin:index')})
+        kwargs.update(admin.site.each_context(self.request))
+        return super().get_context_data(**kwargs)
 
 
 class BookmarkletsView(BaseAdminDocsView):
@@ -77,8 +73,10 @@ class TemplateTagIndexView(BaseAdminDocsView):
             for module_name, library in builtin_libs + app_libs:
                 for tag_name, tag_func in library.tags.items():
                     title, body, metadata = utils.parse_docstring(tag_func.__doc__)
-                    title = title and utils.parse_rst(title, 'tag', _('tag:') + tag_name)
-                    body = body and utils.parse_rst(body, 'tag', _('tag:') + tag_name)
+                    if title:
+                        title = utils.parse_rst(title, 'tag', _('tag:') + tag_name)
+                    if body:
+                        body = utils.parse_rst(body, 'tag', _('tag:') + tag_name)
                     for key in metadata:
                         metadata[key] = utils.parse_rst(metadata[key], 'tag', _('tag:') + tag_name)
                     tag_library = module_name.split('.')[-1]
@@ -89,7 +87,8 @@ class TemplateTagIndexView(BaseAdminDocsView):
                         'meta': metadata,
                         'library': tag_library,
                     })
-        return super().get_context_data(**{**kwargs, 'tags': tags})
+        kwargs.update({'tags': tags})
+        return super().get_context_data(**kwargs)
 
 
 class TemplateFilterIndexView(BaseAdminDocsView):
@@ -108,8 +107,10 @@ class TemplateFilterIndexView(BaseAdminDocsView):
             for module_name, library in builtin_libs + app_libs:
                 for filter_name, filter_func in library.filters.items():
                     title, body, metadata = utils.parse_docstring(filter_func.__doc__)
-                    title = title and utils.parse_rst(title, 'filter', _('filter:') + filter_name)
-                    body = body and utils.parse_rst(body, 'filter', _('filter:') + filter_name)
+                    if title:
+                        title = utils.parse_rst(title, 'filter', _('filter:') + filter_name)
+                    if body:
+                        body = utils.parse_rst(body, 'filter', _('filter:') + filter_name)
                     for key in metadata:
                         metadata[key] = utils.parse_rst(metadata[key], 'filter', _('filter:') + filter_name)
                     tag_library = module_name.split('.')[-1]
@@ -120,11 +121,17 @@ class TemplateFilterIndexView(BaseAdminDocsView):
                         'meta': metadata,
                         'library': tag_library,
                     })
-        return super().get_context_data(**{**kwargs, 'filters': filters})
+        kwargs.update({'filters': filters})
+        return super().get_context_data(**kwargs)
 
 
 class ViewIndexView(BaseAdminDocsView):
     template_name = 'admin_doc/view_index.html'
+
+    @staticmethod
+    def _get_full_name(func):
+        mod_name = func.__module__
+        return '%s.%s' % (mod_name, func.__qualname__)
 
     def get_context_data(self, **kwargs):
         views = []
@@ -132,13 +139,14 @@ class ViewIndexView(BaseAdminDocsView):
         view_functions = extract_views_from_urlpatterns(urlconf.urlpatterns)
         for (func, regex, namespace, name) in view_functions:
             views.append({
-                'full_name': get_view_name(func),
+                'full_name': self._get_full_name(func),
                 'url': simplify_regex(regex),
                 'url_name': ':'.join((namespace or []) + (name and [name] or [])),
                 'namespace': ':'.join((namespace or [])),
                 'name': name,
             })
-        return super().get_context_data(**{**kwargs, 'views': views})
+        kwargs.update({'views': views})
+        return super().get_context_data(**kwargs)
 
 
 class ViewDetailView(BaseAdminDocsView):
@@ -167,17 +175,19 @@ class ViewDetailView(BaseAdminDocsView):
         if view_func is None:
             raise Http404
         title, body, metadata = utils.parse_docstring(view_func.__doc__)
-        title = title and utils.parse_rst(title, 'view', _('view:') + view)
-        body = body and utils.parse_rst(body, 'view', _('view:') + view)
+        if title:
+            title = utils.parse_rst(title, 'view', _('view:') + view)
+        if body:
+            body = utils.parse_rst(body, 'view', _('view:') + view)
         for key in metadata:
             metadata[key] = utils.parse_rst(metadata[key], 'model', _('view:') + view)
-        return super().get_context_data(**{
-            **kwargs,
+        kwargs.update({
             'name': view,
             'summary': title,
             'body': body,
             'meta': metadata,
         })
+        return super().get_context_data(**kwargs)
 
 
 class ModelIndexView(BaseAdminDocsView):
@@ -185,7 +195,8 @@ class ModelIndexView(BaseAdminDocsView):
 
     def get_context_data(self, **kwargs):
         m_list = [m._meta for m in apps.get_models()]
-        return super().get_context_data(**{**kwargs, 'models': m_list})
+        kwargs.update({'models': m_list})
+        return super().get_context_data(**kwargs)
 
 
 class ModelDetailView(BaseAdminDocsView):
@@ -206,8 +217,10 @@ class ModelDetailView(BaseAdminDocsView):
         opts = model._meta
 
         title, body, metadata = utils.parse_docstring(model.__doc__)
-        title = title and utils.parse_rst(title, 'model', _('model:') + model_name)
-        body = body and utils.parse_rst(body, 'model', _('model:') + model_name)
+        if title:
+            title = utils.parse_rst(title, 'model', _('model:') + model_name)
+        if body:
+            body = utils.parse_rst(body, 'model', _('model:') + model_name)
 
         # Gather fields/field descriptions.
         fields = []
@@ -264,9 +277,8 @@ class ModelDetailView(BaseAdminDocsView):
                 except StopIteration:
                     continue
                 verbose = func.__doc__
-                verbose = verbose and (
-                    utils.parse_rst(utils.trim_docstring(verbose), 'model', _('model:') + opts.model_name)
-                )
+                if verbose:
+                    verbose = utils.parse_rst(utils.trim_docstring(verbose), 'model', _('model:') + opts.model_name)
                 # If a method has no arguments, show it as a 'field', otherwise
                 # as a 'method with arguments'.
                 if func_has_no_args(func) and not func_accepts_kwargs(func) and not func_accepts_var_args(func):
@@ -307,14 +319,14 @@ class ModelDetailView(BaseAdminDocsView):
                 'data_type': 'Integer',
                 'verbose': utils.parse_rst(_("number of %s") % verbose, 'model', _('model:') + opts.model_name),
             })
-        return super().get_context_data(**{
-            **kwargs,
+        kwargs.update({
             'name': '%s.%s' % (opts.app_label, opts.object_name),
             'summary': title,
             'description': body,
             'fields': fields,
             'methods': methods,
         })
+        return super().get_context_data(**kwargs)
 
 
 class TemplateDetailView(BaseAdminDocsView):
@@ -331,23 +343,23 @@ class TemplateDetailView(BaseAdminDocsView):
         else:
             # This doesn't account for template loaders (#24128).
             for index, directory in enumerate(default_engine.dirs):
-                template_file = Path(directory) / template
-                if template_file.exists():
-                    with template_file.open() as f:
+                template_file = os.path.join(directory, template)
+                if os.path.exists(template_file):
+                    with open(template_file) as f:
                         template_contents = f.read()
                 else:
                     template_contents = ''
                 templates.append({
                     'file': template_file,
-                    'exists': template_file.exists(),
+                    'exists': os.path.exists(template_file),
                     'contents': template_contents,
                     'order': index,
                 })
-        return super().get_context_data(**{
-            **kwargs,
+        kwargs.update({
             'name': template,
             'templates': templates,
         })
+        return super().get_context_data(**kwargs)
 
 
 ####################

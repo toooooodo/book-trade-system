@@ -1,13 +1,12 @@
-from .comparison import Cast, Coalesce, Greatest, Least
+from .base import (
+    Cast, Coalesce, Concat, ConcatPair, Greatest, Least, Length, Lower, Now,
+    StrIndex, Substr, Upper,
+)
 from .datetime import (
     Extract, ExtractDay, ExtractHour, ExtractMinute, ExtractMonth,
     ExtractQuarter, ExtractSecond, ExtractWeek, ExtractWeekDay, ExtractYear,
-    Now, Trunc, TruncDate, TruncDay, TruncHour, TruncMinute, TruncMonth,
-    TruncQuarter, TruncSecond, TruncTime, TruncWeek, TruncYear,
-)
-from .text import (
-    Chr, Concat, ConcatPair, Left, Length, Lower, LPad, LTrim, Ord, Repeat,
-    Replace, Right, RPad, RTrim, StrIndex, Substr, Trim, Upper,
+    Trunc, TruncDate, TruncDay, TruncHour, TruncMinute, TruncMonth,
+    TruncQuarter, TruncSecond, TruncTime, TruncYear,
 )
 from .window import (
     CumeDist, DenseRank, FirstValue, Lag, LastValue, Lead, NthValue, Ntile,
@@ -15,18 +14,14 @@ from .window import (
 )
 
 __all__ = [
-    # comparison and conversion
-    'Cast', 'Coalesce', 'Greatest', 'Least',
+    # base
+    'Cast', 'Coalesce', 'Concat', 'ConcatPair', 'Greatest', 'Least', 'Length',
+    'Lower', 'Now', 'StrIndex', 'Substr', 'Upper',
     # datetime
     'Extract', 'ExtractDay', 'ExtractHour', 'ExtractMinute', 'ExtractMonth',
     'ExtractQuarter', 'ExtractSecond', 'ExtractWeek', 'ExtractWeekDay',
-    'ExtractYear', 'Now', 'Trunc', 'TruncDate', 'TruncDay', 'TruncHour',
-    'TruncMinute', 'TruncMonth', 'TruncQuarter', 'TruncSecond', 'TruncTime',
-    'TruncWeek', 'TruncYear',
-    # text
-    'Chr', 'Concat', 'ConcatPair', 'Left', 'Length', 'Lower', 'LPad', 'LTrim',
-    'Ord', 'Repeat', 'Replace', 'Right', 'RPad', 'RTrim', 'StrIndex', 'Substr',
-    'Trim', 'Upper',
+    'ExtractYear', 'Trunc', 'TruncDate', 'TruncDay', 'TruncHour', 'TruncMinute',
+    'TruncMonth', 'TruncQuarter', 'TruncSecond', 'TruncTime', 'TruncYear',
     # window
     'CumeDist', 'DenseRank', 'FirstValue', 'Lag', 'LastValue', 'Lead',
     'NthValue', 'Ntile', 'PercentRank', 'Rank', 'RowNumber',

@@ -186,9 +186,15 @@ class GDALBand(GDALRasterBase):
 
         Allowed input data types are bytes, memoryview, list, tuple, and array.
         """
-        offset = offset or (0, 0)
-        size = size or (self.width - offset[0], self.height - offset[1])
-        shape = shape or size
+        if not offset:
+            offset = (0, 0)
+
+        if not size:
+            size = (self.width - offset[0], self.height - offset[1])
+
+        if not shape:
+            shape = size
+
         if any(x <= 0 for x in size):
             raise ValueError('Offset too big for this raster.')
 
@@ -236,7 +242,7 @@ class GDALBand(GDALRasterBase):
 class BandList(list):
     def __init__(self, source):
         self.source = source
-        super().__init__()
+        list.__init__(self)
 
     def __iter__(self):
         for idx in range(1, len(self) + 1):

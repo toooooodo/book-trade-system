@@ -87,7 +87,10 @@ class BaseContext:
         del self.dicts[-1][key]
 
     def __contains__(self, key):
-        return any(key in d for d in self.dicts)
+        for d in self.dicts:
+            if key in d:
+                return True
+        return False
 
     def get(self, key, otherwise=None):
         for d in reversed(self.dicts):
@@ -124,12 +127,13 @@ class BaseContext:
         """
         Compare two contexts by comparing theirs 'dicts' attributes.
         """
-        return (
-            isinstance(other, BaseContext) and
+        if isinstance(other, BaseContext):
             # because dictionaries can be put in different order
             # we have to flatten them like in templates
-            self.flatten() == other.flatten()
-        )
+            return self.flatten() == other.flatten()
+
+        # if it's not comparable return false
+        return False
 
 
 class Context(BaseContext):

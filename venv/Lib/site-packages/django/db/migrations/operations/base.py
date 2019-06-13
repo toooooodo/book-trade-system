@@ -1,5 +1,4 @@
 from django.db import router
-from django.db.models.fields.related import RECURSIVE_RELATIONSHIP_CONSTANT
 
 
 class Operation:
@@ -103,7 +102,7 @@ class Operation:
 
     def allow_migrate_model(self, connection_alias, model):
         """
-        Return whether or not a model may be migrated.
+        Return wether or not a model may be migrated.
 
         This is a thin wrapper around router.allow_migrate_model() that
         preemptively rejects any proxy, swapped out, or unmanaged model.
@@ -124,14 +123,6 @@ class Operation:
         elif operation.elidable:
             return [self]
         return False
-
-    def _get_model_tuple(self, remote_model, app_label, model_name):
-        if remote_model == RECURSIVE_RELATIONSHIP_CONSTANT:
-            return app_label, model_name.lower()
-        elif '.' in remote_model:
-            return tuple(remote_model.lower().split('.'))
-        else:
-            return app_label, remote_model.lower()
 
     def __repr__(self):
         return "<%s %s%s>" % (

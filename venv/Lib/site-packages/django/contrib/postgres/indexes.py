@@ -1,34 +1,17 @@
 from django.db.models import Index
-from django.utils.functional import cached_property
 
 __all__ = ['BrinIndex', 'GinIndex', 'GistIndex']
 
 
-class PostgresIndex(Index):
-
-    @cached_property
-    def max_name_length(self):
-        # Allow an index name longer than 30 characters when the suffix is
-        # longer than the usual 3 character limit. The 30 character limit for
-        # cross-database compatibility isn't applicable to PostgreSQL-specific
-        # indexes.
-        return Index.max_name_length - len(Index.suffix) + len(self.suffix)
-
-    def create_sql(self, model, schema_editor, using=''):
-        statement = super().create_sql(model, schema_editor, using=' USING %s' % self.suffix)
-        with_params = self.get_with_params()
-        if with_params:
-            statement.parts['extra'] = 'WITH (%s) %s' % (
-                ', '.join(with_params),
-                statement.parts['extra'],
-            )
-        return statement
-
-    def get_with_params(self):
-        return []
+class MaxLengthMixin:
+    # Allow an index name longer than 30 characters since the suffix is 4
+    # characters (usual limit is 3). Since this index can only be used on
+    # PostgreSQL, the 30 character limit for cross-database compatibility isn't
+    # applicable.
+    max_name_length = 31
 
 
-class BrinIndex(PostgresIndex):
+class BrinIndex(MaxLengthMixin, Index):
     suffix = 'brin'
 
     def __init__(self, *, pages_per_range=None, **kwargs):
@@ -43,14 +26,16 @@ class BrinIndex(PostgresIndex):
             kwargs['pages_per_range'] = self.pages_per_range
         return path, args, kwargs
 
-    def get_with_params(self):
-        with_params = []
+    def create_sql(self, model, schema_editor, using=''):
+        statement = super().create_sql(model, schema_editor, using=' USING brin')
         if self.pages_per_range is not None:
-            with_params.append('pages_per_range = %d' % self.pages_per_range)
-        return with_params
+            statement.parts['extra'] = ' WITH (pages_per_range={})'.format(
+                schema_editor.quote_value(self.pages_per_range)
+            ) + statement.parts['extra']
+        return statement
 
 
-class GinIndex(PostgresIndex):
+class GinIndex(Index):
     suffix = 'gin'
 
     def __init__(self, *, fastupdate=None, gin_pending_list_limit=None, **kwargs):
@@ -66,16 +51,19 @@ class GinIndex(PostgresIndex):
             kwargs['gin_pending_list_limit'] = self.gin_pending_list_limit
         return path, args, kwargs
 
-    def get_with_params(self):
+    def create_sql(self, model, schema_editor, using=''):
+        statement = super().create_sql(model, schema_editor, using=' USING gin')
         with_params = []
         if self.gin_pending_list_limit is not None:
             with_params.append('gin_pending_list_limit = %d' % self.gin_pending_list_limit)
         if self.fastupdate is not None:
-            with_params.append('fastupdate = %s' % ('on' if self.fastupdate else 'off'))
-        return with_params
+            with_params.append('fastupdate = {}'.format('on' if self.fastupdate else 'off'))
+        if with_params:
+            statement.parts['extra'] = 'WITH ({}) {}'.format(', '.join(with_params), statement.parts['extra'])
+        return statement
 
 
-class GistIndex(PostgresIndex):
+class GistIndex(MaxLengthMixin, Index):
     suffix = 'gist'
 
     def __init__(self, *, buffering=None, fillfactor=None, **kwargs):
@@ -91,10 +79,13 @@ class GistIndex(PostgresIndex):
             kwargs['fillfactor'] = self.fillfactor
         return path, args, kwargs
 
-    def get_with_params(self):
+    def create_sql(self, model, schema_editor):
+        statement = super().create_sql(model, schema_editor, using=' USING gist')
         with_params = []
         if self.buffering is not None:
-            with_params.append('buffering = %s' % ('on' if self.buffering else 'off'))
+            with_params.append('buffering = {}'.format('on' if self.buffering else 'off'))
         if self.fillfactor is not None:
-            with_params.append('fillfactor = %d' % self.fillfactor)
-        return with_params
+            with_params.append('fillfactor = %s' % self.fillfactor)
+        if with_params:
+            statement.parts['extra'] = 'WITH ({}) {}'.format(', '.join(with_params), statement.parts['extra'])
+        return statement

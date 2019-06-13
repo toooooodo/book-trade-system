@@ -322,8 +322,7 @@ class MigrationExecutor:
         apps = after_state.apps
         found_create_model_migration = False
         found_add_field_migration = False
-        with self.connection.cursor() as cursor:
-            existing_table_names = self.connection.introspection.table_names(cursor)
+        existing_table_names = self.connection.introspection.table_names(self.connection.cursor())
         # Make sure all create model and add field operations are done
         for operation in migration.operations:
             if isinstance(operation, migrations.CreateModel):

@@ -6,8 +6,11 @@ class RemovedInDjango30Warning(PendingDeprecationWarning):
     pass
 
 
-class RemovedInNextVersionWarning(DeprecationWarning):
+class RemovedInDjango21Warning(DeprecationWarning):
     pass
+
+
+RemovedInNextVersionWarning = RemovedInDjango21Warning
 
 
 class warn_about_renamed_method:
@@ -88,7 +91,8 @@ class MiddlewareMixin:
         response = None
         if hasattr(self, 'process_request'):
             response = self.process_request(request)
-        response = response or self.get_response(request)
+        if not response:
+            response = self.get_response(request)
         if hasattr(self, 'process_response'):
             response = self.process_response(request, response)
         return response

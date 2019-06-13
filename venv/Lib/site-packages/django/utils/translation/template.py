@@ -2,7 +2,10 @@ import re
 import warnings
 from io import StringIO
 
-from django.template.base import TRANSLATOR_COMMENT_MARK, Lexer, TokenType
+from django.template.base import (
+    TOKEN_BLOCK, TOKEN_COMMENT, TOKEN_TEXT, TOKEN_VAR, TRANSLATOR_COMMENT_MARK,
+    Lexer,
+)
 
 from . import TranslatorCommentWarning, trim_whitespace
 
@@ -60,7 +63,7 @@ def templatize(src, origin=None):
 
     for t in Lexer(src).tokenize():
         if incomment:
-            if t.token_type == TokenType.BLOCK and t.contents == 'endcomment':
+            if t.token_type == TOKEN_BLOCK and t.contents == 'endcomment':
                 content = ''.join(comment)
                 translators_comment_start = None
                 for lineno, line in enumerate(content.splitlines(True)):
@@ -76,7 +79,7 @@ def templatize(src, origin=None):
             else:
                 comment.append(t.contents)
         elif intrans:
-            if t.token_type == TokenType.BLOCK:
+            if t.token_type == TOKEN_BLOCK:
                 endbmatch = endblock_re.match(t.contents)
                 pluralmatch = plural_re.match(t.contents)
                 if endbmatch:
@@ -127,12 +130,12 @@ def templatize(src, origin=None):
                         "Translation blocks must not include other block tags: "
                         "%s (%sline %d)" % (t.contents, filemsg, t.lineno)
                     )
-            elif t.token_type == TokenType.VAR:
+            elif t.token_type == TOKEN_VAR:
                 if inplural:
                     plural.append('%%(%s)s' % t.contents)
                 else:
                     singular.append('%%(%s)s' % t.contents)
-            elif t.token_type == TokenType.TEXT:
+            elif t.token_type == TOKEN_TEXT:
                 contents = t.contents.replace('%', '%%')
                 if inplural:
                     plural.append(contents)
@@ -144,7 +147,7 @@ def templatize(src, origin=None):
             if comment_lineno_cache is not None:
                 cur_lineno = t.lineno + t.contents.count('\n')
                 if comment_lineno_cache == cur_lineno:
-                    if t.token_type != TokenType.COMMENT:
+                    if t.token_type != TOKEN_COMMENT:
                         for c in lineno_comment_map[comment_lineno_cache]:
                             filemsg = ''
                             if origin:
@@ -160,7 +163,7 @@ def templatize(src, origin=None):
                     out.write('# %s' % ' | '.join(lineno_comment_map[comment_lineno_cache]))
                 comment_lineno_cache = None
 
-            if t.token_type == TokenType.BLOCK:
+            if t.token_type == TOKEN_BLOCK:
                 imatch = inline_re.match(t.contents)
                 bmatch = block_re.match(t.contents)
                 cmatches = constant_re.findall(t.contents)
@@ -208,7 +211,7 @@ def templatize(src, origin=None):
                     incomment = True
                 else:
                     out.write(blankout(t.contents, 'B'))
-            elif t.token_type == TokenType.VAR:
+            elif t.token_type == TOKEN_VAR:
                 parts = t.contents.split('|')
                 cmatch = constant_re.match(parts[0])
                 if cmatch:
@@ -218,7 +221,7 @@ def templatize(src, origin=None):
                         out.write(' %s ' % p.split(':', 1)[1])
                     else:
                         out.write(blankout(p, 'F'))
-            elif t.token_type == TokenType.COMMENT:
+            elif t.token_type == TOKEN_COMMENT:
                 if t.contents.lstrip().startswith(TRANSLATOR_COMMENT_MARK):
                     lineno_comment_map.setdefault(t.lineno, []).append(t.contents)
                     comment_lineno_cache = t.lineno

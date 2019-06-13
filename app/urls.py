@@ -7,7 +7,7 @@ urlpatterns = [
     path(r'', views.index, name='index'),
     url(r'^404$', views.notFound),
     url(r'^index/$', views.index),
-    url(r'^login/$', views.login, name='login'),
+    url(r'^login/$', views.login_view, name='login'),
     url(r'^dologin/$', views.dologin),
     url(r'^register/$', views.register, name='register'),
     url(r'^doregister/$', views.doregister),

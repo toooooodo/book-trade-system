@@ -92,13 +92,8 @@ class ForwardManyToOneDescriptor:
         # still be a string model reference.
         return type(
             'RelatedObjectDoesNotExist',
-            (self.field.remote_field.model.DoesNotExist, AttributeError), {
-                '__module__': self.field.model.__module__,
-                '__qualname__': '%s.%s.RelatedObjectDoesNotExist' % (
-                    self.field.model.__qualname__,
-                    self.field.name,
-                ),
-            }
+            (self.field.remote_field.model.DoesNotExist, AttributeError),
+            {}
         )
 
     def is_cached(self, instance):
@@ -162,18 +157,10 @@ class ForwardManyToOneDescriptor:
         try:
             rel_obj = self.field.get_cached_value(instance)
         except KeyError:
-            has_value = None not in self.field.get_local_related_value(instance)
-            ancestor_link = instance._meta.get_ancestor_link(self.field.model) if has_value else None
-            if ancestor_link and ancestor_link.is_cached(instance):
-                # An ancestor link will exist if this field is defined on a
-                # multi-table inheritance parent of the instance's class.
-                ancestor = ancestor_link.get_cached_value(instance)
-                # The value might be cached on an ancestor if the instance
-                # originated from walking down the inheritance chain.
-                rel_obj = self.field.get_cached_value(ancestor, default=None)
-            else:
+            val = self.field.get_local_related_value(instance)
+            if None in val:
                 rel_obj = None
-            if rel_obj is None and has_value:
+            else:
                 rel_obj = self.get_object(instance)
                 remote_field = self.field.remote_field
                 # If this is a one-to-one relation, set the reverse accessor
@@ -213,10 +200,11 @@ class ForwardManyToOneDescriptor:
         elif value is not None:
             if instance._state.db is None:
                 instance._state.db = router.db_for_write(instance.__class__, instance=value)
-            if value._state.db is None:
+            elif value._state.db is None:
                 value._state.db = router.db_for_write(value.__class__, instance=instance)
-            if not router.allow_relation(value, instance):
-                raise ValueError('Cannot assign "%r": the current database router prevents this relation.' % value)
+            elif value._state.db is not None and instance._state.db is not None:
+                if not router.allow_relation(value, instance):
+                    raise ValueError('Cannot assign "%r": the current database router prevents this relation.' % value)
 
         remote_field = self.field.remote_field
         # If we're setting the value of a OneToOneField to None, we need to clear
@@ -255,14 +243,6 @@ class ForwardManyToOneDescriptor:
         # query if it's accessed later on.
         if value is not None and not remote_field.multiple:
             remote_field.set_cached_value(value, instance)
-
-    def __reduce__(self):
-        """
-        Pickling should return the instance attached by self.field on the
-        model, not a new copy of that descriptor. Use getattr() to retrieve
-        the instance directly from the model.
-        """
-        return getattr, (self.field.model, self.field.name)
 
 
 class ForwardOneToOneDescriptor(ForwardManyToOneDescriptor):
@@ -337,13 +317,8 @@ class ReverseOneToOneDescriptor:
         # consistency with `ForwardManyToOneDescriptor`.
         return type(
             'RelatedObjectDoesNotExist',
-            (self.related.related_model.DoesNotExist, AttributeError), {
-                '__module__': self.related.model.__module__,
-                '__qualname__': '%s.%s.RelatedObjectDoesNotExist' % (
-                    self.related.model.__qualname__,
-                    self.related.name,
-                )
-            },
+            (self.related.related_model.DoesNotExist, AttributeError),
+            {}
         )
 
     def is_cached(self, instance):
@@ -458,10 +433,11 @@ class ReverseOneToOneDescriptor:
         else:
             if instance._state.db is None:
                 instance._state.db = router.db_for_write(instance.__class__, instance=value)
-            if value._state.db is None:
+            elif value._state.db is None:
                 value._state.db = router.db_for_write(value.__class__, instance=instance)
-            if not router.allow_relation(value, instance):
-                raise ValueError('Cannot assign "%r": the current database router prevents this relation.' % value)
+            elif value._state.db is not None and instance._state.db is not None:
+                if not router.allow_relation(value, instance):
+                    raise ValueError('Cannot assign "%r": the current database router prevents this relation.' % value)
 
             related_pk = tuple(getattr(instance, field.attname) for field in self.related.field.foreign_related_fields)
             # Set the value of the related field to the value of the related object's related field
@@ -475,10 +451,6 @@ class ReverseOneToOneDescriptor:
             # Set the forward accessor cache on the related object to the current
             # instance to avoid an extra SQL query if it's accessed later on.
             self.related.field.set_cached_value(value, instance)
-
-    def __reduce__(self):
-        # Same purpose as ForwardManyToOneDescriptor.__reduce__().
-        return getattr, (self.related.model, self.related.name)
 
 
 class ReverseManyToOneDescriptor:
@@ -581,13 +553,13 @@ def create_reverse_many_to_one_manager(superclass, rel):
 
         def _remove_prefetched_objects(self):
             try:
-                self.instance._prefetched_objects_cache.pop(self.field.remote_field.get_cache_name())
+                self.instance._prefetched_objects_cache.pop(self.field.related_query_name())
             except (AttributeError, KeyError):
                 pass  # nothing to clear from cache
 
         def get_queryset(self):
             try:
-                return self.instance._prefetched_objects_cache[self.field.remote_field.get_cache_name()]
+                return self.instance._prefetched_objects_cache[self.field.related_query_name()]
             except (AttributeError, KeyError):
                 queryset = super().get_queryset()
                 return self._apply_rel_filters(queryset)
@@ -610,7 +582,7 @@ def create_reverse_many_to_one_manager(superclass, rel):
             for rel_obj in queryset:
                 instance = instances_dict[rel_obj_attr(rel_obj)]
                 setattr(rel_obj, self.field.name, instance)
-            cache_name = self.field.remote_field.get_cache_name()
+            cache_name = self.field.related_query_name()
             return queryset, rel_obj_attr, instance_attr, False, cache_name, False
 
         def add(self, *objs, bulk=True):

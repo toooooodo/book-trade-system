@@ -8,4 +8,5 @@ class GISConfig(AppConfig):
     verbose_name = _("GIS")
 
     def ready(self):
-        serializers.BUILTIN_SERIALIZERS.setdefault('geojson', 'django.contrib.gis.serializers.geojson')
+        if 'geojson' not in serializers.BUILTIN_SERIALIZERS:
+            serializers.BUILTIN_SERIALIZERS['geojson'] = "django.contrib.gis.serializers.geojson"

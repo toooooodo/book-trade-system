@@ -3,7 +3,6 @@ import os
 import pkgutil
 import sys
 from collections import OrderedDict, defaultdict
-from difflib import get_close_matches
 from importlib import import_module
 
 import django
@@ -15,6 +14,7 @@ from django.core.management.base import (
 )
 from django.core.management.color import color_style
 from django.utils import autoreload
+from django.utils.encoding import force_text
 
 
 def find_commands(management_dir):
@@ -117,14 +117,7 @@ def call_command(command_name, *args, **options):
         for s_opt in parser._actions if s_opt.option_strings
     }
     arg_options = {opt_mapping.get(key, key): value for key, value in options.items()}
-    parse_args = [str(a) for a in args]
-    # Any required arguments which are passed in via **options must be passed
-    # to parse_args().
-    parse_args += [
-        '{}={}'.format(min(opt.option_strings), arg_options[opt.dest])
-        for opt in parser._actions if opt.required and opt.dest in options
-    ]
-    defaults = parser.parse_args(args=parse_args)
+    defaults = parser.parse_args(args=[force_text(a) for a in args])
     defaults = dict(defaults._get_kwargs(), **arg_options)
     # Raise an error if any unknown options were passed.
     stealth_options = set(command.base_stealth_options + command.stealth_options)
@@ -211,11 +204,10 @@ class ManagementUtility:
                 settings.INSTALLED_APPS
             else:
                 sys.stderr.write("No Django settings specified.\n")
-            possible_matches = get_close_matches(subcommand, commands)
-            sys.stderr.write('Unknown command: %r' % subcommand)
-            if possible_matches:
-                sys.stderr.write('. Did you mean %s?' % possible_matches[0])
-            sys.stderr.write("\nType '%s help' for usage.\n" % self.prog_name)
+            sys.stderr.write(
+                "Unknown command: %r\nType '%s help' for usage.\n"
+                % (subcommand, self.prog_name)
+            )
             sys.exit(1)
         if isinstance(app_name, BaseCommand):
             # If the command is already loaded, use it directly.
@@ -311,7 +303,7 @@ class ManagementUtility:
         # Preprocess options to extract --settings and --pythonpath.
         # These options could affect the commands that are available, so they
         # must be processed early.
-        parser = CommandParser(usage='%(prog)s subcommand [options] [args]', add_help=False, allow_abbrev=False)
+        parser = CommandParser(None, usage="%(prog)s subcommand [options] [args]", add_help=False)
         parser.add_argument('--settings')
         parser.add_argument('--pythonpath')
         parser.add_argument('args', nargs='*')  # catch-all
@@ -324,8 +316,6 @@ class ManagementUtility:
         try:
             settings.INSTALLED_APPS
         except ImproperlyConfigured as exc:
-            self.settings_exception = exc
-        except ImportError as exc:
             self.settings_exception = exc
 
         if settings.configured:
@@ -361,7 +351,7 @@ class ManagementUtility:
         if subcommand == 'help':
             if '--commands' in args:
                 sys.stdout.write(self.main_help_text(commands_only=True) + '\n')
-            elif not options.args:
+            elif len(options.args) < 1:
                 sys.stdout.write(self.main_help_text() + '\n')
             else:
                 self.fetch_command(options.args[0]).print_help(self.prog_name, options.args[0])

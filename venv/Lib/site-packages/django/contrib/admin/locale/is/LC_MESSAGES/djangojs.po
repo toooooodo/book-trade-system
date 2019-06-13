@@ -4,15 +4,14 @@
 # gudbergur <gudbergur@gmail.com>, 2012
 # Hafsteinn Einarsson <haffi67@gmail.com>, 2011-2012
 # Jannis Leidel <jannis@leidel.info>, 2011
-# Matt R, 2018
 # Thordur Sigurdsson <thordur@ja.is>, 2016-2017
 msgid ""
 msgstr ""
 "Project-Id-Version: django\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-05-17 11:50+0200\n"
-"PO-Revision-Date: 2018-05-18 14:09+0000\n"
-"Last-Translator: Matt R\n"
+"POT-Creation-Date: 2016-05-17 23:12+0200\n"
+"PO-Revision-Date: 2017-09-19 16:41+0000\n"
+"Last-Translator: Thordur Sigurdsson <thordur@ja.is>\n"
 "Language-Team: Icelandic (http://www.transifex.com/django/django/language/"
 "is/)\n"
 "MIME-Version: 1.0\n"
@@ -100,21 +99,6 @@ msgstr ""
 "Þú hefur valið aðgerð en hefur ekki gert breytingar á reitum. Þú ert líklega "
 "að leita að 'Fara' hnappnum frekar en 'Vista' hnappnum."
 
-msgid "Now"
-msgstr "Núna"
-
-msgid "Midnight"
-msgstr "Miðnætti"
-
-msgid "6 a.m."
-msgstr "6 f.h."
-
-msgid "Noon"
-msgstr "Hádegi"
-
-msgid "6 p.m."
-msgstr "6 e.h."
-
 #, javascript-format
 msgid "Note: You are %s hour ahead of server time."
 msgid_plural "Note: You are %s hours ahead of server time."
@@ -127,11 +111,26 @@ msgid_plural "Note: You are %s hours behind server time."
 msgstr[0] "Athugaðu að þú ert %s klukkustund á eftir tíma vefþjóns."
 msgstr[1] "Athugaðu að þú ert %s klukkustundum á eftir tíma vefþjóns."
 
+msgid "Now"
+msgstr "Núna"
+
 msgid "Choose a Time"
 msgstr "Veldu tíma"
 
 msgid "Choose a time"
 msgstr "Veldu tíma"
+
+msgid "Midnight"
+msgstr "Miðnætti"
+
+msgid "6 a.m."
+msgstr "6 f.h."
+
+msgid "Noon"
+msgstr "Hádegi"
+
+msgid "6 p.m."
+msgstr "6 e.h."
 
 msgid "Cancel"
 msgstr "Hætta við"
@@ -149,40 +148,40 @@ msgid "Tomorrow"
 msgstr "Á morgun"
 
 msgid "January"
-msgstr "janúar"
+msgstr "Janúar"
 
 msgid "February"
-msgstr "febrúar"
+msgstr "Febrúar"
 
 msgid "March"
-msgstr "mars"
+msgstr "Mars"
 
 msgid "April"
-msgstr "apríl"
+msgstr "Apríl"
 
 msgid "May"
-msgstr "maí"
+msgstr "Maí"
 
 msgid "June"
-msgstr "júní"
+msgstr "Júní"
 
 msgid "July"
-msgstr "júlí"
+msgstr "Júlí"
 
 msgid "August"
-msgstr "ágúst"
+msgstr "Ágúst"
 
 msgid "September"
-msgstr "september"
+msgstr "September"
 
 msgid "October"
-msgstr "október"
+msgstr "Október"
 
 msgid "November"
-msgstr "nóvember"
+msgstr "Nóvember"
 
 msgid "December"
-msgstr "desember"
+msgstr "Desember"
 
 msgctxt "one letter Sunday"
 msgid "S"

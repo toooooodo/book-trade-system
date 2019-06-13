@@ -101,13 +101,15 @@ class BaseManager:
     def from_queryset(cls, queryset_class, class_name=None):
         if class_name is None:
             class_name = '%sFrom%s' % (cls.__name__, queryset_class.__name__)
-        return type(class_name, (cls,), {
+        class_dict = {
             '_queryset_class': queryset_class,
-            **cls._get_queryset_methods(queryset_class),
-        })
+        }
+        class_dict.update(cls._get_queryset_methods(queryset_class))
+        return type(class_name, (cls,), class_dict)
 
     def contribute_to_class(self, model, name):
-        self.name = self.name or name
+        if not self.name:
+            self.name = name
         self.model = model
 
         setattr(model, name, ManagerDescriptor(self))

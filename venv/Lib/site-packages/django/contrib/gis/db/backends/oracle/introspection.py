@@ -11,7 +11,8 @@ class OracleIntrospection(DatabaseIntrospection):
     data_types_reverse[cx_Oracle.OBJECT] = 'GeometryField'
 
     def get_geometry_type(self, table_name, geo_col):
-        with self.connection.cursor() as cursor:
+        cursor = self.connection.cursor()
+        try:
             # Querying USER_SDO_GEOM_METADATA to get the SRID and dimension information.
             try:
                 cursor.execute(
@@ -39,4 +40,7 @@ class OracleIntrospection(DatabaseIntrospection):
             dim = dim.size()
             if dim != 2:
                 field_params['dim'] = dim
+        finally:
+            cursor.close()
+
         return field_type, field_params

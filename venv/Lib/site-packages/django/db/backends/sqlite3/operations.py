@@ -1,5 +1,4 @@
 import datetime
-import decimal
 import uuid
 
 from django.conf import settings
@@ -10,16 +9,11 @@ from django.db.models import aggregates, fields
 from django.db.models.expressions import Col
 from django.utils import timezone
 from django.utils.dateparse import parse_date, parse_datetime, parse_time
-from django.utils.duration import duration_microseconds
+from django.utils.duration import duration_string
 
 
 class DatabaseOperations(BaseDatabaseOperations):
     cast_char_field_without_max_length = 'text'
-    cast_data_types = {
-        'DateField': 'TEXT',
-        'DateTimeField': 'TEXT',
-    }
-    explain_prefix = 'EXPLAIN QUERY PLAN'
 
     def bulk_batch_size(self, fields, objs):
         """
@@ -49,7 +43,7 @@ class DatabaseOperations(BaseDatabaseOperations):
                     pass
                 else:
                     if isinstance(output_field, bad_fields):
-                        raise utils.NotSupportedError(
+                        raise NotImplementedError(
                             'You cannot use Sum, Avg, StdDev, and Variance '
                             'aggregations on date/time fields in sqlite3 '
                             'since date/time is saved as text.'
@@ -64,7 +58,7 @@ class DatabaseOperations(BaseDatabaseOperations):
         return "django_date_extract('%s', %s)" % (lookup_type.lower(), field_name)
 
     def date_interval_sql(self, timedelta):
-        return str(duration_microseconds(timedelta))
+        return "'%s'" % duration_string(timedelta)
 
     def format_for_duration_arithmetic(self, sql):
         """Do nothing since formatting is handled in the custom function."""
@@ -214,8 +208,10 @@ class DatabaseOperations(BaseDatabaseOperations):
             converters.append(self.convert_datefield_value)
         elif internal_type == 'TimeField':
             converters.append(self.convert_timefield_value)
-        elif internal_type == 'DecimalField':
-            converters.append(self.get_decimalfield_converter(expression))
+        # Converter for Col is added with Database.register_converter()
+        # in base.py.
+        elif internal_type == 'DecimalField' and not isinstance(expression, Col):
+            converters.append(self.convert_decimalfield_value)
         elif internal_type == 'UUIDField':
             converters.append(self.convert_uuidfield_value)
         elif internal_type in ('NullBooleanField', 'BooleanField'):
@@ -242,21 +238,12 @@ class DatabaseOperations(BaseDatabaseOperations):
                 value = parse_time(value)
         return value
 
-    def get_decimalfield_converter(self, expression):
-        # SQLite stores only 15 significant digits. Digits coming from
-        # float inaccuracy must be removed.
-        create_decimal = decimal.Context(prec=15).create_decimal_from_float
-        if isinstance(expression, Col):
-            quantize_value = decimal.Decimal(1).scaleb(-expression.output_field.decimal_places)
-
-            def converter(value, expression, connection):
-                if value is not None:
-                    return create_decimal(value).quantize(quantize_value, context=expression.output_field.context)
-        else:
-            def converter(value, expression, connection):
-                if value is not None:
-                    return create_decimal(value)
-        return converter
+    def convert_decimalfield_value(self, value, expression, connection):
+        if value is not None:
+            value = expression.output_field.format_number(value)
+            # Value is not converted to Decimal here as it will be converted
+            # later in BaseExpression.convert_value().
+        return value
 
     def convert_uuidfield_value(self, value, expression, connection):
         if value is not None:

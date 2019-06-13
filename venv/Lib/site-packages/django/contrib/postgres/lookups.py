@@ -1,5 +1,4 @@
 from django.db.models import Lookup, Transform
-from django.db.models.lookups import Exact
 
 from .search import SearchVector, SearchVectorExact, SearchVectorField
 
@@ -65,12 +64,3 @@ class SearchLookup(SearchVectorExact):
 class TrigramSimilar(PostgresSimpleLookup):
     lookup_name = 'trigram_similar'
     operator = '%%'
-
-
-class JSONExact(Exact):
-    can_use_none_as_rhs = True
-
-    def process_rhs(self, compiler, connection):
-        result = super().process_rhs(compiler, connection)
-        # Treat None lookup values as null.
-        return ("'null'", []) if result == ('%s', [None]) else result

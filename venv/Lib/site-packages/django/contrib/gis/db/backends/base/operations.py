@@ -3,7 +3,6 @@ from django.contrib.gis.db.models.functions import Distance
 from django.contrib.gis.measure import (
     Area as AreaMeasure, Distance as DistanceMeasure,
 )
-from django.db.utils import NotSupportedError
 from django.utils.functional import cached_property
 
 
@@ -106,7 +105,7 @@ class BaseSpatialOperations:
 
     def check_expression_support(self, expression):
         if isinstance(expression, self.disallowed_aggregates):
-            raise NotSupportedError(
+            raise NotImplementedError(
                 "%s spatial aggregation is not supported by this database backend." % expression.name
             )
         super().check_expression_support(expression)
@@ -116,7 +115,7 @@ class BaseSpatialOperations:
 
     def spatial_function_name(self, func_name):
         if func_name in self.unsupported_functions:
-            raise NotSupportedError("This backend doesn't support the %s function." % func_name)
+            raise NotImplementedError("This backend doesn't support the %s function." % func_name)
         return self.function_names.get(func_name, self.geom_func_prefix + func_name)
 
     # Routines for getting the OGC-compliant models.

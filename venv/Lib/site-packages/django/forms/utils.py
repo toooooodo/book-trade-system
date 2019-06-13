@@ -174,5 +174,6 @@ def to_current_timezone(value):
     to naive datetimes in the current time zone for display.
     """
     if settings.USE_TZ and value is not None and timezone.is_aware(value):
-        return timezone.make_naive(value)
+        current_timezone = timezone.get_current_timezone()
+        return timezone.make_naive(value, current_timezone)
     return value

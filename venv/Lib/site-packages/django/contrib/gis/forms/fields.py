@@ -35,14 +35,9 @@ class GeometryField(forms.Field):
             return None
 
         if not isinstance(value, GEOSGeometry):
-            if hasattr(self.widget, 'deserialize'):
-                value = self.widget.deserialize(value)
-            else:
-                try:
-                    value = GEOSGeometry(value)
-                except (GEOSException, ValueError, TypeError):
-                    value = None
-            if value is None:
+            try:
+                value = GEOSGeometry(value)
+            except (GEOSException, ValueError, TypeError):
                 raise forms.ValidationError(self.error_messages['invalid_geom'], code='invalid_geom')
 
         # Try to set the srid

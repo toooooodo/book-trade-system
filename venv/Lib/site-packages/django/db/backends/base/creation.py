@@ -221,7 +221,9 @@ class BaseDatabaseCreation:
         # already and its name has been copied to settings_dict['NAME'] so
         # we don't need to call _get_test_db_name.
         orig_settings_dict = self.connection.settings_dict
-        return {**orig_settings_dict, 'NAME': '{}_{}'.format(orig_settings_dict['NAME'], suffix)}
+        new_settings_dict = orig_settings_dict.copy()
+        new_settings_dict['NAME'] = '{}_{}'.format(orig_settings_dict['NAME'], suffix)
+        return new_settings_dict
 
     def _clone_test_db(self, suffix, verbosity, keepdb=False):
         """

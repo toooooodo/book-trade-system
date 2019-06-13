@@ -6,14 +6,12 @@ from django.core.exceptions import EmptyResultSet
 from django.db.models.expressions import Func, Value
 from django.db.models.fields import DateTimeField, Field, IntegerField
 from django.db.models.query_utils import RegisterLookupMixin
-from django.utils.datastructures import OrderedSet
 from django.utils.functional import cached_property
 
 
 class Lookup:
     lookup_name = None
     prepare_rhs = True
-    can_use_none_as_rhs = False
 
     def __init__(self, lhs, rhs):
         self.lhs, self.rhs = lhs, rhs
@@ -27,7 +25,7 @@ class Lookup:
             # a bilateral transformation on a nested QuerySet: that won't work.
             from django.db.models.sql.query import Query  # avoid circular import
             if isinstance(rhs, Query):
-                raise NotImplementedError("Bilateral transformations on nested querysets are not implemented.")
+                raise NotImplementedError("Bilateral transformations on nested querysets are not supported.")
         self.bilateral_transforms = bilateral_transforms
 
     def apply_bilateral_transforms(self, value):
@@ -179,7 +177,9 @@ class FieldGetDbPrepValueMixin:
     def get_db_prep_lookup(self, value, connection):
         # For relational fields, use the output_field of the 'field' attribute.
         field = getattr(self.lhs.output_field, 'field', None)
-        get_db_prep_value = getattr(field, 'get_db_prep_value', None) or self.lhs.output_field.get_db_prep_value
+        get_db_prep_value = getattr(field, 'get_db_prep_value', None)
+        if not get_db_prep_value:
+            get_db_prep_value = self.lhs.output_field.get_db_prep_value
         return (
             '%s',
             [get_db_prep_value(v, connection, prepared=True) for v in value]
@@ -327,7 +327,7 @@ class In(FieldGetDbPrepValueIterableMixin, BuiltinLookup):
 
         if self.rhs_is_direct_value():
             try:
-                rhs = OrderedSet(self.rhs)
+                rhs = set(self.rhs)
             except TypeError:  # Unhashable items in self.rhs
                 rhs = self.rhs
 
@@ -378,8 +378,6 @@ class In(FieldGetDbPrepValueIterableMixin, BuiltinLookup):
 
 
 class PatternLookup(BuiltinLookup):
-    param_pattern = '%%%s%%'
-    prepare_rhs = False
 
     def get_rhs_op(self, connection, rhs):
         # Assume we are in startswith. We need to produce SQL like:
@@ -397,43 +395,71 @@ class PatternLookup(BuiltinLookup):
         else:
             return super().get_rhs_op(connection, rhs)
 
-    def process_rhs(self, qn, connection):
-        rhs, params = super().process_rhs(qn, connection)
-        if self.rhs_is_direct_value() and params and not self.bilateral_transforms:
-            params[0] = self.param_pattern % connection.ops.prep_for_like_query(params[0])
-        return rhs, params
-
 
 @Field.register_lookup
 class Contains(PatternLookup):
     lookup_name = 'contains'
+    prepare_rhs = False
+
+    def process_rhs(self, qn, connection):
+        rhs, params = super().process_rhs(qn, connection)
+        if params and not self.bilateral_transforms:
+            params[0] = "%%%s%%" % connection.ops.prep_for_like_query(params[0])
+        return rhs, params
 
 
 @Field.register_lookup
 class IContains(Contains):
     lookup_name = 'icontains'
+    prepare_rhs = False
 
 
 @Field.register_lookup
 class StartsWith(PatternLookup):
     lookup_name = 'startswith'
-    param_pattern = '%s%%'
+    prepare_rhs = False
+
+    def process_rhs(self, qn, connection):
+        rhs, params = super().process_rhs(qn, connection)
+        if params and not self.bilateral_transforms:
+            params[0] = "%s%%" % connection.ops.prep_for_like_query(params[0])
+        return rhs, params
 
 
 @Field.register_lookup
-class IStartsWith(StartsWith):
+class IStartsWith(PatternLookup):
     lookup_name = 'istartswith'
+    prepare_rhs = False
+
+    def process_rhs(self, qn, connection):
+        rhs, params = super().process_rhs(qn, connection)
+        if params and not self.bilateral_transforms:
+            params[0] = "%s%%" % connection.ops.prep_for_like_query(params[0])
+        return rhs, params
 
 
 @Field.register_lookup
 class EndsWith(PatternLookup):
     lookup_name = 'endswith'
-    param_pattern = '%%%s'
+    prepare_rhs = False
+
+    def process_rhs(self, qn, connection):
+        rhs, params = super().process_rhs(qn, connection)
+        if params and not self.bilateral_transforms:
+            params[0] = "%%%s" % connection.ops.prep_for_like_query(params[0])
+        return rhs, params
 
 
 @Field.register_lookup
-class IEndsWith(EndsWith):
+class IEndsWith(PatternLookup):
     lookup_name = 'iendswith'
+    prepare_rhs = False
+
+    def process_rhs(self, qn, connection):
+        rhs, params = super().process_rhs(qn, connection)
+        if params and not self.bilateral_transforms:
+            params[0] = "%%%s" % connection.ops.prep_for_like_query(params[0])
+        return rhs, params
 
 
 @Field.register_lookup

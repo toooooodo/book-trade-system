@@ -41,7 +41,8 @@ class GEOSFunc:
 
     def __call__(self, *args):
         # Create a context handle if one doesn't exist for this thread.
-        self.thread_context.handle = self.thread_context.handle or GEOSContextHandle()
+        if not self.thread_context.handle:
+            self.thread_context.handle = GEOSContextHandle()
         # Call the threaded GEOS routine with the pointer of the context handle
         # as the first argument.
         return self.cfunc(self.thread_context.handle.ptr, *args)
@@ -54,7 +55,9 @@ class GEOSFunc:
         return self.cfunc.argtypes
 
     def _set_argtypes(self, argtypes):
-        self.cfunc.argtypes = [CONTEXT_PTR, *argtypes]
+        new_argtypes = [CONTEXT_PTR]
+        new_argtypes.extend(argtypes)
+        self.cfunc.argtypes = new_argtypes
 
     argtypes = property(_get_argtypes, _set_argtypes)
 

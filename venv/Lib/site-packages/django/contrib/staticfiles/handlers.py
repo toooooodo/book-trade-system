@@ -4,7 +4,6 @@ from urllib.request import url2pathname
 from django.conf import settings
 from django.contrib.staticfiles import utils
 from django.contrib.staticfiles.views import serve
-from django.core.handlers.exception import response_for_exception
 from django.core.handlers.wsgi import WSGIHandler, get_path_info
 
 
@@ -57,7 +56,9 @@ class StaticFilesHandler(WSGIHandler):
             try:
                 return self.serve(request)
             except Http404 as e:
-                return response_for_exception(request, e)
+                if settings.DEBUG:
+                    from django.views import debug
+                    return debug.technical_404_response(request, e)
         return super().get_response(request)
 
     def __call__(self, environ, start_response):

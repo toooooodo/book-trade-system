@@ -10,19 +10,17 @@ from django.utils.inspect import func_supports_parameter
 from django.utils.translation import gettext_lazy as _
 
 from ..utils import prefix_validation_error
-from .mixins import CheckFieldDefaultMixin
 from .utils import AttributeSetter
 
 __all__ = ['ArrayField']
 
 
-class ArrayField(CheckFieldDefaultMixin, Field):
+class ArrayField(Field):
     empty_strings_allowed = False
     default_error_messages = {
-        'item_invalid': _('Item %(nth)s in the array did not validate:'),
+        'item_invalid': _('Item %(nth)s in the array did not validate: '),
         'nested_array_mismatch': _('Nested arrays must have the same length.'),
     }
-    _default_hint = ('list', '[]')
 
     def __init__(self, base_field, size=None, **kwargs):
         self.base_field = base_field
@@ -160,7 +158,7 @@ class ArrayField(CheckFieldDefaultMixin, Field):
                     error,
                     prefix=self.error_messages['item_invalid'],
                     code='item_invalid',
-                    params={'nth': index + 1},
+                    params={'nth': index},
                 )
         if isinstance(self.base_field, ArrayField):
             if len({len(i) for i in value}) > 1:
@@ -179,16 +177,17 @@ class ArrayField(CheckFieldDefaultMixin, Field):
                     error,
                     prefix=self.error_messages['item_invalid'],
                     code='item_invalid',
-                    params={'nth': index + 1},
+                    params={'nth': index},
                 )
 
     def formfield(self, **kwargs):
-        return super().formfield(**{
+        defaults = {
             'form_class': SimpleArrayField,
             'base_field': self.base_field.formfield(),
             'max_length': self.size,
-            **kwargs,
-        })
+        }
+        defaults.update(kwargs)
+        return super().formfield(**defaults)
 
 
 @ArrayField.register_lookup

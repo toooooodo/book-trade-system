@@ -1,7 +1,6 @@
 # This file is distributed under the same license as the Django package.
 #
 # Translators:
-# Branko Kokanovic <branko@kokanovic.org>, 2018
 # Jannis Leidel <jannis@leidel.info>, 2011
 # Janos Guljas <janos@resenje.org>, 2012
 msgid ""
@@ -9,8 +8,8 @@ msgstr ""
 "Project-Id-Version: django\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2017-01-19 16:49+0100\n"
-"PO-Revision-Date: 2018-07-04 19:58+0000\n"
-"Last-Translator: Branko Kokanovic <branko@kokanovic.org>\n"
+"PO-Revision-Date: 2017-09-19 16:40+0000\n"
+"Last-Translator: Jannis Leidel <jannis@leidel.info>\n"
 "Language-Team: Serbian (http://www.transifex.com/django/django/language/"
 "sr/)\n"
 "MIME-Version: 1.0\n"
@@ -105,45 +104,45 @@ msgid "Model: %(name)s"
 msgstr ""
 
 msgid "Fields"
-msgstr "Поља"
+msgstr ""
 
 msgid "Field"
-msgstr "Поље"
+msgstr ""
 
 msgid "Type"
-msgstr "Тип"
+msgstr ""
 
 msgid "Description"
-msgstr "Опис"
+msgstr ""
 
 msgid "Methods with arguments"
-msgstr "Метода са аргументима"
+msgstr ""
 
 msgid "Method"
-msgstr "Метод"
+msgstr ""
 
 msgid "Arguments"
-msgstr "Аргументи"
+msgstr ""
 
 msgid "Back to Model documentation"
-msgstr "Назад на документацију о Моделима"
+msgstr ""
 
 msgid "Model documentation"
-msgstr "Документација о Моделима"
+msgstr ""
 
 msgid "Model groups"
-msgstr "Групе модела"
+msgstr ""
 
 msgid "Templates"
 msgstr "Шаблони"
 
 #, python-format
 msgid "Template: %(name)s"
-msgstr "Шаблон: %(name)s"
+msgstr ""
 
 #, python-format
 msgid "Template: \"%(name)s\""
-msgstr "Шаблон: \"%(name)s\""
+msgstr ""
 
 #. Translators: Search is not a verb here, it qualifies path (a search path)
 #, python-format
@@ -151,19 +150,19 @@ msgid "Search path for template \"%(name)s\":"
 msgstr ""
 
 msgid "(does not exist)"
-msgstr "(не постоји)"
+msgstr ""
 
 msgid "Back to Documentation"
-msgstr "Назада на документацију"
+msgstr ""
 
 msgid "Template filters"
-msgstr "Филтери шаблона"
+msgstr ""
 
 msgid "Template filter documentation"
 msgstr ""
 
 msgid "Built-in filters"
-msgstr "Уграђени филтери"
+msgstr ""
 
 #, python-format
 msgid ""
@@ -178,7 +177,7 @@ msgid "Template tag documentation"
 msgstr ""
 
 msgid "Built-in tags"
-msgstr "Уграђене ознаке"
+msgstr ""
 
 #, python-format
 msgid ""
@@ -188,19 +187,19 @@ msgstr ""
 
 #, python-format
 msgid "View: %(name)s"
-msgstr "Види: %(name)s"
+msgstr ""
 
 msgid "Context:"
-msgstr "Контекст:"
+msgstr ""
 
 msgid "Templates:"
-msgstr "Шаблони:"
+msgstr ""
 
 msgid "Back to View documentation"
-msgstr "Назад на документацију о View-овима"
+msgstr ""
 
 msgid "View documentation"
-msgstr "View документација"
+msgstr ""
 
 msgid "Jump to namespace"
 msgstr ""

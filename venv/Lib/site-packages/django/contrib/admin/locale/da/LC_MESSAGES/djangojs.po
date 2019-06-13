@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: django\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-05-17 11:50+0200\n"
+"POT-Creation-Date: 2016-05-17 23:12+0200\n"
 "PO-Revision-Date: 2017-09-19 16:41+0000\n"
 "Last-Translator: Mathias Rav <mathiasrav@gmail.com>\n"
 "Language-Team: Danish (http://www.transifex.com/django/django/language/da/)\n"
@@ -102,21 +102,6 @@ msgstr ""
 "Du har valgt en handling, og du har ikke udført nogen ændringer på felter. "
 "Det, du søger er formentlig Udfør-knappen i stedet for Gem-knappen."
 
-msgid "Now"
-msgstr "Nu"
-
-msgid "Midnight"
-msgstr "Midnat"
-
-msgid "6 a.m."
-msgstr "Klokken 6"
-
-msgid "Noon"
-msgstr "Middag"
-
-msgid "6 p.m."
-msgstr "Klokken 18"
-
 #, javascript-format
 msgid "Note: You are %s hour ahead of server time."
 msgid_plural "Note: You are %s hours ahead of server time."
@@ -129,11 +114,26 @@ msgid_plural "Note: You are %s hours behind server time."
 msgstr[0] "Obs: Du er %s time bagud i forhold til servertiden."
 msgstr[1] "Obs: Du er %s timer bagud i forhold til servertiden."
 
+msgid "Now"
+msgstr "Nu"
+
 msgid "Choose a Time"
 msgstr "Vælg et Tidspunkt"
 
 msgid "Choose a time"
 msgstr "Vælg et tidspunkt"
+
+msgid "Midnight"
+msgstr "Midnat"
+
+msgid "6 a.m."
+msgstr "Klokken 6"
+
+msgid "Noon"
+msgstr "Middag"
+
+msgid "6 p.m."
+msgstr "Klokken 18"
 
 msgid "Cancel"
 msgstr "Annuller"

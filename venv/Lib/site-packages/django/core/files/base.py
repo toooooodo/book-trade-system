@@ -2,7 +2,6 @@ import os
 from io import BytesIO, StringIO, UnsupportedOperation
 
 from django.core.files.utils import FileProxyMixin
-from django.utils.functional import cached_property
 
 
 class File(FileProxyMixin):
@@ -28,8 +27,7 @@ class File(FileProxyMixin):
     def __len__(self):
         return self.size
 
-    @cached_property
-    def size(self):
+    def _get_size_from_underlying_file(self):
         if hasattr(self.file, 'size'):
             return self.file.size
         if hasattr(self.file, 'name'):
@@ -45,12 +43,25 @@ class File(FileProxyMixin):
             return size
         raise AttributeError("Unable to determine the file's size.")
 
+    def _get_size(self):
+        if hasattr(self, '_size'):
+            return self._size
+        self._size = self._get_size_from_underlying_file()
+        return self._size
+
+    def _set_size(self, size):
+        self._size = size
+
+    size = property(_get_size, _set_size)
+
     def chunks(self, chunk_size=None):
         """
         Read the file and yield chunks of ``chunk_size`` bytes (defaults to
-        ``File.DEFAULT_CHUNK_SIZE``).
+        ``UploadedFile.DEFAULT_CHUNK_SIZE``).
         """
-        chunk_size = chunk_size or self.DEFAULT_CHUNK_SIZE
+        if not chunk_size:
+            chunk_size = self.DEFAULT_CHUNK_SIZE
+
         try:
             self.seek(0)
         except (AttributeError, UnsupportedOperation):
@@ -70,7 +81,9 @@ class File(FileProxyMixin):
         always return ``False`` -- there's no good reason to read from memory in
         chunks.
         """
-        return self.size > (chunk_size or self.DEFAULT_CHUNK_SIZE)
+        if not chunk_size:
+            chunk_size = self.DEFAULT_CHUNK_SIZE
+        return self.size > chunk_size
 
     def __iter__(self):
         # Iterate over this file-like object by newlines
@@ -139,10 +152,6 @@ class ContentFile(File):
 
     def close(self):
         pass
-
-    def write(self, data):
-        self.__dict__.pop('size', None)  # Clear the computed size.
-        return self.file.write(data)
 
 
 def endswith_cr(line):

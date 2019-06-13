@@ -27,21 +27,19 @@ class SessionStore(SessionBase):
     def model(self):
         return self.get_model_class()
 
-    def _get_session_from_db(self):
+    def load(self):
         try:
-            return self.model.objects.get(
+            s = self.model.objects.get(
                 session_key=self.session_key,
                 expire_date__gt=timezone.now()
             )
+            return self.decode(s.session_data)
         except (self.model.DoesNotExist, SuspiciousOperation) as e:
             if isinstance(e, SuspiciousOperation):
                 logger = logging.getLogger('django.security.%s' % e.__class__.__name__)
                 logger.warning(str(e))
             self._session_key = None
-
-    def load(self):
-        s = self._get_session_from_db()
-        return self.decode(s.session_data) if s else {}
+            return {}
 
     def exists(self, session_key):
         return self.model.objects.filter(session_key=session_key).exists()

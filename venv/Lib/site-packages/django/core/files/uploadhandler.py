@@ -160,7 +160,10 @@ class MemoryFileUploadHandler(FileUploadHandler):
         """
         # Check the content-length header to see if we should
         # If the post is too large, we cannot use the Memory handler.
-        self.activated = content_length <= settings.FILE_UPLOAD_MAX_MEMORY_SIZE
+        if content_length > settings.FILE_UPLOAD_MAX_MEMORY_SIZE:
+            self.activated = False
+        else:
+            self.activated = True
 
     def new_file(self, *args, **kwargs):
         super().new_file(*args, **kwargs)

@@ -1,3 +1,4 @@
+import binascii
 import struct
 
 from django.forms import ValidationError
@@ -12,14 +13,14 @@ def pack(structure, data):
     """
     Pack data into hex string with little endian format.
     """
-    return struct.pack('<' + structure, *data)
+    return binascii.hexlify(struct.pack('<' + structure, *data)).upper()
 
 
 def unpack(structure, data):
     """
     Unpack little endian hexlified binary string into a list.
     """
-    return struct.unpack('<' + structure, bytes.fromhex(data))
+    return struct.unpack('<' + structure, binascii.unhexlify(data))
 
 
 def chunk(data, index):
@@ -66,7 +67,7 @@ def from_pgraster(data):
 
         # Chunk and unpack band data (pack size times nr of pixels)
         band, data = chunk(data, pack_size * header[10] * header[11])
-        band_result = {'data': bytes.fromhex(band)}
+        band_result = {'data': binascii.unhexlify(band)}
 
         # If the nodata flag is True, set the nodata value.
         if has_nodata:
@@ -108,7 +109,7 @@ def to_pgraster(rast):
         rast.srs.srid, rast.width, rast.height,
     )
 
-    # Pack raster header.
+    # Hexlify raster header
     result = pack(POSTGIS_HEADER_STRUCTURE, rasterheader)
 
     for band in rast.bands:
@@ -134,8 +135,11 @@ def to_pgraster(rast):
         # Pack band header
         bandheader = pack(structure, (pixeltype, band.nodata_value or 0))
 
-        # Add packed header and band data to result
-        result += bandheader + band.data(as_memoryview=True)
+        # Hexlify band data
+        band_data_hex = binascii.hexlify(band.data(as_memoryview=True)).upper()
 
-    # Convert raster to hex string before passing it to the DB.
-    return result.hex()
+        # Add packed header and band data to result
+        result += bandheader + band_data_hex
+
+    # Cast raster to string before passing it to the DB
+    return result.decode()

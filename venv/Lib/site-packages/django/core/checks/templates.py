@@ -17,10 +17,13 @@ E002 = Error(
 
 @register(Tags.templates)
 def check_setting_app_dirs_loaders(app_configs, **kwargs):
-    return [E001] if any(
-        conf.get('APP_DIRS') and 'loaders' in conf.get('OPTIONS', {})
-        for conf in settings.TEMPLATES
-    ) else []
+    passed_check = True
+    for conf in settings.TEMPLATES:
+        if not conf.get('APP_DIRS'):
+            continue
+        if 'loaders' in conf.get('OPTIONS', {}):
+            passed_check = False
+    return [] if passed_check else [E001]
 
 
 @register(Tags.templates)

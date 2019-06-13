@@ -6,7 +6,6 @@ import json
 
 from django import forms
 from django.conf import settings
-from django.core.exceptions import ValidationError
 from django.db.models.deletion import CASCADE
 from django.urls import reverse
 from django.urls.exceptions import NoReverseMatch
@@ -63,8 +62,10 @@ class AdminDateWidget(forms.DateInput):
         return forms.Media(js=["admin/js/%s" % path for path in js])
 
     def __init__(self, attrs=None, format=None):
-        attrs = {'class': 'vDateField', 'size': '10', **(attrs or {})}
-        super().__init__(attrs=attrs, format=format)
+        final_attrs = {'class': 'vDateField', 'size': '10'}
+        if attrs is not None:
+            final_attrs.update(attrs)
+        super().__init__(attrs=final_attrs, format=format)
 
 
 class AdminTimeWidget(forms.TimeInput):
@@ -80,8 +81,10 @@ class AdminTimeWidget(forms.TimeInput):
         return forms.Media(js=["admin/js/%s" % path for path in js])
 
     def __init__(self, attrs=None, format=None):
-        attrs = {'class': 'vTimeField', 'size': '8', **(attrs or {})}
-        super().__init__(attrs=attrs, format=format)
+        final_attrs = {'class': 'vTimeField', 'size': '8'}
+        if attrs is not None:
+            final_attrs.update(attrs)
+        super().__init__(attrs=final_attrs, format=format)
 
 
 class AdminSplitDateTime(forms.SplitDateTimeWidget):
@@ -184,7 +187,7 @@ class ForeignKeyRawIdWidget(forms.TextInput):
         key = self.rel.get_related_field().name
         try:
             obj = self.rel.model._default_manager.using(self.db).get(**{key: value})
-        except (ValueError, self.rel.model.DoesNotExist, ValidationError):
+        except (ValueError, self.rel.model.DoesNotExist):
             return '', ''
 
         try:
@@ -239,8 +242,7 @@ class RelatedFieldWidgetWrapper(forms.Widget):
     template_name = 'admin/widgets/related_widget_wrapper.html'
 
     def __init__(self, widget, rel, admin_site, can_add_related=None,
-                 can_change_related=False, can_delete_related=False,
-                 can_view_related=False):
+                 can_change_related=False, can_delete_related=False):
         self.needs_multipart_form = widget.needs_multipart_form
         self.attrs = widget.attrs
         self.choices = widget.choices
@@ -257,7 +259,6 @@ class RelatedFieldWidgetWrapper(forms.Widget):
         # XXX: The deletion UX can be confusing when dealing with cascading deletion.
         cascade = getattr(rel, 'on_delete', None) is CASCADE
         self.can_delete_related = not multiple and not cascade and can_delete_related
-        self.can_view_related = not multiple and can_view_related
         # so we can check if the related object is registered with this AdminSite
         self.admin_site = admin_site
 
@@ -294,17 +295,25 @@ class RelatedFieldWidgetWrapper(forms.Widget):
             'name': name,
             'url_params': url_params,
             'model': rel_opts.verbose_name,
-            'can_add_related': self.can_add_related,
-            'can_change_related': self.can_change_related,
-            'can_delete_related': self.can_delete_related,
-            'can_view_related': self.can_view_related,
         }
+        if self.can_change_related:
+            change_related_template_url = self.get_related_url(info, 'change', '__fk__')
+            context.update(
+                can_change_related=True,
+                change_related_template_url=change_related_template_url,
+            )
         if self.can_add_related:
-            context['add_related_url'] = self.get_related_url(info, 'add')
+            add_related_url = self.get_related_url(info, 'add')
+            context.update(
+                can_add_related=True,
+                add_related_url=add_related_url,
+            )
         if self.can_delete_related:
-            context['delete_related_template_url'] = self.get_related_url(info, 'delete', '__fk__')
-        if self.can_view_related or self.can_change_related:
-            context['change_related_template_url'] = self.get_related_url(info, 'change', '__fk__')
+            delete_related_template_url = self.get_related_url(info, 'delete', '__fk__')
+            context.update(
+                can_delete_related=True,
+                delete_related_template_url=delete_related_template_url,
+            )
         return context
 
     def value_from_datadict(self, data, files, name):
@@ -319,24 +328,36 @@ class RelatedFieldWidgetWrapper(forms.Widget):
 
 class AdminTextareaWidget(forms.Textarea):
     def __init__(self, attrs=None):
-        super().__init__(attrs={'class': 'vLargeTextField', **(attrs or {})})
+        final_attrs = {'class': 'vLargeTextField'}
+        if attrs is not None:
+            final_attrs.update(attrs)
+        super().__init__(attrs=final_attrs)
 
 
 class AdminTextInputWidget(forms.TextInput):
     def __init__(self, attrs=None):
-        super().__init__(attrs={'class': 'vTextField', **(attrs or {})})
+        final_attrs = {'class': 'vTextField'}
+        if attrs is not None:
+            final_attrs.update(attrs)
+        super().__init__(attrs=final_attrs)
 
 
 class AdminEmailInputWidget(forms.EmailInput):
     def __init__(self, attrs=None):
-        super().__init__(attrs={'class': 'vTextField', **(attrs or {})})
+        final_attrs = {'class': 'vTextField'}
+        if attrs is not None:
+            final_attrs.update(attrs)
+        super().__init__(attrs=final_attrs)
 
 
 class AdminURLFieldWidget(forms.URLInput):
     template_name = 'admin/widgets/url.html'
 
     def __init__(self, attrs=None):
-        super().__init__(attrs={'class': 'vURLField', **(attrs or {})})
+        final_attrs = {'class': 'vURLField'}
+        if attrs is not None:
+            final_attrs.update(attrs)
+        super().__init__(attrs=final_attrs)
 
     def get_context(self, name, value, attrs):
         context = super().get_context(name, value, attrs)
@@ -350,7 +371,10 @@ class AdminIntegerFieldWidget(forms.NumberInput):
     class_name = 'vIntegerField'
 
     def __init__(self, attrs=None):
-        super().__init__(attrs={'class': self.class_name, **(attrs or {})})
+        final_attrs = {'class': self.class_name}
+        if attrs is not None:
+            final_attrs.update(attrs)
+        super().__init__(attrs=final_attrs)
 
 
 class AdminBigIntegerFieldWidget(AdminIntegerFieldWidget):
@@ -365,9 +389,8 @@ SELECT2_TRANSLATIONS = {x.lower(): x for x in [
     'eu', 'fa', 'fi', 'fr', 'gl', 'he', 'hi', 'hr', 'hu', 'id', 'is',
     'it', 'ja', 'km', 'ko', 'lt', 'lv', 'mk', 'ms', 'nb', 'nl', 'pl',
     'pt-BR', 'pt', 'ro', 'ru', 'sk', 'sr-Cyrl', 'sr', 'sv', 'th',
-    'tr', 'uk', 'vi',
+    'tr', 'uk', 'vi', 'zh-CN', 'zh-TW',
 ]}
-SELECT2_TRANSLATIONS.update({'zh-hans': 'zh-CN', 'zh-hant': 'zh-TW'})
 
 
 class AutocompleteMixin:
@@ -384,7 +407,10 @@ class AutocompleteMixin:
         self.admin_site = admin_site
         self.db = using
         self.choices = choices
-        self.attrs = {} if attrs is None else attrs.copy()
+        if attrs is not None:
+            self.attrs = attrs.copy()
+        else:
+            self.attrs = {}
 
     def get_url(self):
         model = self.rel.model
@@ -407,7 +433,7 @@ class AutocompleteMixin:
             'data-theme': 'admin-autocomplete',
             'data-allow-clear': json.dumps(not self.is_required),
             'data-placeholder': '',  # Allows clearing of the input.
-            'class': attrs['class'] + (' ' if attrs['class'] else '') + 'admin-autocomplete',
+            'class': attrs['class'] + 'admin-autocomplete',
         })
         return attrs
 
@@ -431,7 +457,8 @@ class AutocompleteMixin:
                 str(option_value) in value and
                 (has_selected is False or self.allow_multiple_selected)
             )
-            has_selected |= selected
+            if selected is True and has_selected is False:
+                has_selected = True
             index = len(default[1])
             subgroup = default[1]
             subgroup.append(self.create_option(name, option_value, option_label, selected_choices, index))

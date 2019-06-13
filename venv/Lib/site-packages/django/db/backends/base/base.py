@@ -573,10 +573,11 @@ class BaseDatabaseWrapper:
         Provide a cursor: with self.temporary_connection() as cursor: ...
         """
         must_close = self.connection is None
+        cursor = self.cursor()
         try:
-            with self.cursor() as cursor:
-                yield cursor
+            yield cursor
         finally:
+            cursor.close()
             if must_close:
                 self.close()
 
@@ -589,11 +590,13 @@ class BaseDatabaseWrapper:
         potential child threads while (or after) the test database is destroyed.
         Refs #10868, #17786, #16969.
         """
-        return self.__class__(
-            {**self.settings_dict, 'NAME': None},
+        settings_dict = self.settings_dict.copy()
+        settings_dict['NAME'] = None
+        nodb_connection = self.__class__(
+            settings_dict,
             alias=NO_DB_ALIAS,
-            allow_thread_sharing=False,
-        )
+            allow_thread_sharing=False)
+        return nodb_connection
 
     def _start_transaction_under_autocommit(self):
         """

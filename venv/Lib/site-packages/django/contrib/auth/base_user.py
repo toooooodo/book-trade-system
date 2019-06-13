@@ -115,9 +115,6 @@ class AbstractBaseUser(models.Model):
         self.password = make_password(None)
 
     def has_usable_password(self):
-        """
-        Return False if set_unusable_password() has been called for this user.
-        """
         return is_password_usable(self.password)
 
     def get_session_auth_hash(self):
@@ -136,4 +133,4 @@ class AbstractBaseUser(models.Model):
 
     @classmethod
     def normalize_username(cls, username):
-        return unicodedata.normalize('NFKC', username) if isinstance(username, str) else username
+        return unicodedata.normalize('NFKC', username) if username else username

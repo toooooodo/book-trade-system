@@ -74,7 +74,7 @@ class Media:
         media = sorted(self._css)
         return chain.from_iterable([
             format_html(
-                '<link href="{}" type="text/css" media="{}" rel="stylesheet">',
+                '<link href="{}" type="text/css" media="{}" rel="stylesheet" />',
                 self.absolute_path(path), medium
             ) for path in self._css[medium]
         ] for medium in media)
@@ -161,8 +161,10 @@ def media_property(cls):
                     for medium in extend:
                         m = m + base[medium]
                 return m + Media(definition)
-            return Media(definition)
-        return base
+            else:
+                return Media(definition)
+        else:
+            return base
     return property(_media)
 
 
@@ -186,7 +188,10 @@ class Widget(metaclass=MediaDefiningClass):
     supports_microseconds = True
 
     def __init__(self, attrs=None):
-        self.attrs = {} if attrs is None else attrs.copy()
+        if attrs is not None:
+            self.attrs = attrs.copy()
+        else:
+            self.attrs = {}
 
     def __deepcopy__(self, memo):
         obj = copy.copy(self)
@@ -236,7 +241,10 @@ class Widget(metaclass=MediaDefiningClass):
 
     def build_attrs(self, base_attrs, extra_attrs=None):
         """Build an attribute dictionary."""
-        return {**base_attrs, **(extra_attrs or {})}
+        attrs = base_attrs.copy()
+        if extra_attrs is not None:
+            attrs.update(extra_attrs)
+        return attrs
 
     def value_from_datadict(self, data, files, name):
         """
@@ -466,7 +474,7 @@ class DateTimeBaseInput(TextInput):
 
     def __init__(self, attrs=None, format=None):
         super().__init__(attrs)
-        self.format = format or None
+        self.format = format if format else None
 
     def format_value(self, value):
         return formats.localize_input(value, self.format or formats.get_format(self.format_key)[0])
@@ -594,7 +602,8 @@ class ChoiceWidget(Widget):
                     str(subvalue) in value and
                     (not has_selected or self.allow_multiple_selected)
                 )
-                has_selected |= selected
+                if selected and not has_selected:
+                    has_selected = True
                 subgroup.append(self.create_option(
                     name, subvalue, sublabel, selected, index,
                     subindex=subindex, attrs=attrs,
@@ -621,12 +630,12 @@ class ChoiceWidget(Widget):
             'attrs': option_attrs,
             'type': self.input_type,
             'template_name': self.option_template_name,
-            'wrap_label': True,
         }
 
     def get_context(self, name, value, attrs):
         context = super().get_context(name, value, attrs)
         context['widget']['optgroups'] = self.optgroups(name, context['widget']['value'], attrs)
+        context['wrap_label'] = True
         return context
 
     def id_for_label(self, id_, index='0'):
@@ -649,8 +658,6 @@ class ChoiceWidget(Widget):
 
     def format_value(self, value):
         """Return selected values as a list."""
-        if value is None and self.allow_multiple_selected:
-            return []
         if not isinstance(value, (tuple, list)):
             value = [value]
         return [str(v) if v is not None else '' for v in value]
@@ -667,14 +674,14 @@ class Select(ChoiceWidget):
     def get_context(self, name, value, attrs):
         context = super().get_context(name, value, attrs)
         if self.allow_multiple_selected:
-            context['widget']['attrs']['multiple'] = True
+            context['widget']['attrs']['multiple'] = 'multiple'
         return context
 
     @staticmethod
     def _choice_has_empty_value(choice):
         """Return True if the choice's value is empty string or None."""
         value, _ = choice
-        return value is None or value == ''
+        return (isinstance(value, str) and not bool(value)) or value is None
 
     def use_required_attribute(self, initial):
         """
@@ -885,7 +892,7 @@ class SplitDateTimeWidget(MultiWidget):
     def decompress(self, value):
         if value:
             value = to_current_timezone(value)
-            return [value.date(), value.time()]
+            return [value.date(), value.time().replace(microsecond=0)]
         return [None, None]
 
 
@@ -908,7 +915,7 @@ class SelectDateWidget(Widget):
     This also serves as an example of a Widget that has more than one HTML
     element and hence implements value_from_datadict.
     """
-    none_value = ('', '---')
+    none_value = (0, '---')
     month_field = '%s_month'
     day_field = '%s_day'
     year_field = '%s_year'
@@ -938,12 +945,12 @@ class SelectDateWidget(Widget):
             if not len(empty_label) == 3:
                 raise ValueError('empty_label list/tuple must have 3 elements.')
 
-            self.year_none_value = ('', empty_label[0])
-            self.month_none_value = ('', empty_label[1])
-            self.day_none_value = ('', empty_label[2])
+            self.year_none_value = (0, empty_label[0])
+            self.month_none_value = (0, empty_label[1])
+            self.day_none_value = (0, empty_label[2])
         else:
             if empty_label is not None:
-                self.none_value = ('', empty_label)
+                self.none_value = (0, empty_label)
 
             self.year_none_value = self.none_value
             self.month_none_value = self.none_value
@@ -955,29 +962,35 @@ class SelectDateWidget(Widget):
         year_choices = [(i, str(i)) for i in self.years]
         if not self.is_required:
             year_choices.insert(0, self.year_none_value)
+        year_attrs = context['widget']['attrs'].copy()
         year_name = self.year_field % name
+        year_attrs['id'] = 'id_%s' % year_name
         date_context['year'] = self.select_widget(attrs, choices=year_choices).get_context(
             name=year_name,
             value=context['widget']['value']['year'],
-            attrs={**context['widget']['attrs'], 'id': 'id_%s' % year_name},
+            attrs=year_attrs,
         )
         month_choices = list(self.months.items())
         if not self.is_required:
             month_choices.insert(0, self.month_none_value)
+        month_attrs = context['widget']['attrs'].copy()
         month_name = self.month_field % name
+        month_attrs['id'] = 'id_%s' % month_name
         date_context['month'] = self.select_widget(attrs, choices=month_choices).get_context(
             name=month_name,
             value=context['widget']['value']['month'],
-            attrs={**context['widget']['attrs'], 'id': 'id_%s' % month_name},
+            attrs=month_attrs,
         )
         day_choices = [(i, i) for i in range(1, 32)]
         if not self.is_required:
             day_choices.insert(0, self.day_none_value)
+        day_attrs = context['widget']['attrs'].copy()
         day_name = self.day_field % name
+        day_attrs['id'] = 'id_%s' % day_name
         date_context['day'] = self.select_widget(attrs, choices=day_choices,).get_context(
             name=day_name,
             value=context['widget']['value']['day'],
-            attrs={**context['widget']['attrs'], 'id': 'id_%s' % day_name},
+            attrs=day_attrs,
         )
         subwidgets = []
         for field in self._parse_date_fmt():
@@ -995,12 +1008,7 @@ class SelectDateWidget(Widget):
         if isinstance(value, (datetime.date, datetime.datetime)):
             year, month, day = value.year, value.month, value.day
         elif isinstance(value, str):
-            match = self.date_re.match(value)
-            if match:
-                # Convert any zeros in the date to empty strings to match the
-                # empty option value.
-                year, month, day = [int(val) or '' for val in match.groups()]
-            elif settings.USE_L10N:
+            if settings.USE_L10N:
                 input_format = get_format('DATE_INPUT_FORMATS')[0]
                 try:
                     d = datetime.datetime.strptime(value, input_format)
@@ -1008,6 +1016,9 @@ class SelectDateWidget(Widget):
                     pass
                 else:
                     year, month, day = d.year, d.month, d.day
+            match = self.date_re.match(value)
+            if match:
+                year, month, day = [int(val) for val in match.groups()]
         return {'year': year, 'month': month, 'day': day}
 
     @staticmethod
@@ -1035,21 +1046,20 @@ class SelectDateWidget(Widget):
         y = data.get(self.year_field % name)
         m = data.get(self.month_field % name)
         d = data.get(self.day_field % name)
-        if y == m == d == '':
+        if y == m == d == "0":
             return None
-        if y is not None and m is not None and d is not None:
+        if y and m and d:
             if settings.USE_L10N:
                 input_format = get_format('DATE_INPUT_FORMATS')[0]
                 try:
                     date_value = datetime.date(int(y), int(m), int(d))
                 except ValueError:
-                    pass
+                    return '%s-%s-%s' % (y, m, d)
                 else:
                     date_value = datetime_safe.new_date(date_value)
                     return date_value.strftime(input_format)
-            # Return pseudo-ISO dates with zeros for any unselected values,
-            # e.g. '2017-0-23'.
-            return '%s-%s-%s' % (y or 0, m or 0, d or 0)
+            else:
+                return '%s-%s-%s' % (y, m, d)
         return data.get(name)
 
     def value_omitted_from_data(self, data, files, name):

@@ -1,3 +1,6 @@
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
+
 from django.core.paginator import Paginator
 from django.db.models import Q
 from django.db.models.functions import datetime
@@ -5,6 +8,7 @@ from django.forms import model_to_dict
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
+from notifications.signals import notify
 from PIL import Image
 from app.models import *
 
@@ -21,13 +25,13 @@ def notFound(request):
     return render(request, 'app/404.html')
 
 
-def login(request):
+def login_view(request):
     """
     登陆页面
     :param request:
     :return:
     """
-    if request.session.get('is_login', None):
+    if request.user.is_authenticated:
         return redirect('/index')
     return render(request, 'app/login.html')
 
@@ -39,22 +43,20 @@ def dologin(request):
     :param request:
     :return:
     """
-    if request.session.get('is_login', None):
+    if request.user.is_authenticated:
         return JsonResponse({'status': '2'})
     if request.method == "POST":
         username = request.POST.get('username')
         password = request.POST.get('password')
         print(username, password)
-        res = User.objects.filter(Q(username__exact=username) & Q(password__exact=password))
-        if len(res) == 0:
+        # res = User.objects.filter(Q(username__exact=username) & Q(password__exact=password))
+        user = authenticate(request, username=username, password=password)
+        if user is None:
             # 用户不存在
             return JsonResponse({'status': '0'})
         else:
             # 验证成功
-            request.session['is_login'] = True
-            request.session['user_id'] = res[0].id
-            request.session['user_name'] = res[0].username
-            # return redirect('/index/')
+            login(request, user)
             return JsonResponse({'status': '1'})
 
 
@@ -84,10 +86,7 @@ def doregister(request):
         res_user = User.objects.filter(username=username)
         res_email = User.objects.filter(email=email)
         if len(res_user) == 0 and len(res_email) == 0:
-            u = User()
-            u.username = username
-            u.password = password
-            u.email = email
+            u = User.objects.create_user(username=username, email=email, password=password)
             u.save()
             return_dict = {'status': '0'}
             return JsonResponse(return_dict)
@@ -107,8 +106,7 @@ def index(request):
     :param request:
     :return:
     """
-    if request.session.get('is_login', None) is None:
-        return render(request, 'app/login.html')
+    print(request.user.id)  # username
     dic, variable, book, book1, book2, book3, book4 = dict(), dict(), dict(), dict(), dict(), dict(), dict()
     book['book1'] = book1
     book['book2'] = book2
@@ -135,15 +133,13 @@ def index(request):
     return render(request, 'app/index.html', dic)
 
 
+@login_required
 def adlisting(request):
     """
     发布商品
     :param request:
     :return:
     """
-
-    if request.session.get('is_login', None) is None:
-        return render(request, 'app/login.html')
     return render(request, 'app/ad-listing.html')
 
 
@@ -154,9 +150,6 @@ def do_adlisting(request):
     :param request:
     :return:
     """
-    if request.session.get('is_login', None) is None:
-        # 未登录
-        return JsonResponse({'flag': '0'})
     if request.method == "POST":
         title = request.POST.get('title')
         author = request.POST.get('author')
@@ -200,7 +193,7 @@ def do_adlisting(request):
             book.trade = 'OL'
         else:
             book.trade = 'FL'
-        book.seller_id = request.session.get('user_id')
+        book.seller_id = request.user.id
         book.save()
         print(str(book.img))
         _img = Image.open('media/' + str(book.img))
@@ -232,7 +225,7 @@ def single_book(request, book_id):
     book = model_to_dict(book_re,
                          fields=['id', 'title', 'author', 'info', 'isbn', 'url'])
     seller = model_to_dict(seller_re, fields=['username'])
-    seller['time'] = seller_re.time
+    seller['time'] = seller_re.date_joined
     book['trade'] = tradeDic[book_re.trade]
     book['lan'] = lanDic[book_re.language]
     book['type'] = typeDic[book_re.type]
@@ -243,7 +236,6 @@ def single_book(request, book_id):
     book['time'] = book_re.time
     dic['book'] = book
     dic['seller'] = seller
-    # dic['buyer'] = request.session.get('user_id')
     print(dic)
     return render(request, 'app/single.html', dic)
 
@@ -328,6 +320,7 @@ def show_list(request, type_id, page):
     return render(request, 'app/404.html')
 
 
+@login_required
 def order(request, book_id):
     """
     订单页
@@ -335,9 +328,6 @@ def order(request, book_id):
     :param book_id:
     :return:
     """
-    if request.session.get('is_login', None) is None:
-        return render(request, 'app/login.html')
-    # buyer = request.session.get('user_id')
     book = Book.objects.filter(id=book_id, sold__exact=False)
     if len(book) == 0:
         return render(request, 'app/order.html')
@@ -355,19 +345,17 @@ def order(request, book_id):
     return render(request, 'app/order.html', context)
 
 
+@login_required
 def doOrder(request):
     """
     处理订单请求
     :param request:
     :return:
     """
-    if request.session.get('is_login', None) is None:
-        return JsonResponse({'flag': '2'})
     if request.method == "GET":
         return JsonResponse({'flag': '2'})
     orderform = OrderForm()
-    print(request.session.get('user_id'))
-    orderform.buyer = request.session.get('user_id')
+    orderform.buyer = request.user.id
     orderform.phone = request.POST.get('phone')
     orderform.address = request.POST.get('address')
     orderform.timeorname = request.POST.get('timeorname')
@@ -400,15 +388,14 @@ def doOrder(request):
         return JsonResponse({'flag': '1'})
 
 
+@login_required
 def want(request):
-    if request.session.get('is_login', None) is None:
-        return render(request, 'app/login.html')
     return render(request, 'app/want.html')
 
 
 @csrf_exempt
 def dowant(request):
-    if request.session.get('is_login', None) is None:
+    if not request.user.is_authenticated:
         # 未登录
         return JsonResponse({'flag': '0'})
     if request.method == "POST":
@@ -416,7 +403,7 @@ def dowant(request):
         _want.title = request.POST.get('title')
         _want.author = request.POST.get('author')
         _want.disc = request.POST.get('info')
-        _want.user_id = request.session.get('user_id')
+        _want.user_id = request.user.id
         _want.img = request.FILES.get('img')
         _want.flag = True
         _want.save()

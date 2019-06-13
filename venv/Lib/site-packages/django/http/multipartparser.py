@@ -277,8 +277,11 @@ class MultiPartParser:
             exhaust(self._input_data)
 
         # Signal that the upload has completed.
-        # any() shortcircuits if a handler's upload_complete() returns a value.
-        any(handler.upload_complete() for handler in handlers)
+        for handler in handlers:
+            retval = handler.upload_complete()
+            if retval:
+                break
+
         self._post._mutable = False
         return self._post, self._files
 

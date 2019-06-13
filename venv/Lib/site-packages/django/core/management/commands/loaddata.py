@@ -180,8 +180,7 @@ class Command(BaseCommand):
                                     '\rProcessed %i object(s).' % loaded_objects_in_fixture,
                                     ending=''
                                 )
-                        # psycopg2 raises ValueError if data contains NUL chars.
-                        except (DatabaseError, IntegrityError, ValueError) as e:
+                        except (DatabaseError, IntegrityError) as e:
                             e.args = ("Could not load %(app_label)s.%(object_name)s(pk=%(pk)s): %(error_msg)s" % {
                                 'app_label': obj.object._meta.app_label,
                                 'object_name': obj.object._meta.object_name,
@@ -333,7 +332,7 @@ class Command(BaseCommand):
 class SingleZipReader(zipfile.ZipFile):
 
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+        zipfile.ZipFile.__init__(self, *args, **kwargs)
         if len(self.namelist()) != 1:
             raise ValueError("Zip-compressed fixtures must contain one file.")
 

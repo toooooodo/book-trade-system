@@ -2,8 +2,8 @@ from datetime import datetime
 
 from django.conf import settings
 from django.db.models import (
-    DateField, DateTimeField, DurationField, Field, Func, IntegerField,
-    TimeField, Transform, fields,
+    DateField, DateTimeField, DurationField, Field, IntegerField, TimeField,
+    Transform,
 )
 from django.db.models.lookups import (
     YearExact, YearGt, YearGte, YearLt, YearLte,
@@ -143,17 +143,6 @@ ExtractYear.register_lookup(YearLt)
 ExtractYear.register_lookup(YearLte)
 
 
-class Now(Func):
-    template = 'CURRENT_TIMESTAMP'
-    output_field = fields.DateTimeField()
-
-    def as_postgresql(self, compiler, connection):
-        # PostgreSQL's CURRENT_TIMESTAMP means "the time at the start of the
-        # transaction". Use STATEMENT_TIMESTAMP to be cross-compatible with
-        # other databases.
-        return self.as_sql(compiler, connection, template='STATEMENT_TIMESTAMP()')
-
-
 class TruncBase(TimezoneMixin, Transform):
     kind = None
     tzinfo = None
@@ -199,8 +188,7 @@ class TruncBase(TimezoneMixin, Transform):
                 field.name, output_field.__class__.__name__ if has_explicit_output_field else 'DateTimeField'
             ))
         elif isinstance(field, TimeField) and (
-                isinstance(output_field, DateTimeField) or
-                copy.kind in ('year', 'quarter', 'month', 'week', 'day', 'date')):
+                isinstance(output_field, DateTimeField) or copy.kind in ('year', 'quarter', 'month', 'day', 'date')):
             raise ValueError("Cannot truncate TimeField '%s' to %s. " % (
                 field.name, output_field.__class__.__name__ if has_explicit_output_field else 'DateTimeField'
             ))
@@ -241,11 +229,6 @@ class TruncQuarter(TruncBase):
 
 class TruncMonth(TruncBase):
     kind = 'month'
-
-
-class TruncWeek(TruncBase):
-    """Truncate to midnight on the Monday of the week."""
-    kind = 'week'
 
 
 class TruncDay(TruncBase):
