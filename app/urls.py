@@ -13,11 +13,14 @@ urlpatterns = [
     url(r'^doregister/$', views.doregister),
     url(r'^adlisting/$', views.adlisting, name='adlisting'),
     url(r'^doadlisting/$', views.do_adlisting),
-    re_path(r'^book/(?P<book_id>\d+)$', views.single_book, name='book'),
+    path('book/<int:book_id>', views.single_book, name='book'),
     re_path(r'^list/(?P<type_id>\d+)/(?P<page>\d+)$', views.show_list, name='list'),
     re_path(r'^order/(?P<book_id>\d+)$', views.order, name='order'),
     re_path(r'^doorder/$', views.doOrder, name='doorder'),
     re_path(r'^want/$', views.want, name='want'),
     re_path(r'^dowant/$', views.dowant, name='dowant'),
     re_path(r'^want-list/(?P<page>\d+)$', views.showWantList, name='want-list'),
+    url(r'^test/$', views.test,name='test'),
+    # url(r'^noti/(?P<book_id>\d+)$', views.noti, name='noti'),
+    path('noti/<int:seller_id>/<int:book_id>', views.noti,name='noti')
 ]

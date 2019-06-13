@@ -225,7 +225,7 @@
                     <p class="member-time">注册日期 {{ seller.time|date:"Y-m-d" }}</p>
                     <a href="">查看他的商品</a>
                     <ul class="list-inline mt-20">
-                        <li class="list-inline-item"><a href=""
+                        <li class="list-inline-item"><a href="{% url 'noti' seller.id book.id %}"
                                                         class="btn btn-contact d-inline-block  btn-primary px-lg-4 my-1 px-md-3">私信</a>
                         </li>
                         <li class="list-inline-item"><a href="{% url 'order' book.id %}"

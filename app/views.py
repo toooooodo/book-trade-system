@@ -224,7 +224,7 @@ def single_book(request, book_id):
     dic = dict()
     book = model_to_dict(book_re,
                          fields=['id', 'title', 'author', 'info', 'isbn', 'url'])
-    seller = model_to_dict(seller_re, fields=['username'])
+    seller = model_to_dict(seller_re, fields=['username', 'id'])
     seller['time'] = seller_re.date_joined
     book['trade'] = tradeDic[book_re.trade]
     book['lan'] = lanDic[book_re.language]
@@ -455,3 +455,13 @@ def showWantList(request, page):
         return render(request, 'app/want-list.html', context)
     else:
         return render(request, 'app/404.html')
+
+
+def test(request):
+    return render(request, 'app/test.html')
+
+
+def noti(request, seller_id, book_id):
+    notify.send(request.user, recipient=User.objects.filter(id=seller_id), verb='111111',
+                target=Book.objects.filter(id=book_id)[0])
+    return HttpResponse('11')

@@ -60,30 +60,31 @@
                     <div class="row mt-30">
                         {% for want in want_page %}
                             <div class="col-sm-12 col-lg-4 col-md-6">
-                            <!-- product card -->
-                            <div class="product-item bg-light">
-                                <div class="card">
-                                    <div class="thumb-content">
-                                        <!-- <div class="price">$200</div> -->
-                                        <a href="#">
-                                            <img class="card-img-top img-fluid" src="{{ want.img.url }}"
-                                                 alt="Card image cap">
-                                        </a>
-                                    </div>
-                                    <div class="card-body">
-                                        <h4 class="card-title"><a href="#">{{ want.title }}</a></h4>
-                                        <ul class="list-inline product-meta">
-                                            <li class="list-inline-item">
-                                                <a href="#"><i class="fa fa-calendar"></i>{{ want.time }}</a>
-                                            </li>
-                                        </ul>
-                                        <p class="card-text">{{ want.disc|truncatechars:40 }}</p>
+                                <!-- product card -->
+                                <div class="product-item bg-light">
+                                    <div class="card">
+                                        <div class="thumb-content">
+                                            <!-- <div class="price">$200</div> -->
+                                            <a href="#">
+                                                <img class="card-img-top img-fluid" src="{{ want.img.url }}"
+                                                     alt="Card image cap">
+                                            </a>
+                                        </div>
+                                        <div class="card-body">
+                                            <h4 class="card-title"><a href="#">{{ want.title }}</a></h4>
+                                            <ul class="list-inline product-meta">
+                                                <li class="list-inline-item">
+                                                    <a href="#"><i class="fa fa-calendar"></i>{{ want.time }}</a>
+                                                </li>
+                                            </ul>
+                                            <p class="card-text">{{ want.disc|truncatechars:40 }}</p>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
 
+
+                            </div>
                         {% endfor %}
-                        </div>
                     </div>
                 </div>
                 <div class="pagination justify-content-center">
@@ -102,11 +103,11 @@
                             {% for pindex in pages %}
                                 {% if pindex == want_page.number %}
                                     <li class="page-item active"><a class="page-link"
-                                                             href="{% url 'want-list' pindex %}?sort={{ sort }}">{{ pindex }}</a>
+                                                                    href="{% url 'want-list' pindex %}?sort={{ sort }}">{{ pindex }}</a>
                                     </li>
                                 {% else %}
                                     <li class="page-item"><a class="page-link"
-                                                                    href="{% url 'want-list' pindex %}?sort={{ sort }}">{{ pindex }}</a>
+                                                             href="{% url 'want-list' pindex %}?sort={{ sort }}">{{ pindex }}</a>
                                     </li>
                                 {% endif %}
                             {% endfor %}

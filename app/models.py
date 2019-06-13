@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+
 # Create your models here.
 
 # class User(models.Model):
@@ -46,6 +47,9 @@ class Book(models.Model):
     time = models.DateTimeField(auto_now_add=True)
     sold = models.BooleanField()
     score = models.DecimalField(max_digits=2, decimal_places=1)
+
+    def getSeller(self):
+        return self.seller
 
 
 # class EDBook(models.Model):
@@ -107,6 +111,9 @@ class OrderForm(models.Model):
     message = models.TextField()
     book = models.ForeignKey('Book', to_field='id', on_delete=models.CASCADE)
 
+    def getSeller(self):
+        return self.seller
+
 
 class Want(models.Model):
     user = models.ForeignKey(User, to_field='id', on_delete=models.CASCADE)
@@ -117,3 +124,6 @@ class Want(models.Model):
     img = models.ImageField(upload_to='images')  # 图片
     time = models.DateTimeField(auto_now_add=True)
     flag = models.BooleanField()
+
+    def getWanter(self):
+        return self.user
