@@ -225,7 +225,8 @@
                     <p class="member-time">注册日期 {{ seller.time|date:"Y-m-d" }}</p>
                     <a href="">查看他的商品</a>
                     <ul class="list-inline mt-20">
-                        <li class="list-inline-item"><a href="{% url 'noti' seller.id book.id %}"
+                        <li class="list-inline-item"><a href="" data-toggle="modal"
+                                                        data-target="#contact"
                                                         class="btn btn-contact d-inline-block  btn-primary px-lg-4 my-1 px-md-3">私信</a>
                         </li>
                         <li class="list-inline-item"><a href="{% url 'order' book.id %}"
@@ -260,6 +261,35 @@
     <!-- Container End -->
 </section>
 
+<div class="modal fade" id="contact" tabindex="-1" role="dialog"
+     aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header border-bottom-0">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form action="{% url 'noti' seller.id book.id %}" method="post">
+                <div class="modal-body text-center">
+                    <img src="/static/images/account/Account1.png" class="img-fluid mb-2" alt="">
+                    <h6 class="py-2">请在下方的文本框中输入消息</h6>
+                    <p>点击确定发送消息，或点击取消返回商品详情页。
+                    </p>
+                    <textarea name="message" id="message" cols="40" rows="4"
+                              class="w-100 rounded"></textarea>
+                </div>
+                <div
+                        class="modal-footer border-top-0 mb-3 mx-5 justify-content-lg-between justify-content-center">
+                    <button type="button" class="btn btn-danger"
+                            data-dismiss="modal">取消
+                    </button>
+                    <button type="submit" class="btn btn-primary" id="send-message">发送</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 {% include 'app/footer.html' %}
 
 <!-- JAVASCRIPTS -->
@@ -272,8 +302,12 @@
         var type = $('div.form-control>ul.list>li.selected').attr("data-value");
         console.log(title, type);
         // window.location.replace("http://www.jb51.net");
-        window.location.href = "/list/"+type+"/1?sort=ascending&title="+title;
+        window.location.href = "/list/" + type + "/1?sort=ascending&title=" + title;
         return false;
+    });
+    $('button#send-message').click(function () {
+        var message = $('textarea#message').val();
+
     })
 </script>
 </body>

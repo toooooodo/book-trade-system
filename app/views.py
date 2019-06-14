@@ -7,6 +7,7 @@ from django.db.models.functions import datetime
 from django.forms import model_to_dict
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, JsonResponse
+from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
 from notifications.signals import notify
 from PIL import Image
@@ -83,10 +84,10 @@ def doregister(request):
         print(username, email, password)
         # res = User.objects.filter(username=username, email=email)
         # res = User.objects.filter(Q(username__exact=username) | Q(email__exact=email))
-        res_user = User.objects.filter(username=username)
-        res_email = User.objects.filter(email=email)
+        res_user = MyUser.objects.filter(username=username)
+        res_email = MyUser.objects.filter(email=email)
         if len(res_user) == 0 and len(res_email) == 0:
-            u = User.objects.create_user(username=username, email=email, password=password)
+            u = MyUser.objects.create_user(username=username, email=email, password=password)
             u.save()
             return_dict = {'status': '0'}
             return JsonResponse(return_dict)
@@ -121,14 +122,18 @@ def index(request):
     dic['variable'] = variable
     # title type lan info
     books = Book.objects.filter(sold__exact=False)[:4]
-    for i, key in enumerate(book):
-        book[key]['title'] = books[i].title
-        book[key]['type'] = typeDic[books[i].type]
-        # book[key]['lan'] = languageDic[books[i].language]
-        book[key]['time'] = books[i].time
-        book[key]['info'] = books[i].info
-        book[key]['url'] = books[i].img.url
-        book[key]['id'] = books[i].id
+    if len(books) == 4:
+        for i, key in enumerate(book):
+            book[key]['title'] = books[i].title
+            book[key]['type'] = typeDic[books[i].type]
+            # book[key]['lan'] = languageDic[books[i].language]
+            book[key]['time'] = books[i].time
+            book[key]['info'] = books[i].info
+            book[key]['url'] = books[i].img.url
+            book[key]['id'] = books[i].id
+        dic['flag'] = True
+    else:
+        dic['flag'] = False
     dic['book'] = book
     return render(request, 'app/index.html', dic)
 
@@ -198,7 +203,7 @@ def do_adlisting(request):
         print(str(book.img))
         _img = Image.open('media/' + str(book.img))
         print(_img.size)
-        _img = _img.resize((275, 280), Image.ANTIALIAS)
+        _img = _img.resize((800, 800), Image.ANTIALIAS)
         _img.save('media/' + str(book.img))
         return JsonResponse({'flag': '1'})
     return JsonResponse({'flag': '2'})
@@ -216,7 +221,7 @@ def single_book(request, book_id):
         return render(request, 'app/404.html')
     for i in book_re:
         print(i)
-    seller_re = User.objects.filter(id=book_re[0].seller_id)[0]
+    seller_re = MyUser.objects.filter(id=book_re[0].seller_id)[0]
     book_re = book_re[0]
     tradeDic = {'OL': '线上', 'FL': '线下'}
     lanDic = {'EN': '英文', 'ZH': '中文', 'OT': '其他'}
@@ -339,7 +344,7 @@ def order(request, book_id):
     bookDic['time'] = book[0].time
     context = {
         'book': bookDic,
-        'seller': User.objects.filter(id=book[0].seller_id)[0].username
+        'seller': MyUser.objects.filter(id=book[0].seller_id)[0].username
     }
     print(bookDic)
     return render(request, 'app/order.html', context)
@@ -409,7 +414,7 @@ def dowant(request):
         _want.save()
         _img = Image.open('media/' + str(_want.img))
         print(_img.size)
-        _img = _img.resize((275, 280), Image.ANTIALIAS)
+        _img = _img.resize((800, 800), Image.ANTIALIAS)
         _img.save('media/' + str(_want.img))
         return JsonResponse({'flag': '1'})
     return JsonResponse({'flag': '2'})
@@ -461,7 +466,63 @@ def test(request):
     return render(request, 'app/test.html')
 
 
+@csrf_exempt
+@login_required
 def noti(request, seller_id, book_id):
-    notify.send(request.user, recipient=User.objects.filter(id=seller_id), verb='111111',
-                target=Book.objects.filter(id=book_id)[0])
-    return HttpResponse('11')
+    if request.method == "POST":
+        notify.send(request.user, recipient=MyUser.objects.filter(id=seller_id), verb=request.POST.get('message'),
+                    target=Book.objects.filter(id=book_id)[0])
+        return redirect(reverse('book', args=[book_id]))
+    return render(request, 'app/404.html')
+
+
+@login_required
+def message(request, page):
+    user = MyUser.objects.get(id=request.user.id)
+    messages = user.notifications.active()
+    paginator = Paginator(messages, 5)
+    # 获取第page页的内容
+    try:
+        page = int(page)
+    except Exception as e:
+        return render(request, 'app/404.html')
+    if page > paginator.num_pages or page <= 0:
+        return redirect(reverse('message', args=[1]))
+    message_page = paginator.page(page)
+    num_pages = paginator.num_pages
+    if num_pages < 5:
+        pages = range(1, num_pages + 1)
+    elif page <= 3:
+        pages = range(1, 6)
+    elif num_pages - page <= 2:
+        pages = range(num_pages - 4, num_pages + 1)
+    else:
+        pages = range(page - 2, page + 3)
+    context = {
+        'pages': pages,
+        'message_page': message_page,
+    }
+    return render(request, 'app/message.html', context)
+
+
+@login_required
+def readMessage(request, page_id, message_id):
+    request.user.notifications.get(id=message_id).mark_as_read()
+    return redirect(reverse('message', args=[page_id]))
+
+
+@login_required
+def deleteMessage(request, page_id, message_id):
+    # request.user.notifications.get(id=message_id).deleted()
+    notifi = request.user.notifications.get(id=message_id)
+    notifi.deleted = True
+    notifi.save()
+    return redirect(reverse('message', args=[page_id]))
+
+
+def myAd(request, page_id):
+    return None
+
+
+def edit(request):
+    return None

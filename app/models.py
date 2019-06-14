@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import User
+from django.contrib.auth.models import AbstractUser
 
 
 # Create your models here.
@@ -9,6 +9,13 @@ from django.contrib.auth.models import User
 #     password = models.CharField(max_length=25)
 #     email = models.EmailField(max_length=25, unique=True)
 #     time = models.DateTimeField(auto_now_add=True)
+
+class MyUser(AbstractUser):
+    portrait = models.ImageField(upload_to='portrait')  # 图片
+    email = models.EmailField(max_length=25, unique=True)
+
+    def __str__(self):
+        return self.username
 
 
 class Book(models.Model):
@@ -31,7 +38,7 @@ class Book(models.Model):
         ('OL', 'online'),  # 线上
         ('FL', 'offline'),  # 线下
     )
-    seller = models.ForeignKey(User, to_field='id', on_delete=models.CASCADE)  # 卖方
+    seller = models.ForeignKey(MyUser, to_field='id', on_delete=models.CASCADE)  # 卖方
     title = models.CharField(max_length=80)  # 书名
     author = models.CharField(max_length=40)  # 作者
     language = models.CharField(max_length=2, choices=BOOK_LAN_CHOICES)  # 语言
@@ -50,6 +57,9 @@ class Book(models.Model):
 
     def getSeller(self):
         return self.seller
+
+    def __str__(self):
+        return self.title
 
 
 # class EDBook(models.Model):
@@ -90,8 +100,8 @@ class Book(models.Model):
 # class INBook(models.Model):
 #     id = models.IntegerField(primary_key=True)
 #     category = models.CharField(max_length=1)
-#
-#
+
+
 class BookCount(models.Model):
     cat = models.CharField(max_length=2, primary_key=True)
     num = models.IntegerField()
@@ -102,7 +112,7 @@ class OrderForm(models.Model):
         ('OL', 'online'),  # 线上
         ('FL', 'offline'),  # 线下
     )
-    seller = models.ForeignKey(User, to_field='id', on_delete=models.CASCADE)
+    seller = models.ForeignKey(MyUser, to_field='id', on_delete=models.CASCADE)
     buyer = models.IntegerField()
     method = models.CharField(max_length=2, choices=TRADE_TYPE)
     address = models.TextField()
@@ -116,7 +126,7 @@ class OrderForm(models.Model):
 
 
 class Want(models.Model):
-    user = models.ForeignKey(User, to_field='id', on_delete=models.CASCADE)
+    user = models.ForeignKey(MyUser, to_field='id', on_delete=models.CASCADE)
     title = models.CharField(max_length=80)
     author = models.CharField(max_length=40)
     disc = models.TextField()

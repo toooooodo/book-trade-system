@@ -128,3 +128,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media').replace('\\', '/')
 MEDIA_URL = '/media/'
 
 LOGIN_URL = "/login"
+
+AUTH_USER_MODEL = 'app.MyUser'
+
+DJANGO_NOTIFICATIONS_CONFIG = {'SOFT_DELETE': True}
