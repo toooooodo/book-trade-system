@@ -111,12 +111,14 @@
                                     </li>
                                 {% endif %}
                             {% endfor %}
+                        {% if want_page.has_next %}
                             <li class="page-item">
-                                <a class="page-link" href="#" aria-label="Next">
+                                <a class="page-link" href="{% url 'want-list' want_page.next_page_number %}" aria-label="Next">
                                     <span aria-hidden="true">&raquo;</span>
                                     <span class="sr-only">Next</span>
                                 </a>
                             </li>
+                        {% endif %}
                         </ul>
                     </nav>
                 </div>
