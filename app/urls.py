@@ -28,7 +28,7 @@ urlpatterns = [
     path('message/<int:page>', views.message, name='message'),
     path('read-message/<int:page_id>/<int:message_id>', views.readMessage, name='read-message'),
     path('delete-message/<int:page_id>/<int:message_id>', views.deleteMessage, name='delete-message'),
-    path('my-ad/<int:page_id>', views.myAd, name='my-ad'),
+    path('my-ad/<int:page>', views.myAd, name='my-ad'),
     path('edit/', views.edit, name='edit'),
-    path('logout/', views.logout, name='logout'),
+    path('logout/', views.logOut, name='logout'),
 ]

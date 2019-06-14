@@ -254,10 +254,10 @@ def show_list(request, type_id, page):
     :return:
     """
     if request.method == "GET":
-        if '0' <= type_id <= '8':
+        if '0' <= str(type_id) <= '8':
             sort = request.GET.get('sort')
             title = request.GET.get('title')
-            if type_id == '0':
+            if str(type_id) == '0':
                 if sort == 'ascending':
                     books = Book.objects.filter(title__contains=title, sold__exact=False).order_by('sellingPrice')
                 elif sort == 'descending':
@@ -520,9 +520,45 @@ def deleteMessage(request, page_id, message_id):
     return redirect(reverse('message', args=[page_id]))
 
 
-def myAd(request, page_id):
-    return None
+@login_required
+def myAd(request, page):
+    books = Book.objects.filter(seller_id=request.user.id, sold__exact=False).order_by('id')
+    paginator = Paginator(books, 4)
+    # 获取第page页的内容
+    try:
+        page = int(page)
+    except Exception as e:
+        return render(request, 'app/404.html')
+
+    if page > paginator.num_pages or page <= 0:
+        return redirect(reverse('my-ad', args=[1]))
+    book_page = paginator.page(page)
+    num_pages = paginator.num_pages
+    if num_pages < 5:
+        pages = range(1, num_pages + 1)
+    elif page <= 3:
+        pages = range(1, 6)
+    elif num_pages - page <= 2:
+        pages = range(num_pages - 4, num_pages + 1)
+    else:
+        pages = range(page - 2, page + 3)
+    typeDic = {'1': '教育', '2': '文艺', '3': '人文社科', '4': '生活', '5': '经管', '6': '科技', '7': '少儿', '8': '励志'}
+
+    for i in book_page:
+        i.type = typeDic[i.type]
+    context = {
+        'pages': pages,
+        'book_page': book_page,
+    }
+    return render(request, 'app/dashboard-my-ads.html', context)
 
 
+@login_required
 def edit(request):
     return None
+
+
+@login_required
+def logOut(request):
+    logout(request)
+    return redirect(reverse('index'))

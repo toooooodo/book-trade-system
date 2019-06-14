@@ -25,13 +25,12 @@
 
                                 <!-- Dropdown list -->
                                 <div class="dropdown-menu">
-                                    <a class="dropdown-item" href="dashboard.html">Dashboard</a>
-                                    <a class="dropdown-item" href="dashboard-my-ads.html">Dashboard My Ads</a>
-                                    <a class="dropdown-item" href="dashboard-favourite-ads.html">Dashboard Favourite
-                                        Ads</a>
-                                    <a class="dropdown-item" href="dashboard-archived-ads.html">Dashboard Archived
-                                        Ads</a>
-                                    <a class="dropdown-item" href="dashboard-pending-ads.html">Dashboard Pending Ads</a>
+                                    <a class="dropdown-item" href="{% url 'my-ad' 1 %}">我的商品</a>
+                                    <a class="dropdown-item" href="{% url 'message' 1 %}">消息中心</a>
+                                    <a class="dropdown-item" href="#">购物车</a>
+{#                                    <a class="dropdown-item" href="dashboard-archived-ads.html">Dashboard Archived#}
+{#                                        Ads</a>#}
+{#                                    <a class="dropdown-item" href="dashboard-pending-ads.html">Dashboard Pending Ads</a>#}
                                 </div>
                             </li>
                             <!-- 商品列表 -->
