@@ -31,4 +31,8 @@ urlpatterns = [
     path('my-ad/<int:page>', views.myAd, name='my-ad'),
     path('edit/', views.edit, name='edit'),
     path('logout/', views.logOut, name='logout'),
+    path('edit-personal-info/', views.editPerInfo, name='edit-personal-info'),
+    path('edit-password/', views.editPassword, name='edit-password'),
+    path('edit-email/', views.editEmail, name='edit-email'),
+
 ]

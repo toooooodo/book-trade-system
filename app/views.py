@@ -555,7 +555,25 @@ def myAd(request, page):
 
 @login_required
 def edit(request):
-    return None
+    return render(request, 'app/user-profile.html')
+
+
+@csrf_exempt
+@login_required
+def editPerInfo(request):
+    pass
+
+
+@csrf_exempt
+@login_required
+def editPassword(request):
+    pass
+
+
+@csrf_exempt
+@login_required
+def editEmail(request):
+    pass
 
 
 @login_required
