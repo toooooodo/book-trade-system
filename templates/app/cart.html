@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <!-- SITE TITTLE -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Classimax</title>
+
+    {% include 'app/link.html' %}
+
+</head>
+
+<body class="body-wrapper">
+
+{% include 'app/header.html' %}
+<!--==================================
+=            User Profile            =
+===================================-->
+<section class="dashboard section">
+    <!-- Container Start -->
+    <div class="container">
+        <!-- Row Start -->
+        <div class="row">
+            {% load notifications_tags %}
+            {% notifications_unread as unread_count %}
+            <div class="col-md-10 offset-md-1 col-lg-4 offset-lg-0">
+                <div class="sidebar">
+                    <!-- User Widget -->
+                    <div class="widget user-dashboard-profile">
+                        <!-- User Image -->
+                        <div class="profile-thumb">
+                            <img src="{{ request.user.portrait.url }}" alt="" class="rounded-circle">
+                        </div>
+                        <!-- User Name -->
+                        <h5 class="text-center">{{ request.user.username }}</h5>
+                        <p>注册日期：{{ request.user.date_joined|date:"Y-m-d" }}</p>
+                        <a href="{% url 'edit' %}" class="btn btn-main-sm">编辑个人信息</a>
+                    </div>
+                    <!-- Dashboard Links -->
+                    <div class="widget user-dashboard-menu">
+                        <ul>
+                            <li><a href="{% url 'my-ad' 1 %}"><i class="fa fa-user"></i> 我的商品 </a></li>
+                            <li>
+                                <a href="{% url 'message' 1 %}"><i class="fa fa-bookmark-o"></i> 消息中心
+                                    <span>{{ unread_count }}</span></a>
+                            </li>
+                            <li class="active">
+                                <a href="{% url 'cart' 1 %}"><i class="fa fa-file-archive-o"></i> 购物车
+                                    <span>{{ cart_count }}</span></a>
+                            </li>
+                            <li>
+                                <a href="{% url 'logout' %}"><i class="fa fa-cog"></i> 登出</a>
+                            </li>
+                        </ul>
+                    </div>
+
+                </div>
+            </div>
+            <div class="col-md-10 offset-md-1 col-lg-8 offset-lg-0">
+                <!-- Recently Favorited -->
+                <div class="widget dashboard-container my-adslist">
+                    <h3 class="widget-header">我的购物车</h3>
+                    <table class="table table-responsive product-dashboard-table">
+                        <thead class="col-12">
+                        <tr class="col-12">
+                            <th> 图片</th>
+                            <th> 商品信息</th>
+                            <th class="text-center">商品分类</th>
+                            <th class="text-center">操作</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+
+                        {% for book in cart %}
+                            <tr>
+                                <td class="product-thumb">
+                                    <a href="{% url 'book' book.product.id %}"><img width="120px" height="auto"
+                                                                                    src="{{ book.product.img.url }}"
+                                                                                    alt="image description"></a></td>
+                                <td class="product-details">
+                                    <h3 class="title">{{ book.product.title }}</h3>
+                                    <span class="add-id"><strong>发布者：</strong>{{ book.product.seller.username }}</span>
+                                    <span><strong>发布时间：</strong><time>{{ book.product.time|date:"Y-m-d" }}</time> </span>
+                                    <span class="status active"><strong>价格：</strong>¥{{ book.product.sellingPrice }}</span>
+                                    <span class="add-id"><strong>作者：</strong>{{ book.product.author }}</span>
+                                    <span class="add-id"><strong>描述信息：</strong>{{ book.product.info|truncatechars:15 }}</span>
+                                </td>
+                                <td class="product-category"><span class="categories">{{ book.product.type }}</span>
+                                </td>
+                                <td class="action" data-title="Action">
+                                    <div class="">
+                                        <ul class="list-inline justify-content-center">
+                                            <li class="list-inline-item">
+                                                <a data-toggle="tooltip" data-placement="top" title="Delete"
+                                                   class="delete"
+                                                   href="{% url 'remove-cart' book.product.id %}">
+                                                    <i class="fa fa-trash"></i>
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </td>
+                            </tr>
+
+                        {% endfor %}
+                        </tbody>
+                    </table>
+
+                </div>
+
+                <!-- pagination -->
+                {#                <div class="pagination justify-content-center">#}
+                {#                    <nav aria-label="Page navigation example">#}
+                {#                        <ul class="pagination">#}
+                {#                            {% if book_page.has_previous %}#}
+                {#                                <li class="page-item">#}
+                {#                                    <a class="page-link" href="{% url 'my-ad' book_page.previous_page_number %}"#}
+                {#                                       aria-label="Previous">#}
+                {#                                        <span aria-hidden="true">&laquo;</span>#}
+                {#                                        <span class="sr-only">Previous</span>#}
+                {#                                    </a>#}
+                {#                                </li>#}
+                {#                            {% endif %}#}
+                {#                            {% for pindex in pages %}#}
+                {#                                {% if pindex == book_page.bumber %}#}
+                {#                                    <li class="page-item active"><a class="page-link"#}
+                {#                                                                    href="{% url 'my-ad' pindex %}">{{ pindex }}</a>#}
+                {#                                    </li>#}
+                {#                                {% else %}#}
+                {#                                    <li class="page-item"><a class="page-link"#}
+                {#                                                             href="{% url 'my-ad' pindex %}">{{ pindex }}</a></li>#}
+                {#                                {% endif %}#}
+                {#                            {% endfor %}#}
+                {#                            {% if book_page.has_next %}#}
+                {#                                <li class="page-item">#}
+                {#                                    <a class="page-link" href="{% url 'my-ad' book_page.next_page_number %}"#}
+                {#                                       aria-label="Next">#}
+                {#                                        <span aria-hidden="true">&raquo;</span>#}
+                {#                                        <span class="sr-only">Next</span>#}
+                {#                                    </a>#}
+                {#                                </li>#}
+                {#                            {% endif %}#}
+                {#                        </ul>#}
+                {#                    </nav>#}
+                {#                </div>#}
+                <!-- pagination -->
+
+            </div>
+        </div>
+        <!-- Row End -->
+    </div>
+    <!-- Container End -->
+</section>
+<!--============================
+=            Footer            =
+=============================-->
+{% include 'app/footer.html' %}
+
+{% include 'app/script.html' %}
+
+<script>
+    $(document).ready(function () {
+        var typeDic = {
+            '1': '教育',
+            '2': '文艺',
+            '3': '人文社科',
+            '4': '生活',
+            '5': '经管',
+            '6': '科技',
+            '7': '少儿',
+            '8': '励志'
+        };
+        $('span.categories').each(function () {
+            // console.log($(this).text());
+            var id = $(this).text();
+            console.log(id, typeDic[id]);
+            $(this).text(typeDic[id]);
+        })
+    })
+</script>
+</body>
+
+</html>

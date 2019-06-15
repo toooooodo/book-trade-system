@@ -47,7 +47,7 @@
                                     <span>{{ unread_count }}</span></a>
                             </li>
                             <li>
-                                <a href="#"><i class="fa fa-file-archive-o"></i> 购物车 <span>12</span></a>
+                                <a href="{% url 'cart' 1 %}"><i class="fa fa-file-archive-o"></i> 购物车 <span>{{ cart_couant }}</span></a>
                             </li>
                             <li>
                                 <a href="{% url 'logout' %}"><i class="fa fa-cog"></i> 登出</a>

@@ -49,7 +49,8 @@
                                     <span>{{ unread_count }}</span></a>
                             </li>
                             <li>
-                                <a href="#"><i class="fa fa-file-archive-o"></i> 购物车 <span>12</span></a>
+                                <a href="{% url 'cart' 1 %}"><i class="fa fa-file-archive-o"></i> 购物车
+                                    <span>{{ cart_count }}</span></a>
                             </li>
                             <li>
                                 <a href="{% url 'logout' %}"><i class="fa fa-cog"></i> 登出</a>
@@ -115,10 +116,50 @@
                                     <!-- <span class="location"><strong>Location</strong>Dhaka,Bangladesh</span> -->
                                 </td>
 
-                                <td class="action" data-title="Action">
+                                <td class="col-md-12 action" data-title="Action">
 
                                     <div class="">
                                         <ul class="list-inline justify-content-center">
+                                            <li class="list-inline-item">
+                                                <a data-toggle="modal" data-placement="top" title="Edit" class="edit"
+                                                   href=""
+                                                   data-target="#contact">
+                                                    <i class="fa fa-pencil"></i>
+                                                </a>
+                                            </li>
+                                            <div class="modal fade" id="contact" tabindex="-1" role="dialog"
+                                                 aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                                                <div class="modal-dialog modal-dialog-centered" role="document">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header border-bottom-0">
+                                                            <button type="button" class="close" data-dismiss="modal"
+                                                                    aria-label="Close">
+                                                                <span aria-hidden="true">&times;</span>
+                                                            </button>
+                                                        </div>
+                                                        <form action="{% url 'noti' message.actor.id message.target.id %}" method="post">
+                                                            <div class="modal-body text-center">
+                                                                <img src="/static/images/account/Account1.png"
+                                                                     class="img-fluid mb-2" alt="">
+                                                                <h6 class="py-2">请在下方的文本框中输入消息</h6>
+                                                                <p>点击确定发送消息，或点击取消返回商品详情页。
+                                                                </p>
+                                                                <textarea name="message" id="message" cols="40" rows="4"
+                                                                          class="w-100 rounded"></textarea>
+                                                            </div>
+                                                            <div
+                                                                    class="modal-footer border-top-0 mb-3 mx-5 justify-content-lg-between justify-content-center">
+                                                                <button type="button" class="btn btn-danger"
+                                                                        data-dismiss="modal">取消
+                                                                </button>
+                                                                <button type="submit" class="btn btn-primary"
+                                                                        id="send-message">发送
+                                                                </button>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
                                             {% if message.unread %}
                                                 <li class="list-inline-item">
                                                     <a data-toggle="tooltip" data-placement="top" title="View"
@@ -192,6 +233,8 @@
 <!--============================
 =            Footer            =
 =============================-->
+
+
 {% include 'app/footer.html' %}
 {% include 'app/script.html' %}
 

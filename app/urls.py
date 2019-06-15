@@ -14,14 +14,11 @@ urlpatterns = [
     path('adlisting/', views.adlisting, name='adlisting'),
     path('doadlisting/', views.do_adlisting),
     path('book/<int:book_id>', views.single_book, name='book'),
-    # re_path(r'^list/(?P<type_id>\d+)/(?P<page>\d+)$', views.show_list, name='list'),
-    # re_path(r'^order/(?P<book_id>\d+)$', views.order, name='order'),
     path('list/<int:type_id>/<int:page>', views.show_list, name='list'),
     path('order/<int:book_id>', views.order, name='order'),
     path('doorder/', views.doOrder, name='doorder'),
     path('want/', views.want, name='want'),
     path('dowant/', views.dowant, name='dowant'),
-    # re_path(r'^want-list/(?P<page>\d+)$', views.showWantList, name='want-list'),
     path('want-list/<int:page>', views.showWantList, name='want-list'),
     path('test/', views.test, name='test'),
     path('noti/<int:seller_id>/<int:book_id>', views.noti, name='noti'),
@@ -34,5 +31,7 @@ urlpatterns = [
     path('edit-personal-info/', views.editPerInfo, name='edit-personal-info'),
     path('edit-password/', views.editPassword, name='edit-password'),
     path('edit-email/', views.editEmail, name='edit-email'),
-
+    path('cart/<int:page>', views.cart, name='cart'),
+    path('add-cart/<int:book_id>', views.addItem, name='add-cart'),
+    path('remove-cart/<int:book_id>', views.removeItem, name='remove-cart'),
 ]

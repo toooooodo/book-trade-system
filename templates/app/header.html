@@ -27,7 +27,7 @@
                                 <div class="dropdown-menu">
                                     <a class="dropdown-item" href="{% url 'my-ad' 1 %}">我的商品</a>
                                     <a class="dropdown-item" href="{% url 'message' 1 %}">消息中心</a>
-                                    <a class="dropdown-item" href="#">购物车</a>
+                                    <a class="dropdown-item" href="{% url 'cart' 1 %}">购物车</a>
 {#                                    <a class="dropdown-item" href="dashboard-archived-ads.html">Dashboard Archived#}
 {#                                        Ads</a>#}
 {#                                    <a class="dropdown-item" href="dashboard-pending-ads.html">Dashboard Pending Ads</a>#}
@@ -57,22 +57,13 @@
                             <li class="nav-item active">
                                 <a class="nav-link" href="{% url 'want-list' 1 %}?sort=latest">求购信息</a>
                             </li>
-                            {#                            <li class="nav-item dropdown dropdown-slide">#}
-                            {#                                <a class="nav-link dropdown-toggle" href="" data-toggle="dropdown" aria-haspopup="true"#}
-                            {#                                   aria-expanded="false">#}
-                            {#                                    Listing <span><i class="fa fa-angle-down"></i></span>#}
-                            {#                                </a>#}
-                            {#                                <!-- Dropdown list -->#}
-                            {#                                <div class="dropdown-menu">#}
-                            {#                                    <a class="dropdown-item" href="category.html">Ad-Gird View</a>#}
-                            {#                                    <a class="dropdown-item" href="ad-listing-list.html">Ad-List View</a>#}
-                            {#                                </div>#}
-                            {#                            </li>#}
                         </ul>
                         <ul class="navbar-nav ml-auto mt-10">
+                            {% if request.user.is_authenticated == False %}
                             <li class="nav-item">
                                 <a class="nav-link login-button" href="{% url 'login' %}">登录</a>
                             </li>
+                            {% else %}
                             <li class="nav-item" style="margin-right: 4px; margin-left: 4px">
                                 <a class="nav-link text-white add-button" href="{% url 'adlisting' %}"><i
                                         class="fa fa-plus-circle"></i>发布新书</a>
@@ -81,6 +72,7 @@
                                 <a class="nav-link text-white add-button" href="{% url 'want' %}"><i
                                         class="fa fa-plus-circle" style="margin-right: 4px; margin-left: 4px"></i>发布求购信息</a>
                             </li>
+                            {% endif %}
                         </ul>
                     </div>
                 </nav>

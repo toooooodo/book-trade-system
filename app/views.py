@@ -11,6 +11,7 @@ from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
 from notifications.signals import notify
 from PIL import Image
+from cart.cart import Cart
 from app.models import *
 
 
@@ -88,6 +89,8 @@ def doregister(request):
         res_email = MyUser.objects.filter(email=email)
         if len(res_user) == 0 and len(res_email) == 0:
             u = MyUser.objects.create_user(username=username, email=email, password=password)
+            # 默认头像
+            u.portrait = 'portrait/user-thumb.jpg'
             u.save()
             return_dict = {'status': '0'}
             return JsonResponse(return_dict)
@@ -229,7 +232,7 @@ def single_book(request, book_id):
     dic = dict()
     book = model_to_dict(book_re,
                          fields=['id', 'title', 'author', 'info', 'isbn', 'url'])
-    seller = model_to_dict(seller_re, fields=['username', 'id'])
+    seller = model_to_dict(seller_re, fields=['username', 'id', 'portrait'])
     seller['time'] = seller_re.date_joined
     book['trade'] = tradeDic[book_re.trade]
     book['lan'] = lanDic[book_re.language]
@@ -501,6 +504,7 @@ def message(request, page):
     context = {
         'pages': pages,
         'message_page': message_page,
+        'cart_count': Cart(request).count()
     }
     return render(request, 'app/message.html', context)
 
@@ -549,6 +553,7 @@ def myAd(request, page):
     context = {
         'pages': pages,
         'book_page': book_page,
+        'cart_couant': Cart(request).count(),
     }
     return render(request, 'app/dashboard-my-ads.html', context)
 
@@ -622,6 +627,29 @@ def editEmail(request):
         else:
             return JsonResponse({'flag': '0'})
     return JsonResponse({'flag': 'error'})
+
+
+@login_required
+def cart(request, page):
+    cart = Cart(request)
+    return render(request, 'app/cart.html', {'cart': cart, 'cart_count': cart.count()})
+
+
+@login_required
+def addItem(request, book_id):
+    book = Book.objects.get(id=book_id)
+    cart = Cart(request)
+    cart.add(book, unit_price=book.sellingPrice, quantity=1)
+    return redirect(reverse('book', args=[book_id]))
+
+
+@login_required
+def removeItem(request, book_id):
+    book = Book.objects.get(id=book_id)
+    cart = Cart(request)
+    cart.remove(book)
+    return redirect(reverse('cart', args=[1]))
+
 
 @login_required
 def logOut(request):

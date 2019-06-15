@@ -70,6 +70,8 @@
             toastr.warning("请填写用户名");
         } else if (pwd !== pwd1) {
             toastr.warning("密码不一致");
+        } else if (pwd.length < 7) {
+            toastr.warning('密码长度不能少于7位');
         } else if ($("#registering").is(':checked') === false) {
             toastr.warning("请同意服务条款和隐私政策",);
         } else {
