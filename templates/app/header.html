@@ -28,9 +28,9 @@
                                     <a class="dropdown-item" href="{% url 'my-ad' 1 %}">我的商品</a>
                                     <a class="dropdown-item" href="{% url 'message' 1 %}">消息中心</a>
                                     <a class="dropdown-item" href="{% url 'cart' 1 %}">购物车</a>
-{#                                    <a class="dropdown-item" href="dashboard-archived-ads.html">Dashboard Archived#}
-{#                                        Ads</a>#}
-{#                                    <a class="dropdown-item" href="dashboard-pending-ads.html">Dashboard Pending Ads</a>#}
+                                    {#                                    <a class="dropdown-item" href="dashboard-archived-ads.html">Dashboard Archived#}
+                                    {#                                        Ads</a>#}
+                                    {#                                    <a class="dropdown-item" href="dashboard-pending-ads.html">Dashboard Pending Ads</a>#}
                                 </div>
                             </li>
                             <!-- 商品列表 -->
@@ -60,18 +60,24 @@
                         </ul>
                         <ul class="navbar-nav ml-auto mt-10">
                             {% if request.user.is_authenticated == False %}
-                            <li class="nav-item">
-                                <a class="nav-link login-button" href="{% url 'login' %}">登录</a>
-                            </li>
+                                <li class="nav-item">
+                                    <a class="nav-link login-button" href="{% url 'login' %}">登录</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link login-button" href="{% url 'register' %}">注册</a>
+                                </li>
                             {% else %}
-                            <li class="nav-item" style="margin-right: 4px; margin-left: 4px">
-                                <a class="nav-link text-white add-button" href="{% url 'adlisting' %}"><i
-                                        class="fa fa-plus-circle"></i>发布新书</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-white add-button" href="{% url 'want' %}"><i
-                                        class="fa fa-plus-circle" style="margin-right: 4px; margin-left: 4px"></i>发布求购信息</a>
-                            </li>
+                                <li class="nav-item">
+                                    <a class="nav-link login-button" href="{% url 'logout' %}">登出</a>
+                                </li>
+                                <li class="nav-item" style="margin-right: 4px; margin-left: 4px">
+                                    <a class="nav-link text-white add-button" href="{% url 'adlisting' %}"><i
+                                            class="fa fa-plus-circle"></i>发布新书</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-white add-button" href="{% url 'want' %}"><i
+                                            class="fa fa-plus-circle" style="margin-right: 4px; margin-left: 4px"></i>发布求购信息</a>
+                                </li>
                             {% endif %}
                         </ul>
                     </div>

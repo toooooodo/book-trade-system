@@ -109,7 +109,7 @@
                                 </li>
                             {% endif %}
                             {% for pindex in pages %}
-                                {% if pindex == book_page.bumber %}
+                                {% if pindex == book_page.number %}
                                     <li class="page-item active"><a class="page-link"
                                                                     href="{% url 'my-ad' pindex %}">{{ pindex }}</a>
                                     </li>

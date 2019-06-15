@@ -655,3 +655,10 @@ def removeItem(request, book_id):
 def logOut(request):
     logout(request)
     return redirect(reverse('index'))
+
+
+"""
+Xiang Zhuang 1111111
+Ba Huang 1111111
+Jing Hao 1111111
+"""
