@@ -1,4 +1,4 @@
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import authenticate, login, logout, hashers
 from django.contrib.auth.decorators import login_required
 
 from django.core.paginator import Paginator
@@ -559,22 +559,69 @@ def edit(request):
 
 
 @csrf_exempt
-@login_required
+# @login_required
 def editPerInfo(request):
-    pass
+    if not request.user.is_authenticated:
+        # 未登录
+        return JsonResponse({'flag': '0'})
+    # print('edit personal info')
+    if request.method == "POST":
+        user = MyUser.objects.get(id=request.user.id)
+        user.first_name = request.POST.get('firstname')
+        user.last_name = request.POST.get('lastname')
+        user.portrait = request.FILES.get('portrait')
+        user.save()
+        _img = Image.open('media/' + str(user.portrait))
+        _img = _img.resize((800, 800), Image.ANTIALIAS)
+        _img.save('media/' + str(user.portrait))
+        return JsonResponse({'flag': '1'})
+    return JsonResponse({'flag': '2'})
 
 
 @csrf_exempt
 @login_required
 def editPassword(request):
-    pass
+    print('111')
+    if request.method == "POST":
+        user = MyUser.objects.get(id=request.user.id)
+        current = (request.POST.get('current')).strip()
+        new = (request.POST.get('new')).strip()
+        # print(user, current, new)
+        if user.check_password(current):
+            print('yes')
+            if not new:
+                # 新密码为空
+                return JsonResponse({'flag': '2'})
+            elif len(new) <= 6:
+                return JsonResponse({'flag': '3'})
+            else:
+                user.password = hashers.make_password(password=new)
+                user.save()
+                logout(request)
+                return JsonResponse({'flag': '1'})
+        else:
+            print('no')
+            return JsonResponse({'flag': '0'})
+    return JsonResponse({'flag': 'error'})
 
 
 @csrf_exempt
 @login_required
 def editEmail(request):
-    pass
-
+    if request.method == "POST":
+        user = MyUser.objects.get(id=request.user.id)
+        current = (request.POST.get('current')).strip()
+        new = (request.POST.get('new')).strip()
+        if user.email == current:
+            if len(MyUser.objects.filter(email__exact=new)) == 0:
+                user.email = new
+                user.save()
+                return JsonResponse({'flag': '1'})
+            else:
+                return JsonResponse({'flag': '2'})
+        else:
+            return JsonResponse({'flag': '0'})
+    return JsonResponse({'flag': 'error'})
 
 @login_required
 def logOut(request):

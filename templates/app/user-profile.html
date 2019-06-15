@@ -41,24 +41,24 @@
                     <div class="col-lg-6 col-md-6">
                         <div class="widget personal-info">
                             <h3 class="widget-header user">编辑个人信息</h3>
-                            <form action="#" enctype="multipart/form-data" method="post" onsubmit="return editPers()">
+                            <form enctype="multipart/form-data" method="post" onsubmit="return editPers()">
                                 {% csrf_token %}
                                 <!-- First Name -->
                                 <div class="form-group">
                                     <label for="first-name">First Name</label>
-                                    <input type="text" class="form-control" id="first-name">
+                                    <input type="text" class="form-control" id="first-name" required>
                                 </div>
                                 <!-- Last Name -->
                                 <div class="form-group">
                                     <label for="last-name">Last Name</label>
-                                    <input type="text" class="form-control" id="last-name">
+                                    <input type="text" class="form-control" id="last-name" required>
                                 </div>
                                 <!-- File chooser -->
                                 <div class="form-group choose-file d-inline-flex">
                                     <i class="fa fa-user text-center px-3"></i>
                                     <input type="file" class="form-control-file mt-2 pt-1" id="input-file">
                                 </div>
-                                <button class="btn btn-transparent">保存我的修改</button>
+                                <button type="submit" class="btn btn-transparent">保存我的修改</button>
                             </form>
                         </div>
                     </div>
@@ -66,7 +66,7 @@
                         <!-- Change Password -->
                         <div class="widget change-password">
                             <h3 class="widget-header user">修改密码</h3>
-                            <form action="#" method="post" onsubmit="return editPassword()">
+                            <form method="post" onsubmit="return editPassword()">
                                 {% csrf_token %}
                                 <!-- Current Password -->
                                 <div class="form-group">
@@ -84,7 +84,7 @@
                                     <input type="password" class="form-control" id="confirm-password" required>
                                 </div>
                                 <!-- Submit Button -->
-                                <button class="btn btn-transparent">修改密码</button>
+                                <button type="submit" class="btn btn-transparent">修改密码</button>
                             </form>
                         </div>
                     </div>
@@ -105,7 +105,7 @@
                                     <input type="email" class="form-control" id="new-email" required>
                                 </div>
                                 <!-- Submit Button -->
-                                <button class="btn btn-transparent">修改邮箱</button>
+                                <button type="submit" class="btn btn-transparent">修改邮箱</button>
                             </form>
                         </div>
                     </div>
@@ -128,24 +128,39 @@
         var patn = /\.jpg$|\.jpeg$|\.png$|\.gif$/i; // img
         var firstname = $('input#first-name').val();
         var lastname = $('input#last-name').val();
-        var portrait = $('input#file-upload').val();
-        if (!patn.test(file.name)) {
+        var portrait = $('input#input-file')[0].files[0];
+        if (firstname.length > 30) {
+            toastr.warning('first-name字段长度<=30');
+        }
+        if (lastname.length > 150) {
+            toastr.warning('last-name字段长度<=150');
+        }
+        if (typeof (portrait) === "undefined") {
+            toastr.warning("请选择上传的图片");
+        } else if (!patn.test(portrait.name)) {
             toastr.warning("请选择正确格式的图片");
         } else {
             var formData = new FormData();
             formData.append('firstname', firstname);
             formData.append('lastname', lastname);
             formData.append('portrait', portrait);
+            // console.log(formData);
             $.ajax({
                 url: '/edit-personal-info/', /*接口域名地址*/
-                type: 'POST',
+                type: 'post',
                 data: formData,
                 contentType: false,
                 processData: false,
                 success: function (xhr) {
-
+                    if (xhr.flag === '1')
+                        toastr.success('编辑成功');
+                    else if (xhr.flag === '0')
+                        toastr.error('未登录');
+                    else
+                        toastr.error('编辑失败');
                 },
                 error: function (xhr) {
+                    toastr.error('编辑失败');
 
                 },
             })
@@ -169,17 +184,29 @@
                     'current': current,
                     'new': new1,
                 },
+                timeout: 3000,
                 success: function (xhr) {
-
+                    if (xhr.flag === '1') {
+                        toastr.success('密码修改成功');
+                        window.location.href = "/index";
+                    } else if (xhr.flag === '2') {
+                        toastr.warning('新密码不能为空');
+                    } else if (xhr.flag === '3') {
+                        toastr.warning('新密码长度不能少于六位');
+                    } else if (xhr.flag === '0') {
+                        toastr.error('当前密码错误');
+                    }
                 },
                 error: function (xhr) {
-
+                    toastr.error('系统出错');
                 }
             })
         }
+        return false;
     }
 
     function editEmail() {
+        toastr.options.positionClass = 'toast-top-full-width';
         var current = $('input#current-email').val();
         var new1 = $('input#new-email').val();
         $.ajax({
@@ -192,12 +219,18 @@
             },
             timeout: 3000,
             success: function (xhr) {
-
+                if (xhr.flag === '0')
+                    toastr.error('当前邮箱错误');
+                else if (xhr.flag === '1')
+                    toastr.success('成功设置新邮箱');
+                else if (xhr.flag === '2')
+                    toastr.error('新邮箱已被注册');
             },
             error: function (xhr) {
-
+                toastr.error('系统错误');
             },
-        })
+        });
+        return false;
     }
 </script>
 </body>
