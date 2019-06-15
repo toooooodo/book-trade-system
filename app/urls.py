@@ -22,6 +22,7 @@ urlpatterns = [
     path('want-list/<int:page>', views.showWantList, name='want-list'),
     path('test/', views.test, name='test'),
     path('noti/<int:seller_id>/<int:book_id>', views.noti, name='noti'),
+    path('m-noti/<int:recipient>/<int:book_id>/<int:message_page>', views.messageNoti, name='m-noti'),
     path('message/<int:page>', views.message, name='message'),
     path('read-message/<int:page_id>/<int:message_id>', views.readMessage, name='read-message'),
     path('delete-message/<int:page_id>/<int:message_id>', views.deleteMessage, name='delete-message'),

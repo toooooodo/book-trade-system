@@ -137,7 +137,7 @@
                                                                 <span aria-hidden="true">&times;</span>
                                                             </button>
                                                         </div>
-                                                        <form action="{% url 'noti' message.actor.id message.target.id %}" method="post">
+                                                        <form action="{% url 'm-noti' message.actor.id message.target.id message_page.number %}" method="post">
                                                             <div class="modal-body text-center">
                                                                 <img src="/static/images/account/Account1.png"
                                                                      class="img-fluid mb-2" alt="">

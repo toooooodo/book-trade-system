@@ -478,6 +478,14 @@ def noti(request, seller_id, book_id):
         return redirect(reverse('book', args=[book_id]))
     return render(request, 'app/404.html')
 
+@csrf_exempt
+@login_required
+def messageNoti(request, recipient, book_id, message_page):
+    if request.method == "POST":
+        notify.send(request.user, recipient=MyUser.objects.filter(id=recipient), verb=request.POST.get('message'),
+                    target=Book.objects.filter(id=book_id)[0])
+        return redirect(reverse('message', args=[message_page]))
+    return render(request, 'app/404.html')
 
 @login_required
 def message(request, page):
