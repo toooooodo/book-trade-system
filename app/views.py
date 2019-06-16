@@ -216,7 +216,7 @@ def single_book(request, book_id):
     """
     商品详情页
     :param request:
-    :param book_id:
+    :param book_id: 书编号
     :return:
     """
     book_re = Book.objects.filter(id=book_id, sold=False)
@@ -252,8 +252,8 @@ def show_list(request, type_id, page):
     """
     商品列表
     :param request:
-    :param type_id:
-    :param page:
+    :param type_id: 种类编号
+    :param page: 页面号
     :return:
     """
     if request.method == "GET":
@@ -398,11 +398,21 @@ def doOrder(request):
 
 @login_required
 def want(request):
+    """
+    发布求购信息页面
+    :param request:
+    :return:
+    """
     return render(request, 'app/want.html')
 
 
 @csrf_exempt
 def dowant(request):
+    """
+    处理求购请求
+    :param request:
+    :return:
+    """
     if not request.user.is_authenticated:
         # 未登录
         return JsonResponse({'flag': '0'})
@@ -424,6 +434,12 @@ def dowant(request):
 
 
 def showWantList(request, page):
+    """
+    求购信息汇总页面
+    :param request:
+    :param page: 页面编号
+    :return:
+    """
     if request.method == "GET":
         sort = request.GET.get('sort')
         if sort == 'latest':
@@ -465,13 +481,20 @@ def showWantList(request, page):
         return render(request, 'app/404.html')
 
 
-def test(request):
-    return render(request, 'app/test.html')
+# def test(request):
+#     return render(request, 'app/test.html')
 
 
 @csrf_exempt
 @login_required
 def noti(request, seller_id, book_id):
+    """
+    发私信
+    :param request:
+    :param seller_id: 接收者编号
+    :param book_id: 书的编号
+    :return:
+    """
     if request.method == "POST":
         notify.send(request.user, recipient=MyUser.objects.filter(id=seller_id), verb=request.POST.get('message'),
                     target=Book.objects.filter(id=book_id)[0])
@@ -481,6 +504,14 @@ def noti(request, seller_id, book_id):
 @csrf_exempt
 @login_required
 def messageNoti(request, recipient, book_id, message_page):
+    """
+    从消息中心回私信
+    :param request:
+    :param recipient: 接受者编号
+    :param book_id: 书的编号
+    :param message_page: 消息页编号
+    :return:
+    """
     if request.method == "POST":
         notify.send(request.user, recipient=MyUser.objects.filter(id=recipient), verb=request.POST.get('message'),
                     target=Book.objects.filter(id=book_id)[0])
@@ -489,6 +520,12 @@ def messageNoti(request, recipient, book_id, message_page):
 
 @login_required
 def message(request, page):
+    """
+    渲染消息中心页面
+    :param request:
+    :param page:
+    :return:
+    """
     user = MyUser.objects.get(id=request.user.id)
     messages = user.notifications.active()
     paginator = Paginator(messages, 5)
@@ -519,12 +556,26 @@ def message(request, page):
 
 @login_required
 def readMessage(request, page_id, message_id):
+    """
+    读消息
+    :param request:
+    :param page_id: 消息中心页面编号
+    :param message_id: 消息编号
+    :return:
+    """
     request.user.notifications.get(id=message_id).mark_as_read()
     return redirect(reverse('message', args=[page_id]))
 
 
 @login_required
 def deleteMessage(request, page_id, message_id):
+    """
+    删除消息
+    :param request:
+    :param page_id: 消息中心页面编号
+    :param message_id: 消息编号
+    :return:
+    """
     # request.user.notifications.get(id=message_id).deleted()
     notifi = request.user.notifications.get(id=message_id)
     notifi.deleted = True
@@ -534,6 +585,12 @@ def deleteMessage(request, page_id, message_id):
 
 @login_required
 def myAd(request, page):
+    """
+    渲染我的商品页面
+    :param request:
+    :param page: 页面编号
+    :return:
+    """
     books = Book.objects.filter(seller_id=request.user.id, sold__exact=False).order_by('id')
     paginator = Paginator(books, 4)
     # 获取第page页的内容
@@ -568,12 +625,22 @@ def myAd(request, page):
 
 @login_required
 def edit(request):
+    """
+    渲染编辑个人信息页面
+    :param request:
+    :return:
+    """
     return render(request, 'app/user-profile.html')
 
 
 @csrf_exempt
 # @login_required
 def editPerInfo(request):
+    """
+    处理编辑个人信息请求
+    :param request:
+    :return:
+    """
     if not request.user.is_authenticated:
         # 未登录
         return JsonResponse({'flag': '0'})
@@ -594,7 +661,11 @@ def editPerInfo(request):
 @csrf_exempt
 @login_required
 def editPassword(request):
-    print('111')
+    """
+    处理重设密码请求
+    :param request:
+    :return:
+    """
     if request.method == "POST":
         user = MyUser.objects.get(id=request.user.id)
         current = (request.POST.get('current')).strip()
@@ -621,6 +692,11 @@ def editPassword(request):
 @csrf_exempt
 @login_required
 def editEmail(request):
+    """
+    处理编辑邮件请求
+    :param request:
+    :return:
+    """
     if request.method == "POST":
         user = MyUser.objects.get(id=request.user.id)
         current = (request.POST.get('current')).strip()
@@ -639,12 +715,24 @@ def editEmail(request):
 
 @login_required
 def cart(request, page):
+    """
+    渲染购物车页面
+    :param request:
+    :param page:
+    :return:
+    """
     cart = Cart(request)
     return render(request, 'app/cart.html', {'cart': cart, 'cart_count': cart.count()})
 
 
 @login_required
 def addItem(request, book_id):
+    """
+    向购物车里添加商品
+    :param request:
+    :param book_id: 书的编号
+    :return:
+    """
     book = Book.objects.get(id=book_id)
     cart = Cart(request)
     cart.add(book, unit_price=book.sellingPrice, quantity=1)
@@ -653,6 +741,12 @@ def addItem(request, book_id):
 
 @login_required
 def removeItem(request, book_id):
+    """
+    删除购物车里的商品
+    :param request:
+    :param book_id: 书的编号
+    :return:
+    """
     book = Book.objects.get(id=book_id)
     cart = Cart(request)
     cart.remove(book)
@@ -661,6 +755,11 @@ def removeItem(request, book_id):
 
 @login_required
 def logOut(request):
+    """
+    登出
+    :param request:
+    :return:
+    """
     logout(request)
     return redirect(reverse('index'))
 
