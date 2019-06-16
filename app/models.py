@@ -4,11 +4,6 @@ from django.contrib.auth.models import AbstractUser
 
 # Create your models here.
 
-# class User(models.Model):
-#     username = models.CharField(max_length=20, unique=True)
-#     password = models.CharField(max_length=25)
-#     email = models.EmailField(max_length=25, unique=True)
-#     time = models.DateTimeField(auto_now_add=True)
 
 class MyUser(AbstractUser):
     portrait = models.ImageField(upload_to='portrait')  # 图片
@@ -62,44 +57,6 @@ class Book(models.Model):
         return self.title
 
 
-# class EDBook(models.Model):
-#     id = models.IntegerField(primary_key=True)
-#     category = models.CharField(max_length=1)
-#
-#
-# class LTBook(models.Model):
-#     id = models.IntegerField(primary_key=True)
-#     category = models.CharField(max_length=1)
-#
-#
-# class HMBook(models.Model):
-#     id = models.IntegerField(primary_key=True)
-#     category = models.CharField(max_length=1)
-#
-#
-# class LFBook(models.Model):
-#     id = models.IntegerField(primary_key=True)
-#     category = models.CharField(max_length=1)
-#
-#
-# class ECBook(models.Model):
-#     id = models.IntegerField(primary_key=True)
-#     category = models.CharField(max_length=1)
-#
-#
-# class TCBook(models.Model):
-#     id = models.IntegerField(primary_key=True)
-#     category = models.CharField(max_length=1)
-#
-#
-# class CHBook(models.Model):
-#     id = models.IntegerField(primary_key=True)
-#     category = models.CharField(max_length=1)
-#
-#
-# class INBook(models.Model):
-#     id = models.IntegerField(primary_key=True)
-#     category = models.CharField(max_length=1)
 
 
 class BookCount(models.Model):

@@ -83,8 +83,6 @@ def doregister(request):
         email = (request.POST.get('email')).strip()
         password = (request.POST.get('password')).strip()
         print(username, email, password)
-        # res = User.objects.filter(username=username, email=email)
-        # res = User.objects.filter(Q(username__exact=username) | Q(email__exact=email))
         res_user = MyUser.objects.filter(username=username)
         res_email = MyUser.objects.filter(email=email)
         if len(res_user) == 0 and len(res_email) == 0:
