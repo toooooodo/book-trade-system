@@ -45,13 +45,12 @@ def dologin(request):
     :param request:
     :return:
     """
-    if request.user.is_authenticated:
+    if request.user.is_authenticated:  # 用户已登录
         return JsonResponse({'status': '2'})
     if request.method == "POST":
         username = request.POST.get('username')
         password = request.POST.get('password')
         print(username, password)
-        # res = User.objects.filter(Q(username__exact=username) & Q(password__exact=password))
         user = authenticate(request, username=username, password=password)
         if user is None:
             # 用户不存在
@@ -248,7 +247,7 @@ def single_book(request, book_id):
 
 def show_list(request, type_id, page):
     """
-    商品列表
+    商品列表，分类检索
     :param request:
     :param type_id: 种类编号
     :param page: 页面号
@@ -499,6 +498,7 @@ def noti(request, seller_id, book_id):
         return redirect(reverse('book', args=[book_id]))
     return render(request, 'app/404.html')
 
+
 @csrf_exempt
 @login_required
 def messageNoti(request, recipient, book_id, message_page):
@@ -515,6 +515,7 @@ def messageNoti(request, recipient, book_id, message_page):
                     target=Book.objects.filter(id=book_id)[0])
         return redirect(reverse('message', args=[message_page]))
     return render(request, 'app/404.html')
+
 
 @login_required
 def message(request, page):
@@ -635,7 +636,7 @@ def edit(request):
 # @login_required
 def editPerInfo(request):
     """
-    处理编辑个人信息请求
+    处理编辑个人基本信息请求
     :param request:
     :return:
     """
