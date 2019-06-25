@@ -82,6 +82,8 @@ def doregister(request):
         email = (request.POST.get('email')).strip()
         password = (request.POST.get('password')).strip()
         print(username, email, password)
+        if len(username) < 7 or len(password) < 7:
+            return None
         res_user = MyUser.objects.filter(username=username)
         res_email = MyUser.objects.filter(email=email)
         if len(res_user) == 0 and len(res_email) == 0:
@@ -156,56 +158,59 @@ def do_adlisting(request):
     :return:
     """
     if request.method == "POST":
-        title = request.POST.get('title')
-        author = request.POST.get('author')
-        language = request.POST.get('language')
-        _type = request.POST.get('type')
-        category = request.POST.get('category')
-        info = request.POST.get('info')
-        origin = request.POST.get('origin')
-        sell = request.POST.get('sell')
-        trade = request.POST.get('trade')
-        isbn = request.POST.get('isbn')
-        url = request.POST.get('url')
+        title = (request.POST.get('title')).strip()
+        author = (request.POST.get('author')).strip()
+        language = (request.POST.get('language')).strip()
+        _type = (request.POST.get('type')).strip()
+        category = (request.POST.get('category')).strip()
+        info = (request.POST.get('info')).strip()
+        origin = (request.POST.get('origin')).strip()
+        sell = (request.POST.get('sell')).strip()
+        trade = (request.POST.get('trade')).strip()
+        isbn = (request.POST.get('isbn')).strip()
+        url = (request.POST.get('url')).strip()
         img = request.FILES.get('img')
-
-        cat_s = chr(ord(_type) - ord('1') + ord('a')) + chr(ord(category) - ord('1') + ord('a'))
-        print(cat_s)
-        num = BookCount.objects.get(cat=cat_s).num
-        BookCount.objects.filter(cat=cat_s).update(num=num + 1)
-        # print(title, author, language, _type, category, info, origin,
-        #       sell, trade, isbn, url, img)
-        book = Book()
-        book.title = title
-        book.author = author
-        if language == 'chinese':
-            book.language = 'ZH'
-        elif language == 'english':
-            book.language = 'EN'
+        if len(title) and len(author) and len(language) and len(_type) and len(category) and len(info) and len(
+                origin) and len(sell) and len(trade) and len(isbn) and len(url):
+            cat_s = chr(ord(_type) - ord('1') + ord('a')) + chr(ord(category) - ord('1') + ord('a'))
+            print(cat_s)
+            num = BookCount.objects.get(cat=cat_s).num
+            BookCount.objects.filter(cat=cat_s).update(num=num + 1)
+            # print(title, author, language, _type, category, info, origin,
+            #       sell, trade, isbn, url, img)
+            book = Book()
+            book.title = title
+            book.author = author
+            if language == 'chinese':
+                book.language = 'ZH'
+            elif language == 'english':
+                book.language = 'EN'
+            else:
+                book.language = 'OT'
+            book.type = _type
+            book.category = category
+            book.info = info
+            book.originPrice = origin
+            book.sellingPrice = sell
+            book.isbn = isbn
+            book.url = url
+            book.img = img
+            book.sold = False
+            book.score = 5.0
+            if trade == 'online':
+                book.trade = 'OL'
+            else:
+                book.trade = 'FL'
+            book.seller_id = request.user.id
+            book.save()
+            print(str(book.img))
+            _img = Image.open('media/' + str(book.img))
+            print(_img.size)
+            _img = _img.resize((800, 800), Image.ANTIALIAS)
+            _img.save('media/' + str(book.img))
+            return JsonResponse({'flag': '1'})
         else:
-            book.language = 'OT'
-        book.type = _type
-        book.category = category
-        book.info = info
-        book.originPrice = origin
-        book.sellingPrice = sell
-        book.isbn = isbn
-        book.url = url
-        book.img = img
-        book.sold = False
-        book.score = 5.0
-        if trade == 'online':
-            book.trade = 'OL'
-        else:
-            book.trade = 'FL'
-        book.seller_id = request.user.id
-        book.save()
-        print(str(book.img))
-        _img = Image.open('media/' + str(book.img))
-        print(_img.size)
-        _img = _img.resize((800, 800), Image.ANTIALIAS)
-        _img.save('media/' + str(book.img))
-        return JsonResponse({'flag': '1'})
+            return JsonResponse({'flag': '2'})
     return JsonResponse({'flag': '2'})
 
 
@@ -361,11 +366,14 @@ def doOrder(request):
         return JsonResponse({'flag': '2'})
     orderform = OrderForm()
     orderform.buyer = request.user.id
-    orderform.phone = request.POST.get('phone')
-    orderform.address = request.POST.get('address')
-    orderform.timeorname = request.POST.get('timeorname')
-    orderform.message = request.POST.get('message')
-    orderform.book_id = request.POST.get('book_id')
+    orderform.phone = (request.POST.get('phone')).strip()
+    orderform.address = (request.POST.get('address')).strip()
+    orderform.timeorname = (request.POST.get('timeorname')).strip()
+    orderform.message = (request.POST.get('message')).strip()
+    orderform.book_id = (request.POST.get('book_id')).strip()
+    if not orderform.buyer or not orderform.phone or not orderform.address or not orderform.timeorname or \
+            not orderform.message or not orderform.book_id:
+        return JsonResponse({'flag': '2'})
     # print(orderform.buyer, orderform.phone, orderform.address, orderform.timeorname, orderform.message,
     #       orderform.book_id)
     book = Book.objects.filter(id=orderform.book_id, sold__exact=False)
@@ -415,11 +423,13 @@ def dowant(request):
         return JsonResponse({'flag': '0'})
     if request.method == "POST":
         _want = Want()
-        _want.title = request.POST.get('title')
-        _want.author = request.POST.get('author')
-        _want.disc = request.POST.get('info')
+        _want.title = (request.POST.get('title')).strip()
+        _want.author = (request.POST.get('author')).strip()
+        _want.disc = (request.POST.get('info')).strip()
         _want.user_id = request.user.id
         _want.img = request.FILES.get('img')
+        if not _want.title or not _want.author or not _want.disc:
+            return JsonResponse({'flag': '2'})
         _want.flag = True
         _want.save()
         _img = Image.open('media/' + str(_want.img))
@@ -643,12 +653,14 @@ def editPerInfo(request):
     if not request.user.is_authenticated:
         # 未登录
         return JsonResponse({'flag': '0'})
-    # print('edit personal info')
     if request.method == "POST":
         user = MyUser.objects.get(id=request.user.id)
         user.first_name = request.POST.get('firstname')
         user.last_name = request.POST.get('lastname')
         user.portrait = request.FILES.get('portrait')
+        if not user.first_name or not user.last_name or not user.portrait:
+            # 有信息为空
+            return JsonResponse({'flag': '2'})
         user.save()
         _img = Image.open('media/' + str(user.portrait))
         _img = _img.resize((800, 800), Image.ANTIALIAS)
@@ -692,7 +704,7 @@ def editPassword(request):
 @login_required
 def editEmail(request):
     """
-    处理编辑邮件请求
+    处理编辑邮箱请求
     :param request:
     :return:
     """
@@ -700,6 +712,9 @@ def editEmail(request):
         user = MyUser.objects.get(id=request.user.id)
         current = (request.POST.get('current')).strip()
         new = (request.POST.get('new')).strip()
+        if len(new) == 0:
+            # 新邮箱为空
+            return JsonResponse({'flag': '0'})
         if user.email == current:
             if len(MyUser.objects.filter(email__exact=new)) == 0:
                 user.email = new
