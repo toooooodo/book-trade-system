@@ -107,7 +107,7 @@
                                             消息内容：
                                         </div>
                                         <div class="col-md-8">
-                                            <span>{{ message.verb }} </span>
+                                            <a href="{% url 'chat' message.actor.id message.target.id%}"> <span>{{ message.verb }} </span></a>
                                         </div>
                                     </div>
 
@@ -137,7 +137,8 @@
                                                                 <span aria-hidden="true">&times;</span>
                                                             </button>
                                                         </div>
-                                                        <form action="{% url 'm-noti' message.actor.id message.target.id message_page.number %}" method="post">
+                                                        <form action="{% url 'm-noti' message.actor.id message.target.id message_page.number %}"
+                                                              method="post">
                                                             <div class="modal-body text-center">
                                                                 <img src="/static/images/account/Account1.png"
                                                                      class="img-fluid mb-2" alt="">

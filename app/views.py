@@ -536,6 +536,7 @@ def message(request, page):
     :return:
     """
     user = MyUser.objects.get(id=request.user.id)
+    # messages = user.notifications.active().filter(actor_object_id='1')
     messages = user.notifications.active()
     paginator = Paginator(messages, 5)
     # 获取第page页的内容
@@ -783,3 +784,20 @@ Xiang Zhuang 1111111
 Ba Huang 1111111
 Jing Hao 1111111
 """
+
+
+@login_required
+def chat(request, actor, book_id):
+    user = MyUser.objects.get(id=request.user.id)
+    messages = user.notifications.filter(actor_object_id=actor)
+    return render(request, 'app/chat.html', {'messages': messages})
+
+
+@csrf_exempt
+@login_required
+def sendMessage(request, recipient, book):
+    if request.method == 'POST':
+        notify.send(request.user, recipient=MyUser.objects.filter(id=recipient), verb=request.POST.get('message'),
+                    target=Book.objects.filter(id=book)[0])
+        return JsonResponse({})
+    return redirect(reverse('404'))

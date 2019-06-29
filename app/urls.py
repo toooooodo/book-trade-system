@@ -20,7 +20,6 @@ urlpatterns = [
     path('want/', views.want, name='want'),
     path('dowant/', views.dowant, name='dowant'),
     path('want-list/<int:page>', views.showWantList, name='want-list'),
-    # path('test/', views.test, name='test'),
     path('noti/<int:seller_id>/<int:book_id>', views.noti, name='noti'),
     path('m-noti/<int:recipient>/<int:book_id>/<int:message_page>', views.messageNoti, name='m-noti'),
     path('message/<int:page>', views.message, name='message'),
@@ -35,4 +34,6 @@ urlpatterns = [
     path('cart/<int:page>', views.cart, name='cart'),
     path('add-cart/<int:book_id>', views.addItem, name='add-cart'),
     path('remove-cart/<int:book_id>', views.removeItem, name='remove-cart'),
+    path('chat/<int:actor>/<int:book_id>', views.chat, name='chat'),
+    path('chat-noti/<int:recipient>/<int:book_id>', views.sendMessage, name='chat-noti'),
 ]
