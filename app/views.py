@@ -779,15 +779,15 @@ def logOut(request):
     return redirect(reverse('index'))
 
 
-"""
-Xiang Zhuang 1111111
-Ba Huang 1111111
-Jing Hao 1111111
-"""
-
-
 @login_required
 def chat(request, actor, book_id):
+    """
+    聊天页
+    :param request:
+    :param actor:
+    :param book_id:
+    :return:
+    """
     user = MyUser.objects.get(id=request.user.id)
     messages = user.notifications.filter(actor_object_id=actor)
     return render(request, 'app/chat.html', {'messages': messages})
@@ -795,9 +795,23 @@ def chat(request, actor, book_id):
 
 @csrf_exempt
 @login_required
-def sendMessage(request, recipient, book):
+def sendMessage(request, recipient, book_id):
+    """
+    处理聊天页发送过来的消息
+    :param request:
+    :param recipient:
+    :param book_id:
+    :return:
+    """
     if request.method == 'POST':
         notify.send(request.user, recipient=MyUser.objects.filter(id=recipient), verb=request.POST.get('message'),
-                    target=Book.objects.filter(id=book)[0])
+                    target=Book.objects.filter(id=book_id)[0])
         return JsonResponse({})
     return redirect(reverse('404'))
+
+
+"""
+Xiang Zhuang 1111111
+Ba Huang 1111111
+Jing Hao 1111111
+"""

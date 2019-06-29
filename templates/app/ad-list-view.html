@@ -153,7 +153,7 @@
                                                 <li class="list-inline-item" id="type"><a href="{% url 'list' book.type 1 %}?sort=ascending&title="> <i
                                                         class="fa fa-folder-open-o"></i>{{ book.type }}</a></li>
                                                 <li class="list-inline-item"><i
-                                                        class="fa fa-calendar"></i>{{ book.time|date:"Y-m-d" }}</li>
+                                                        class="fa fa-calendar"></i>{{ book.time|date:"Y-m-d H:i:s" }}</li>
                                             </ul>
                                             <p class="pr-5">{{ book.info|truncatechars:100 }}</p>
                                         </div>

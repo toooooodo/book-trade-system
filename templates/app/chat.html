@@ -39,9 +39,9 @@
                     {% endfor %}
                     <form onsubmit="return chat()"> {% csrf_token %}
                         <div class="chat-txt">
-                            <input type="text" class="form-control">
+                            <input type="text" class="form-control" id="input-text">
                         </div>
-                        <button type="submit" class="btn btn-theme" id="send">Send</button>
+                        <button type="submit" class="btn btn-theme" id="send-button">Send</button>
                     </form>
                 </aside>
             </div>
@@ -83,10 +83,7 @@
     };
 
     function chat() {
-        var verb = $('#send').val();
-        // console.log(window.location.pathname.split('/')[2]);
-        console.log(verb);
-        /*
+        var verb = $("input#input-text").val();
         $.ajax({
             type: "POST",
             url: "/chat-noti/" + window.location.pathname.split('/')[2]+'/'+window.location.pathname.split('/')[3],
@@ -105,7 +102,7 @@
                 )
             }
         });
-        */
+        $("input#input-text").val('');
         return false;
     }
 </script>
