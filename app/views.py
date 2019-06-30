@@ -789,7 +789,7 @@ def chat(request, actor, book_id):
     :return:
     """
     user = MyUser.objects.get(id=request.user.id)
-    messages = user.notifications.filter(actor_object_id=actor)
+    messages = user.notifications.filter(actor_object_id=actor).order_by('timestamp')
     return render(request, 'app/chat.html', {'messages': messages})
 
 

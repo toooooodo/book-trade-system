@@ -3,7 +3,7 @@
         <div class="row">
             <div class="col-md-12">
                 <nav class="navbar navbar-expand-lg navbar-light navigation">
-                    <a class="navbar-brand" href="index.html">
+                    <a class="navbar-brand" href="/">
                         <img src="/static/images/logo.png" alt="">
                     </a>
                     <button class="navbar-toggler" type="button" data-toggle="collapse"
@@ -28,6 +28,7 @@
                                     <a class="dropdown-item" href="{% url 'my-ad' 1 %}">我的商品</a>
                                     <a class="dropdown-item" href="{% url 'message' 1 %}">消息中心</a>
                                     <a class="dropdown-item" href="{% url 'cart' 1 %}">购物车</a>
+                                    <a class="dropdown-item" href="{% url 'edit' %}">编辑个人信息</a>
                                     {#                                    <a class="dropdown-item" href="dashboard-archived-ads.html">Dashboard Archived#}
                                     {#                                        Ads</a>#}
                                     {#                                    <a class="dropdown-item" href="dashboard-pending-ads.html">Dashboard Pending Ads</a>#}
