@@ -22,3 +22,5 @@
 ![avatar](img/购物车.png)
 ### 我的消息
 ![avatar](img/我的消息.png)
+### 编辑个人信息
+![avatar](img/编辑个人信息.png)
